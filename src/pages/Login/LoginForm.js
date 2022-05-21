@@ -1,11 +1,13 @@
 import user from '../../images/user.png';
 import lock from '../../images/lock.png';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './Login.module.css';
 import Button from '@mui/material/Button';
 import { purple } from '@mui/material/colors';
 import { styled } from '@mui/material/styles';
+import AuthContext from '../../store/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 function LoginForm() {
   const ColorButton = styled(Button)(({ theme }) => ({
@@ -22,6 +24,8 @@ function LoginForm() {
   });
   const [formErrors, setFormErrors] = useState({});
   const [isSubmit, setIsSubmit] = useState(false);
+  const navigation = useNavigate();
+  const authCtx = useContext(AuthContext);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -33,8 +37,49 @@ function LoginForm() {
 
   function handleSubmit(event) {
     event.preventDefault();
+    // authCtx.login('dummydata');
+    // navigation("/");
     setFormErrors(validate(credentials));
     setIsSubmit(true);
+
+    const url = 'http://localhost:8080/api/account';
+    fetch(url, {
+      method: 'POST',
+      body: JSON.stringify({
+        username: credentials.username,
+        password: credentials.password,
+      }),
+      // body: JSON.stringify(base),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          return res.json().then((data) => {
+            let errorMessage; // = 'Authentication failed!';
+            console.log(JSON.stringify(data));
+            if (data && data.error && data.error.message) {
+              errorMessage = data.error.message;
+            }
+            console.log(errorMessage);
+
+            throw new Error(errorMessage);
+          });
+        }
+      })
+      .then((data) => {
+        // console.log(data.data.account);
+        authCtx.login(data.data.token);
+        authCtx.datalog(data.data.account);
+        console.log('working');
+        navigation('/home');
+      })
+      .catch((err) => {
+        alert(err.message);
+      });
   }
 
   useEffect(() => {

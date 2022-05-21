@@ -26,7 +26,7 @@ function Home() {
         <div className={styles.right}>
           <Box>
             <h2 className={styles.header}>Welcome Mr Teo!</h2>
-            <p style={{ padding: 180 }}>
+            <p style={{ padding: 150 }}>
               <h2>Dashboard</h2>
             </p>
           </Box>
