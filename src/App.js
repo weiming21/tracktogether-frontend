@@ -1,11 +1,12 @@
-import './App.css';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Login from './pages/Login/Login';
-import SignUp from './pages/SignUp/SignUp';
-import Home from './pages/Home/Home';
-import AuthContext from './store/AuthContext';
-import { useContext } from 'react';
-import { Navigate } from 'react-router-dom';
+import "./App.css";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Login from "./pages/Login/Login";
+import SignUp from "./pages/SignUp/SignUp";
+import Home from "./pages/Home/Home";
+import Personal from "./pages/Personal/Personal";
+import AuthContext from "./store/AuthContext";
+import { useContext } from "react";
+import { Navigate } from "react-router-dom";
 
 // function App() {
 //   return (
@@ -31,6 +32,9 @@ function App() {
           <Route exact path="/" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           {authCtx.isLoggedIn && <Route path="/Home" element={<Home />} />}
+          {authCtx.isLoggedIn && (
+            <Route path="/personal" element={<Personal />} />
+          )}
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </BrowserRouter>
