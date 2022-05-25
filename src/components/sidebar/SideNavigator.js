@@ -1,4 +1,4 @@
-import React from 'react';
+import { React, useContext } from "react";
 import {
   CDBSidebar,
   CDBSidebarContent,
@@ -6,19 +6,23 @@ import {
   CDBSidebarHeader,
   CDBSidebarMenu,
   CDBSidebarMenuItem,
-} from 'cdbreact';
-import { NavLink } from 'react-router-dom';
+} from "cdbreact";
+import { NavLink } from "react-router-dom";
+import AuthContext from "../../store/AuthContext";
 
 function SideNavigator() {
+  const authCtx = useContext(AuthContext);
   return (
     <div
-      style={{ display: 'flex', height: '90vh', overflow: 'scroll initial' }}>
+      style={{ display: "flex", height: "90vh", overflow: "scroll initial" }}
+    >
       <CDBSidebar textColor="#fff" backgroundColor="#333">
         <CDBSidebarHeader prefix={<i className="fa fa-bars fa-large"></i>}>
           <a
             href="/"
             className="text-decoration-none"
-            style={{ color: 'inherit' }}>
+            style={{ color: "inherit" }}
+          >
             TrackTogether
           </a>
         </CDBSidebarHeader>
@@ -43,7 +47,12 @@ function SideNavigator() {
         </CDBSidebarContent>
 
         <CDBSidebarFooter>
-          <NavLink exact to="/" activeClassName="activeClicked">
+          <NavLink
+            exact
+            to="/"
+            activeClassName="activeClicked"
+            onClick={authCtx.logout}
+          >
             <CDBSidebarMenuItem icon="sign-out-alt">Logout</CDBSidebarMenuItem>
           </NavLink>
         </CDBSidebarFooter>

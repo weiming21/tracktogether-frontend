@@ -1,43 +1,59 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 const AuthContext = React.createContext({
-  token: '',
-  username: '',
-  email: '',
-  phone: '',
+  token: "",
+  username: "",
+  email: "",
+  contact: "",
   isLoggedIn: false,
-  login: (token) => {},
-  datalog: (account) => {},
+  login: () => {},
+  datalog: () => {},
   logout: () => {},
 });
 
 export const AuthContextProvider = (props) => {
-  const [token, setToken] = useState(null);
-  const [username, setUsername] = useState(null);
-  const [email, setEmail] = useState(null);
-  const [phone, setPhone] = useState(null);
+  const initialToken = localStorage.getItem("token");
+  const initialAccountString = null; //localStorage.getItem("account");
+
+  const initialAccount =
+    initialAccountString == null ? null : initialAccountString.json;
+
+  const [token, setToken] = useState(initialToken);
+  const [username, setUsername] = useState(
+    initialAccount == null ? null : initialAccount.username
+  );
+  const [email, setEmail] = useState(
+    initialAccount == null ? null : initialAccount.email
+  );
+  const [contact, setContact] = useState(
+    initialAccount == null ? null : initialAccount.contact
+  );
 
   const userIsLoggedIn = !!token;
 
   const loginHandler = (token) => {
     setToken(token);
+    localStorage.setItem("token", token);
   };
 
   const loginData = (account) => {
     setUsername(account.username);
     setEmail(account.email);
-    setPhone(account.phone);
+    setContact(account.contact);
+    localStorage.setItem("account", JSON.stringify(account));
   };
 
   const logoutHandler = () => {
     setToken(null);
+    localStorage.removeItem("token");
+    localStorage.removeItem("account");
   };
 
   const contextValue = {
     token: token,
     username: username,
     email: email,
-    phone: phone,
+    contact: contact,
     isLoggedIn: userIsLoggedIn,
     login: loginHandler,
     datalog: loginData,
