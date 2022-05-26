@@ -3,14 +3,20 @@ import SideNavigator from "../../components/sidebar/SideNavigator";
 import Box from "../../components/Box";
 import styles from "./Personal.module.css";
 import React, { useState, useRef } from "react";
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import {
   Table,
-  Stack,
+  // Stack,
   Button,
-  Dropdown,
-  DropdownButton,
+  // Dropdown,
+  // DropdownButton,
   Modal,
   Form,
+  Row,
+  Col,
+  Popover,
+  OverlayTrigger,
+  // CloseButton,
 } from "react-bootstrap";
 function Personal() {
   const data = [
@@ -73,6 +79,23 @@ function Personal() {
 
     setTransactionForm(false);
   };
+  const popover = (
+    <Popover id="popover-basic">
+      <Popover.Header>Filter By</Popover.Header>
+
+      <Popover.Body>
+        <Form.Group>
+          <Form.Label> Choose Variable </Form.Label>
+          <Form.Select placeholder="Enter category">
+            <option> Category </option>
+            <option> Transport </option>
+            <option> Bills </option>
+          </Form.Select>
+        </Form.Group>
+      </Popover.Body>
+      {/* <CloseButton /> */}
+    </Popover>
+  );
 
   return (
     <React.Fragment>
@@ -84,16 +107,38 @@ function Personal() {
 
         <div className={styles.right}>
           <Box>
-            <Stack direction="horizontal" gap={4} className="pb-3">
-              <h2 className={styles.header}>Transaction Log</h2>
-              <Button onClick={handleTransactionForm}> Add Transaction</Button>
-
-              <DropdownButton id="dropdown-basic-button" title="Filter by">
-                <Dropdown.Item href="/">Category</Dropdown.Item>
-                <Dropdown.Item href="/">Another action</Dropdown.Item>
-                <Dropdown.Item href="/">Something else</Dropdown.Item>
-              </DropdownButton>
-            </Stack>
+            <Row className="align-items-center pb-3">
+              <Col xs="auto">
+                {" "}
+                <h2 className={styles.header}>Transaction Log</h2>{" "}
+              </Col>
+              <Col xs="auto">
+                {" "}
+                <Button onClick={handleTransactionForm}>
+                  {" "}
+                  Add Transaction
+                </Button>
+              </Col>
+              <Col xs="auto">
+                <Form.Text>Sort By</Form.Text>
+              </Col>
+              <Col xs="auto">
+                <Form.Select placeholder="Enter category">
+                  <option> Category </option>
+                  <option> Transport </option>
+                  <option> Bills </option>
+                </Form.Select>
+              </Col>
+              <Col xs="auto">
+                <OverlayTrigger
+                  trigger="click"
+                  placement="right"
+                  overlay={popover}
+                >
+                  <FilterAltIcon />
+                </OverlayTrigger>
+              </Col>
+            </Row>
 
             <Table striped bordered hover>
               <thead>

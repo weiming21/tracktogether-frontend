@@ -1,4 +1,4 @@
-import "./App.css";
+// import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Login from "./pages/Login/Login";
 import SignUp from "./pages/SignUp/SignUp";
@@ -8,6 +8,7 @@ import Profile from "./pages/Profile/Profile";
 import AuthContext from "./store/AuthContext";
 import { useContext } from "react";
 import { Navigate } from "react-router-dom";
+import styles from "./App.module.css";
 
 // function App() {
 //   return (
@@ -28,7 +29,7 @@ function App() {
   const authCtx = useContext(AuthContext);
   const profileURL = "/profile/" + authCtx.username;
   return (
-    <div className="App">
+    <div className={styles.App}>
       <BrowserRouter>
         <Routes>
           <Route exact path="/" element={<Login />} />
