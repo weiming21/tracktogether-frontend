@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 const AuthContext = React.createContext({
-  token: "",
-  id: "",
-  username: "",
-  email: "",
-  contact: "",
+  token: '',
+  id: '',
+  username: '',
+  email: '',
+  contact: '',
   isLoggedIn: false,
   isFetchingData: false,
   login: () => {},
@@ -14,7 +14,7 @@ const AuthContext = React.createContext({
 });
 
 export const AuthContextProvider = (props) => {
-  const initialToken = localStorage.getItem("token");
+  const initialToken = localStorage.getItem('token');
   const [token, setToken] = useState(initialToken);
   const [id, setId] = useState(null);
   const [username, setUsername] = useState(null);
@@ -26,14 +26,14 @@ export const AuthContextProvider = (props) => {
   if (initialToken != null) {
     if (!fetchingData && id == null) {
       setFetchingData(true);
-      const url = "http://localhost:8080/api/account/refresh";
-      console.log("fetching data in auth context");
+      const url = 'http://localhost:8080/api/account/refresh';
+      console.log('fetching data in auth context');
       fetch(url, {
-        method: "GET",
+        method: 'GET',
         // body: JSON.stringify(base),
         headers: {
-          "Content-Type": "application/json",
-          authorization: "Bearer " + initialToken,
+          'Content-Type': 'application/json',
+          authorization: 'Bearer ' + initialToken,
         },
       })
         .then((res) => {
@@ -54,7 +54,7 @@ export const AuthContextProvider = (props) => {
         })
         .then((data) => {
           loginData(data.data.account);
-          console.log("Successfully refreshed!");
+          console.log('Successfully refreshed!');
           setFetchingData(false);
         })
         .catch((err) => {
@@ -67,10 +67,11 @@ export const AuthContextProvider = (props) => {
 
   const loginHandler = (token) => {
     setToken(token);
-    localStorage.setItem("token", token);
+    localStorage.setItem('token', token);
   };
 
   const loginData = (account) => {
+    console.log(account);
     setId(account._id);
     setUsername(account.username);
     setEmail(account.email);
@@ -80,7 +81,7 @@ export const AuthContextProvider = (props) => {
 
   const logoutHandler = () => {
     setToken(null);
-    localStorage.removeItem("token");
+    localStorage.removeItem('token');
     // localStorage.removeItem("id");
   };
 
