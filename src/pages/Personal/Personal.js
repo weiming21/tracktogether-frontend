@@ -1,9 +1,10 @@
-import Navigator from "../../components/navbar/Navigator";
-import SideNavigator from "../../components/sidebar/SideNavigator";
-import Box from "../../components/Box";
-import styles from "./Personal.module.css";
-import React, { useState, useRef } from "react";
-import FilterAltIcon from "@mui/icons-material/FilterAlt";
+import Navigator from '../../components/navbar/Navigator';
+import SideNavigator from '../../components/sidebar/SideNavigator';
+import Box from '../../components/Box';
+import styles from './Personal.module.css';
+import React, { useState, useRef, useEffect, useContext } from 'react';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import AuthContext from '../../store/AuthContext';
 import {
   Table,
   // Stack,
@@ -17,39 +18,23 @@ import {
   Popover,
   OverlayTrigger,
   // CloseButton,
-} from "react-bootstrap";
+} from 'react-bootstrap';
+
 function Personal() {
-  const data = [
-    {
-      Date: "21/5/2022",
-      TransactionName: "Restaurant ABC Prawn Aglio Olio",
-      Category: "Food",
-      Amount: "26.80",
-      TransactionMode: "Bank",
-    },
-    {
-      Date: "22/5/2022",
-      TransactionName: "Blk123 Chicken Rice",
-      Category: "Food",
-      Amount: "5.2",
-      TransactionMode: "Bank",
-    },
-    {
-      Date: "23/5/2022",
-      TransactionName: "Ez-Link Top-up",
-      Category: "Travel",
-      Amount: "20.00",
-      TransactionMode: "Bank",
-    },
-    {
-      Date: "24/5/2022",
-      TransactionName: "Transfer to Chang",
-      Category: "Food",
-      Amount: "10.60",
-      TransactionMode: "Paylah",
-    },
-  ];
-  const [currData, setCurrData] = useState(data);
+  const authCtx = useContext(AuthContext);
+  console.log(authCtx.id);
+
+  const [currData, setCurrData] = useState([]);
+  useEffect(() => {
+    const url = 'http://localhost:8080/api/account/' + authCtx.id;
+    console.log(url);
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => setCurrData(data))
+      .catch((error) =>
+        setCurrData(`Unable to retrieve quote. Error: ${error}`),
+      );
+  }, []);
 
   const dateInput = useRef();
   const transNameInput = useRef();
@@ -66,19 +51,46 @@ function Personal() {
     const enteredCategory = categoryInput.current.value;
     const enteredAmount = amountInput.current.value;
     const enteredTransMode = transModeInput.current.value;
-    setCurrData([
-      ...currData,
-      {
-        Date: enteredDate,
-        TransactionName: enteredTransName,
-        Category: enteredCategory,
-        Amount: enteredAmount,
-        TransactionMode: enteredTransMode,
-      },
-    ]);
-
+    const newData = {
+      date: enteredDate,
+      category: enteredCategory,
+      amount: parseFloat(enteredAmount),
+      information: enteredTransName,
+      mode: enteredTransMode,
+    };
+    console.log(newData);
+    setCurrData([...currData, newData]);
     setTransactionForm(false);
+    const url = 'http://localhost:8080/api/account/' + authCtx.id;
+    console.log(url);
+    fetch(url, {
+      method: 'PUT',
+      body: JSON.stringify(newData),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          return res.json().then((data) => {
+            let errorMessage;
+            console.log(JSON.stringify(data));
+            if (data && data.error && data.error.message) {
+              errorMessage = data.error.message;
+            }
+            console.log(errorMessage);
+
+            throw new Error(errorMessage);
+          });
+        }
+      })
+      .catch((err) => {
+        alert(err.message);
+      });
   };
+
   const popover = (
     <Popover id="popover-basic">
       <Popover.Header>Filter By</Popover.Header>
@@ -100,7 +112,7 @@ function Personal() {
   return (
     <React.Fragment>
       <Navigator />
-      <div style={{ display: "flex" }}>
+      <div style={{ display: 'flex' }}>
         <div className={styles.left}>
           <SideNavigator />
         </div>
@@ -109,13 +121,13 @@ function Personal() {
           <Box>
             <Row className="align-items-center pb-3">
               <Col xs="auto">
-                {" "}
-                <h2 className={styles.header}>Transaction Log</h2>{" "}
+                {' '}
+                <h2 className={styles.header}>Transaction Log</h2>{' '}
               </Col>
               <Col xs="auto">
-                {" "}
+                {' '}
                 <Button onClick={handleTransactionForm}>
-                  {" "}
+                  {' '}
                   Add Transaction
                 </Button>
               </Col>
@@ -133,8 +145,7 @@ function Personal() {
                 <OverlayTrigger
                   trigger="click"
                   placement="right"
-                  overlay={popover}
-                >
+                  overlay={popover}>
                   <FilterAltIcon />
                 </OverlayTrigger>
               </Col>
@@ -146,7 +157,7 @@ function Personal() {
                   <th>Date</th>
                   <th>Transaction Name</th>
                   <th>Category</th>
-                  <th>Amount</th>
+                  <th>Amount($)</th>
                   <th>Transaction Mode</th>
                 </tr>
               </thead>
@@ -154,11 +165,11 @@ function Personal() {
                 {currData.map((entry) => {
                   return (
                     <tr>
-                      <td>{entry.Date}</td>
-                      <td>{entry.TransactionName}</td>
-                      <td>{entry.Category}</td>
-                      <td>{entry.Amount}</td>
-                      <td>{entry.TransactionMode}</td>
+                      <td>{new Date(entry.date).toDateString()}</td>
+                      <td>{entry.information}</td>
+                      <td>{entry.category}</td>
+                      <td>{Number(entry.amount).toFixed(2)}</td>
+                      <td>{entry.mode}</td>
                     </tr>
                   );
                 })}

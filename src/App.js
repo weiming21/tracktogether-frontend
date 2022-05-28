@@ -1,33 +1,18 @@
 // import "./App.css";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Login from "./pages/Login/Login";
-import SignUp from "./pages/SignUp/SignUp";
-import Home from "./pages/Home/Home";
-import Personal from "./pages/Personal/Personal";
-import Profile from "./pages/Profile/Profile";
-import AuthContext from "./store/AuthContext";
-import { useContext } from "react";
-import { Navigate } from "react-router-dom";
-import styles from "./App.module.css";
-
-// function App() {
-//   return (
-//     <div className="App">
-//       <BrowserRouter>
-//         <Navigator />
-//         <SideNavigator />
-
-//         <Routes>
-//           <Route path="/personal" element={<Login />} />
-//         </Routes>
-//       </BrowserRouter>
-//     </div>
-//   );
-// }
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import Login from './pages/Login/Login';
+import SignUp from './pages/SignUp/SignUp';
+import Home from './pages/Home/Home';
+import Personal from './pages/Personal/Personal';
+import Profile from './pages/Profile/Profile';
+import AuthContext from './store/AuthContext';
+import { useContext } from 'react';
+import { Navigate } from 'react-router-dom';
+import styles from './App.module.css';
 
 function App() {
   const authCtx = useContext(AuthContext);
-  const profileURL = "/profile/" + authCtx.username;
+  const profileURL = '/profile/' + authCtx.username;
   return (
     <div className={styles.App}>
       <BrowserRouter>

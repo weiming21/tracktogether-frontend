@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 const AuthContext = React.createContext({
-  token: "",
-  username: "",
-  email: "",
-  contact: "",
+  token: '',
+  id: '',
+  username: '',
+  email: '',
+  contact: '',
   isLoggedIn: false,
   login: () => {},
   datalog: () => {},
@@ -12,45 +13,50 @@ const AuthContext = React.createContext({
 });
 
 export const AuthContextProvider = (props) => {
-  const initialToken = localStorage.getItem("token");
+  const initialToken = localStorage.getItem('token');
   const initialAccountString = null; //localStorage.getItem("account");
 
   const initialAccount =
     initialAccountString == null ? null : initialAccountString.json;
 
   const [token, setToken] = useState(initialToken);
+  const [id, setId] = useState(
+    initialAccount == null ? null : initialAccount.id,
+  );
   const [username, setUsername] = useState(
-    initialAccount == null ? null : initialAccount.username
+    initialAccount == null ? null : initialAccount.username,
   );
   const [email, setEmail] = useState(
-    initialAccount == null ? null : initialAccount.email
+    initialAccount == null ? null : initialAccount.email,
   );
   const [contact, setContact] = useState(
-    initialAccount == null ? null : initialAccount.contact
+    initialAccount == null ? null : initialAccount.contact,
   );
 
   const userIsLoggedIn = !!token;
 
   const loginHandler = (token) => {
     setToken(token);
-    localStorage.setItem("token", token);
+    localStorage.setItem('token', token);
   };
 
   const loginData = (account) => {
+    setId(account._id);
     setUsername(account.username);
     setEmail(account.email);
     setContact(account.contact);
-    localStorage.setItem("account", JSON.stringify(account));
+    localStorage.setItem('account', JSON.stringify(account));
   };
 
   const logoutHandler = () => {
     setToken(null);
-    localStorage.removeItem("token");
-    localStorage.removeItem("account");
+    localStorage.removeItem('token');
+    localStorage.removeItem('account');
   };
 
   const contextValue = {
     token: token,
+    id: id,
     username: username,
     email: email,
     contact: contact,
