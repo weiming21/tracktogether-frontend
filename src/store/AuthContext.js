@@ -1,43 +1,73 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 const AuthContext = React.createContext({
-  token: '',
-  id: '',
-  username: '',
-  email: '',
-  contact: '',
+  token: "",
+  id: "",
+  username: "",
+  email: "",
+  contact: "",
   isLoggedIn: false,
+  isFetchingData: false,
   login: () => {},
   datalog: () => {},
   logout: () => {},
 });
 
 export const AuthContextProvider = (props) => {
-  const initialToken = localStorage.getItem('token');
-  const initialAccountString = null; //localStorage.getItem("account");
-
-  const initialAccount =
-    initialAccountString == null ? null : initialAccountString.json;
-
+  const initialToken = localStorage.getItem("token");
   const [token, setToken] = useState(initialToken);
-  const [id, setId] = useState(
-    initialAccount == null ? null : initialAccount.id,
-  );
-  const [username, setUsername] = useState(
-    initialAccount == null ? null : initialAccount.username,
-  );
-  const [email, setEmail] = useState(
-    initialAccount == null ? null : initialAccount.email,
-  );
-  const [contact, setContact] = useState(
-    initialAccount == null ? null : initialAccount.contact,
-  );
+  const [id, setId] = useState(null);
+  const [username, setUsername] = useState(null);
+  const [email, setEmail] = useState(null);
+  const [contact, setContact] = useState(null);
 
+  const [fetchingData, setFetchingData] = useState(false);
+
+  if (initialToken != null) {
+    if (!fetchingData && id == null) {
+      setFetchingData(true);
+      const url = "http://localhost:8080/api/account/refresh";
+      console.log("fetching data in auth context");
+      fetch(url, {
+        method: "GET",
+        // body: JSON.stringify(base),
+        headers: {
+          "Content-Type": "application/json",
+          authorization: "Bearer " + initialToken,
+        },
+      })
+        .then((res) => {
+          if (res.ok) {
+            return res.json();
+          } else {
+            return res.json().then((data) => {
+              let errorMessage; // = 'Authentication failed!';
+              console.log(JSON.stringify(data));
+              if (data && data.error && data.error.message) {
+                errorMessage = data.error.message;
+              }
+              console.log(errorMessage);
+
+              throw new Error(errorMessage);
+            });
+          }
+        })
+        .then((data) => {
+          loginData(data.data.account);
+          console.log("Successfully refreshed!");
+          setFetchingData(false);
+        })
+        .catch((err) => {
+          alert(err.message);
+        });
+    }
+  }
+  // const initialId = localStorage.getItem("id");
   const userIsLoggedIn = !!token;
 
   const loginHandler = (token) => {
     setToken(token);
-    localStorage.setItem('token', token);
+    localStorage.setItem("token", token);
   };
 
   const loginData = (account) => {
@@ -45,13 +75,13 @@ export const AuthContextProvider = (props) => {
     setUsername(account.username);
     setEmail(account.email);
     setContact(account.contact);
-    localStorage.setItem('account', JSON.stringify(account));
+    // localStorage.setItem("id", account._id);
   };
 
   const logoutHandler = () => {
     setToken(null);
-    localStorage.removeItem('token');
-    localStorage.removeItem('account');
+    localStorage.removeItem("token");
+    // localStorage.removeItem("id");
   };
 
   const contextValue = {
@@ -61,6 +91,7 @@ export const AuthContextProvider = (props) => {
     email: email,
     contact: contact,
     isLoggedIn: userIsLoggedIn,
+    isFetchingData: fetchingData,
     login: loginHandler,
     datalog: loginData,
     logout: logoutHandler,
