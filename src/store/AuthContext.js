@@ -14,14 +14,17 @@ const AuthContext = React.createContext({
 
 export const AuthContextProvider = (props) => {
   const initialToken = localStorage.getItem('token');
-  const initialAccountString = null; //localStorage.getItem("account");
+  const initialAccountString = localStorage.getItem('account');
+  console.log(initialAccountString);
 
   const initialAccount =
-    initialAccountString == null ? null : initialAccountString.json;
+    initialAccountString == null ? null : JSON.parse(initialAccountString);
+
+  console.log(initialAccount + 'test');
 
   const [token, setToken] = useState(initialToken);
   const [id, setId] = useState(
-    initialAccount == null ? null : initialAccount.id,
+    initialAccount == null ? null : initialAccount._id,
   );
   const [username, setUsername] = useState(
     initialAccount == null ? null : initialAccount.username,
@@ -41,6 +44,7 @@ export const AuthContextProvider = (props) => {
   };
 
   const loginData = (account) => {
+    console.log(account);
     setId(account._id);
     setUsername(account.username);
     setEmail(account.email);

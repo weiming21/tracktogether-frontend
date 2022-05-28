@@ -8,9 +8,11 @@ import React, { useState, useContext } from 'react';
 import { Form, Row, Col, Button, Image, Stack } from 'react-bootstrap';
 import EditIcon from '@mui/icons-material/Edit';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
+import { useNavigate } from 'react-router-dom';
 
 function Profile() {
   const authCtx = useContext(AuthContext);
+  const navigation = useNavigate();
 
   const [username, setUserName] = useState(authCtx.username);
   const [contact, setContact] = useState(authCtx.contact);
@@ -33,6 +35,50 @@ function Profile() {
     event.preventDefault();
     setEmailState(!emailState);
   };
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    const url = 'http://localhost:8080/api/account/';
+    fetch(url, {
+      method: 'PUT',
+      body: JSON.stringify({
+        _id: authCtx.id,
+        username: username,
+        email: email,
+        contact: contact,
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+        authorization: 'Bearer ' + authCtx.token,
+      },
+    })
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          return res.json().then((data) => {
+            let errorMessage = 'Authentication failed!';
+            console.log(JSON.stringify(data));
+            if (data && data.error && data.error.message) {
+              errorMessage = data.error.message;
+            }
+            console.log(errorMessage);
+
+            throw new Error(errorMessage);
+          });
+        }
+      })
+      .then((data) => {
+        // console.log(data.data.account);
+        // authCtx.login(data.data.token);
+        authCtx.datalog(data.data.account);
+        // console.log('working');
+        navigation('/home');
+      })
+      .catch((err) => {
+        alert(err.message);
+      });
+  }
 
   return (
     <div className={styles.newApp}>
@@ -125,7 +171,7 @@ function Profile() {
                 </Col>
               </Row>
 
-              <Button variant="primary" type="submit">
+              <Button variant="primary" type="submit" onClick={handleSubmit}>
                 Submit
               </Button>
             </Form>
