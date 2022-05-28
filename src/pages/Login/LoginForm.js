@@ -130,13 +130,9 @@ function LoginForm() {
       </form>
       <div className={styles.link}>
         <a href="#">Forgot password?</a> or <Link to="/signup">Sign Up</Link>
-        <p>
-          <Link to="/Home"> Go to Dashboard (test) </Link>
-        </p>
       </div>
       <span style={{ color: 'red' }}>{formErrors.name}</span>
       <br />
-      {JSON.stringify(credentials)}
     </div>
   );
 }

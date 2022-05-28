@@ -9,6 +9,7 @@ import { purple } from '@mui/material/colors';
 import { styled } from '@mui/material/styles';
 import AuthContext from '../../store/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 function SignUpForm() {
   const ColorButton = styled(Button)(({ theme }) => ({
@@ -171,11 +172,12 @@ function SignUpForm() {
           Sign Up
         </ColorButton>
       </form>
+      <div className={styles.link}>
+        <span>Already have an account?</span> <Link to="/">Login</Link>
+      </div>
       <p>
         <span style={{ color: 'red' }}>{formErrors.name}</span>
       </p>
-      {/* <br />
-      {JSON.stringify(credentials)} */}
     </div>
   );
 }
