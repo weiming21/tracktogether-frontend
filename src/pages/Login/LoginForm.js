@@ -1,26 +1,26 @@
-import user from "../../images/user.png";
-import lock from "../../images/lock.png";
-import React, { useState, useEffect, useContext } from "react";
-import { Link } from "react-router-dom";
-import styles from "./Login.module.css";
-import Button from "@mui/material/Button";
-import { purple } from "@mui/material/colors";
-import { styled } from "@mui/material/styles";
-import AuthContext from "../../store/AuthContext";
-import { useNavigate } from "react-router-dom";
+import user from '../../images/user.png';
+import lock from '../../images/lock.png';
+import React, { useState, useEffect, useContext } from 'react';
+import { Link } from 'react-router-dom';
+import styles from './Login.module.css';
+import Button from '@mui/material/Button';
+import { purple } from '@mui/material/colors';
+import { styled } from '@mui/material/styles';
+import AuthContext from '../../store/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 function LoginForm() {
   const ColorButton = styled(Button)(({ theme }) => ({
     color: theme.palette.getContrastText(purple[500]),
     backgroundColor: purple[500],
-    "&:hover": {
+    '&:hover': {
       backgroundColor: purple[700],
     },
   }));
 
   const [credentials, setCredentials] = useState({
-    username: "",
-    password: "",
+    username: '',
+    password: '',
   });
   const [formErrors, setFormErrors] = useState({});
   const [isSubmit, setIsSubmit] = useState(false);
@@ -42,16 +42,16 @@ function LoginForm() {
     setFormErrors(validate(credentials));
     setIsSubmit(true);
 
-    const url = "http://localhost:8080/api/account/login";
+    const url = 'http://localhost:8080/api/account/login';
     fetch(url, {
-      method: "POST",
+      method: 'POST',
       body: JSON.stringify({
         username: credentials.username,
         password: credentials.password,
       }),
       // body: JSON.stringify(base),
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
     })
       .then((res) => {
@@ -74,8 +74,8 @@ function LoginForm() {
         // console.log(data.data.account);
         authCtx.login(data.data.token);
         authCtx.datalog(data.data.account);
-        console.log("working");
-        navigation("/home");
+        console.log('working');
+        navigation('/home');
       })
       .catch((err) => {
         alert(err.message);
@@ -92,7 +92,7 @@ function LoginForm() {
   const validate = (values) => {
     const errors = {};
     if (!values.username || !values.password) {
-      errors.name = "Error";
+      errors.name = 'Error';
     }
     return errors;
   };
@@ -134,7 +134,7 @@ function LoginForm() {
           <Link to="/Home"> Go to Dashboard (test) </Link>
         </p>
       </div>
-      <span style={{ color: "red" }}>{formErrors.name}</span>
+      <span style={{ color: 'red' }}>{formErrors.name}</span>
       <br />
       {JSON.stringify(credentials)}
     </div>

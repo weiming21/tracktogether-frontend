@@ -7,7 +7,7 @@ const AuthContext = React.createContext({
   email: '',
   contact: '',
   isLoggedIn: false,
-  isFetchingData: false,
+  isDataFetched: false,
   login: () => {},
   datalog: () => {},
   logout: () => {},
@@ -21,47 +21,45 @@ export const AuthContextProvider = (props) => {
   const [email, setEmail] = useState(null);
   const [contact, setContact] = useState(null);
 
-  const [fetchingData, setFetchingData] = useState(false);
+  const [dataFetched, setDataFetched] = useState(false);
 
-  if (initialToken != null) {
-    if (!fetchingData && id == null) {
-      setFetchingData(true);
-      const url = 'http://localhost:8080/api/account/refresh';
-      console.log('fetching data in auth context');
-      fetch(url, {
-        method: 'GET',
-        // body: JSON.stringify(base),
-        headers: {
-          'Content-Type': 'application/json',
-          authorization: 'Bearer ' + initialToken,
-        },
+  if (!dataFetched && initialToken != null) {
+    const url = 'http://localhost:8080/api/account/refresh';
+    console.log('fetching data in auth context');
+    fetch(url, {
+      method: 'GET',
+      // body: JSON.stringify(base),
+      headers: {
+        'Content-Type': 'application/json',
+        authorization: 'Bearer ' + initialToken,
+      },
+    })
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          return res.json().then((data) => {
+            let errorMessage; // = 'Authentication failed!';
+            console.log(JSON.stringify(data));
+            if (data && data.error && data.error.message) {
+              errorMessage = data.error.message;
+            }
+            console.log(errorMessage);
+
+            throw new Error(errorMessage);
+          });
+        }
       })
-        .then((res) => {
-          if (res.ok) {
-            return res.json();
-          } else {
-            return res.json().then((data) => {
-              let errorMessage; // = 'Authentication failed!';
-              console.log(JSON.stringify(data));
-              if (data && data.error && data.error.message) {
-                errorMessage = data.error.message;
-              }
-              console.log(errorMessage);
-
-              throw new Error(errorMessage);
-            });
-          }
-        })
-        .then((data) => {
-          loginData(data.data.account);
-          console.log('Successfully refreshed!');
-          setFetchingData(false);
-        })
-        .catch((err) => {
-          alert(err.message);
-        });
-    }
+      .then((data) => {
+        loginData(data.data.account);
+        console.log('Successfully refreshed!');
+        setDataFetched(true);
+      })
+      .catch((err) => {
+        alert(err.message);
+      });
   }
+
   // const initialId = localStorage.getItem("id");
   const userIsLoggedIn = !!token;
 
@@ -92,7 +90,7 @@ export const AuthContextProvider = (props) => {
     email: email,
     contact: contact,
     isLoggedIn: userIsLoggedIn,
-    isFetchingData: fetchingData,
+    isDataFetched: dataFetched,
     login: loginHandler,
     datalog: loginData,
     logout: logoutHandler,

@@ -1,15 +1,15 @@
 //import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Navigator from "../../components/navbar/Navigator";
-import SideNavigator from "../../components/sidebar/SideNavigator";
-import Box from "../../components/Box";
-import styles from "./Home.module.css";
-import { useState, useEffect } from "react";
+import Navigator from '../../components/navbar/Navigator';
+import SideNavigator from '../../components/sidebar/SideNavigator';
+import Box from '../../components/Box';
+import styles from './Home.module.css';
+import { useState, useEffect } from 'react';
 
 function Home() {
   const [quote, setQuote] = useState([]);
 
   useEffect(() => {
-    fetch("https://api.quotable.io/random")
+    fetch('https://api.quotable.io/random')
       .then((response) => response.json())
       .then((data) => setQuote([data.content, data.author]))
       .catch((error) => setQuote(`Unable to retrieve quote. Error: ${error}`));
@@ -18,7 +18,7 @@ function Home() {
   return (
     <div>
       <Navigator />
-      <div style={{ display: "flex" }}>
+      <div style={{ display: 'flex' }}>
         <div className={styles.left}>
           <SideNavigator />
         </div>

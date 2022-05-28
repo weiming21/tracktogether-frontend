@@ -1,10 +1,10 @@
-import Navigator from "../../components/navbar/Navigator";
-import SideNavigator from "../../components/sidebar/SideNavigator";
-import Box from "../../components/Box";
-import styles from "./Personal.module.css";
-import React, { useState, useRef, useEffect, useContext } from "react";
-import FilterAltIcon from "@mui/icons-material/FilterAlt";
-import AuthContext from "../../store/AuthContext";
+import Navigator from '../../components/navbar/Navigator';
+import SideNavigator from '../../components/sidebar/SideNavigator';
+import Box from '../../components/Box';
+import styles from './Personal.module.css';
+import React, { useState, useRef, useEffect, useContext } from 'react';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import AuthContext from '../../store/AuthContext';
 import {
   Table,
   // Stack,
@@ -18,7 +18,7 @@ import {
   Popover,
   OverlayTrigger,
   // CloseButton,
-} from "react-bootstrap";
+} from 'react-bootstrap';
 
 function Personal() {
   const authCtx = useContext(AuthContext);
@@ -27,15 +27,15 @@ function Personal() {
 
   const [currData, setCurrData] = useState([]);
   useEffect(() => {
-    console.log(authCtx.isFetchingData + " use effect frames");
-    if (!authCtx.isFetchingData) {
-      const url = "http://localhost:8080/api/account/" + authCtx.id;
-      console.log("fetching data in personal " + url);
+    console.log(authCtx.isFetchingData + ' use effect frames');
+    if (authCtx.isDataFetched) {
+      const url = 'http://localhost:8080/api/account/' + authCtx.id;
+      console.log('fetching data in personal ' + url);
       fetch(url)
         .then((response) => response.json())
         .then((data) => setCurrData(data))
         .catch((error) =>
-          setCurrData(`Unable to retrieve quote. Error: ${error}`)
+          setCurrData(`Unable to retrieve quote. Error: ${error}`),
         );
     }
   }, [authCtx]);
@@ -65,13 +65,13 @@ function Personal() {
     console.log(newData);
     setCurrData([...currData, newData]);
     setTransactionForm(false);
-    const url = "http://localhost:8080/api/account/" + authCtx.id;
+    const url = 'http://localhost:8080/api/account/' + authCtx.id;
     console.log(url);
     fetch(url, {
-      method: "PUT",
+      method: 'PUT',
       body: JSON.stringify(newData),
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
     })
       .then((res) => {
@@ -116,7 +116,7 @@ function Personal() {
   return (
     <React.Fragment>
       <Navigator />
-      <div style={{ display: "flex" }}>
+      <div style={{ display: 'flex' }}>
         <div className={styles.left}>
           <SideNavigator />
         </div>
@@ -125,13 +125,13 @@ function Personal() {
           <Box>
             <Row className="align-items-center pb-3">
               <Col xs="auto">
-                {" "}
-                <h2 className={styles.header}>Transaction Log</h2>{" "}
+                {' '}
+                <h2 className={styles.header}>Transaction Log</h2>{' '}
               </Col>
               <Col xs="auto">
-                {" "}
+                {' '}
                 <Button onClick={handleTransactionForm}>
-                  {" "}
+                  {' '}
                   Add Transaction
                 </Button>
               </Col>
@@ -149,8 +149,7 @@ function Personal() {
                 <OverlayTrigger
                   trigger="click"
                   placement="right"
-                  overlay={popover}
-                >
+                  overlay={popover}>
                   <FilterAltIcon />
                 </OverlayTrigger>
               </Col>
