@@ -1,70 +1,19 @@
-# Getting Started with Create React App
+# Orbital - TCM - TrackTogether
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Team TCM's Orbital 2022 Project: **_TrackTogether_**
 
-## Available Scripts
+## Motivation
 
-In the project directory, you can run:
+In this day and age, it is increasingly difficult to dovetail our personal needs and the common activities among us nicely without conflicts. More often than not, our personal demands are already taxing enough, and it would be double whammy if extra undue effort has to be delegated to liaising with various parties. This spurs the idea of providing a shared platform which is not only capable of alleviating our personal burden by simplifying and automating some of our daily tasks, but also capable of seamlessly integrating both the personal and collaborative aspects of our lives.
 
-### `npm start`
+Our focus will be pivoted on the finance aspects of our lives, which is motivated by the constant need for us to keep track of our own budget and expenses. This becomes increasingly important and pertinent for teenagers who are stepping into adulthood. Despite having many applications in the market that help us manage our finances, they require manual keying of information from the users. This might defeat the purpose, if say, the user was too bore down with their other commitments such that he/she forgot to key in right after committing the expense and end up having to do extra work to sieve through past transactions to retrieve the required information. Therefore, it will be beneficial to have a personal expense tracker that is linked to the user's bank account and could automatically and instantly extract the corresponding transaction information into the correct expense category.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Additionally, to facilitate a smoother and simpler monetary dealings for most of our daily group activities, it is beneficial to document a transparent, authentic and immutable ledger of transaction records among different parties across events of similar nature, which will then be aggregated into the correct total amount each party should pay or receive when the time is right or when there is a need. This could help to reduce the need for excessively frequent payments and also prevent people from conveniently forgetting about collecting and returning money. Furthermore, the reliance on mobile payments such as PayNow/PayLah poses a challenge for the personal tracker to categorise these types of mutual transactions. The group tracker could therefore complement the flaw of the personal tracker by being able to keep track of the category of group payments and weave them seamlessly into our individual transactions.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Vision
 
-### `npm test`
+We envision TrackTogether as a user-friendly automated expense tracker that **abstracts away from users the undue hassle for constant manual tracking** and **empower users to better manage their finance-related activities at both an individual and group level**.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Programme Flow and Design
 
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Full documentation for this project can be found [here](https://docs.google.com/document/d/1pxaldj-d10qNYUETtGEqeoQ6UXYIdUXOeuk6gmx6fY4/edit?usp=sharing)
