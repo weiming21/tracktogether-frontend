@@ -1,24 +1,24 @@
-import Navigator from '../../components/navbar/Navigator';
-import SideNavigator from '../../components/sidebar/SideNavigator';
-import Box from '../../components/Box';
-import styles from './Personal.module.css';
-import React, { useState, useRef, useEffect, useContext } from 'react';
-import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import AuthContext from '../../store/AuthContext';
+import Navigator from "../../components/navbar/Navigator";
+import SideNavigator from "../../components/sidebar/SideNavigator";
+import Box from "../../components/Box";
+import SubmitTransactionModal from "./SubmitTransactionModal";
+import styles from "./Personal.module.css";
+import React, { useState, useRef, useEffect, useContext } from "react";
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
+import AuthContext from "../../store/AuthContext";
 import {
   Table,
   // Stack,
   Button,
   // Dropdown,
   // DropdownButton,
-  Modal,
   Form,
   Row,
   Col,
   Popover,
   OverlayTrigger,
   // CloseButton,
-} from 'react-bootstrap';
+} from "react-bootstrap";
 
 function Personal() {
   const authCtx = useContext(AuthContext);
@@ -26,19 +26,45 @@ function Personal() {
   // console.log(authCtx.isFetchingData + " Context Fetching Data");
 
   const [currData, setCurrData] = useState([]);
+
   useEffect(() => {
-    console.log(authCtx.isFetchingData + ' use effect frames');
+    console.log(authCtx.isFetchingData + " use effect frames");
     if (authCtx.isDataFetched) {
-      const url = 'http://localhost:8080/api/account/' + authCtx.id;
-      console.log('fetching data in personal ' + url);
+      const url = "http://localhost:8080/api/account/" + authCtx.id;
+      console.log("fetching data in personal " + url);
       fetch(url)
         .then((response) => response.json())
-        .then((data) => setCurrData(data))
+        .then((data) => {
+          setCurrData(data);
+        })
+        .then((data) => {
+          console.log(data);
+        })
         .catch((error) =>
-          setCurrData(`Unable to retrieve quote. Error: ${error}`),
+          setCurrData(`Unable to retrieve quote. Error: ${error}`)
         );
+      sortCategoryHandler();
     }
   }, [authCtx]);
+
+  const sortCategory = useRef();
+
+  function sortCategoryHandler() {
+    function dataComparator(sortCategoryValue) {
+      switch (sortCategoryValue) {
+        case "Date":
+          return (a, b) => new Date(b.date) - new Date(a.date);
+        case "Amount":
+          return (a, b) => Number(b.amount) - Number(a.amount);
+        case "Transaction Name":
+          return (a, b) => (b.information < a.information ? -1 : 1);
+      }
+    }
+
+    const newCurrData = [...currData];
+    newCurrData.sort(dataComparator(sortCategory.current.value));
+    setCurrData(newCurrData);
+  }
 
   const dateInput = useRef();
   const transNameInput = useRef();
@@ -65,13 +91,13 @@ function Personal() {
     console.log(newData);
     setCurrData([...currData, newData]);
     setTransactionForm(false);
-    const url = 'http://localhost:8080/api/account/' + authCtx.id;
+    const url = "http://localhost:8080/api/account/" + authCtx.id;
     console.log(url);
     fetch(url, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify(newData),
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     })
       .then((res) => {
@@ -113,10 +139,21 @@ function Personal() {
     </Popover>
   );
 
+  const formProps = {
+    dateInput: dateInput,
+    transNameInput: transNameInput,
+    categoryInput: categoryInput,
+    amountInput: amountInput,
+    transModeInput: transModeInput,
+    transactionForm: transactionForm,
+    handleClose: handleClose,
+    handleAddTransaction: handleAddTransaction,
+  };
+
   return (
     <React.Fragment>
       <Navigator />
-      <div style={{ display: 'flex' }}>
+      <div style={{ display: "flex" }}>
         <div className={styles.left}>
           <SideNavigator />
         </div>
@@ -125,13 +162,13 @@ function Personal() {
           <Box>
             <Row className="align-items-center pb-3">
               <Col xs="auto">
-                {' '}
-                <h2 className={styles.header}>Transaction Log</h2>{' '}
+                {" "}
+                <h2 className={styles.header}>Transaction Log</h2>{" "}
               </Col>
               <Col xs="auto">
-                {' '}
+                {" "}
                 <Button onClick={handleTransactionForm}>
-                  {' '}
+                  {" "}
                   Add Transaction
                 </Button>
               </Col>
@@ -139,17 +176,22 @@ function Personal() {
                 <Form.Text>Sort By</Form.Text>
               </Col>
               <Col xs="auto">
-                <Form.Select placeholder="Enter category">
-                  <option> Category </option>
-                  <option> Transport </option>
-                  <option> Bills </option>
+                <Form.Select
+                  ref={sortCategory}
+                  onChange={sortCategoryHandler}
+                  placeholder="Enter category"
+                >
+                  <option> Date </option>
+                  <option> Amount </option>
+                  <option> Transaction Name </option>
                 </Form.Select>
               </Col>
               <Col xs="auto">
                 <OverlayTrigger
                   trigger="click"
                   placement="right"
-                  overlay={popover}>
+                  overlay={popover}
+                >
                   <FilterAltIcon />
                 </OverlayTrigger>
               </Col>
@@ -183,62 +225,7 @@ function Personal() {
         </div>
       </div>
 
-      <Modal show={transactionForm} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Add New Transaction</Modal.Title>
-        </Modal.Header>
-
-        <Modal.Body>
-          <Form>
-            <Form.Group className="mb-3" controlId="formBasicDate">
-              <Form.Label>Date</Form.Label>
-              <Form.Control
-                ref={dateInput}
-                type="date"
-                placeholder="Enter Date"
-              />
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="formBasicTransaction">
-              <Form.Label>Transaction name</Form.Label>
-              <Form.Control
-                ref={transNameInput}
-                placeholder="Enter transaction name"
-              />
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="formBasicCategory">
-              <Form.Label>Category</Form.Label>
-              <Form.Select ref={categoryInput} placeholder="Enter category">
-                <option> Food </option>
-                <option> Transport </option>
-                <option> Bills </option>
-              </Form.Select>
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="formBasicAmount">
-              <Form.Label>Amount</Form.Label>
-              <Form.Control
-                ref={amountInput}
-                type="number"
-                placeholder="Enter amount"
-              />
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="formBasicMode">
-              <Form.Label>Transaction mode</Form.Label>
-              <Form.Control
-                ref={transModeInput}
-                placeholder="Enter transaction mode"
-              />
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={handleAddTransaction}>
-            Add Transaction
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <SubmitTransactionModal formProps={formProps} />
     </React.Fragment>
   );
 }
