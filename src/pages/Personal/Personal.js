@@ -114,9 +114,9 @@ function Personal() {
   );
 
   return (
-    <React.Fragment>
+    <React.Fragment style={{ overflow: 'auto' }}>
       <Navigator />
-      <div style={{ display: 'flex' }}>
+      <div style={{ display: 'flex', height: '100%', overflow: 'auto' }}>
         <div className={styles.left}>
           <SideNavigator />
         </div>
