@@ -59,14 +59,14 @@ function LoginForm() {
           return res.json();
         } else {
           return res.json().then((data) => {
-            let errorMessage; // = 'Authentication failed!';
-            console.log(JSON.stringify(data));
-            if (data && data.error && data.error.message) {
-              errorMessage = data.error.message;
-            }
-            console.log(errorMessage);
-
-            throw new Error(errorMessage);
+            // let errorMessage; // = 'Authentication failed!';
+            // console.log(JSON.stringify(data));
+            // if (data && data.error && data.error.message) {
+            //   errorMessage = data.error.message;
+            // }
+            // console.log(errorMessage);
+            setFormErrors(logError(data.message));
+            // throw new Error(errorMessage);
           });
         }
       })
@@ -78,9 +78,16 @@ function LoginForm() {
         navigation('/home');
       })
       .catch((err) => {
-        alert(err.message);
+        //alert(err.message);
+        console.log(err.message);
       });
   }
+
+  const logError = (error) => {
+    const errors = {};
+    errors.name = error;
+    return errors;
+  };
 
   useEffect(() => {
     console.log(formErrors);

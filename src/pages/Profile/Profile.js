@@ -83,7 +83,7 @@ function Profile() {
   return (
     <div className={styles.newApp}>
       <Navigator />
-      <div style={{ display: 'flex' }}>
+      <div style={{ display: 'flex', height: '100%', overflow: 'auto' }}>
         <div className={styles.left}>
           <SideNavigator />
         </div>
