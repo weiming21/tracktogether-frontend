@@ -5,7 +5,10 @@ import SubmitTransactionModal from "./SubmitTransactionModal";
 import styles from "./Personal.module.css";
 import React, { useState, useRef, useEffect, useContext } from "react";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import AuthContext from "../../store/AuthContext";
+// import Button from "@mui/material/Button";
 import {
   Table,
   // Stack,
@@ -48,16 +51,25 @@ function Personal() {
   }, [authCtx]);
 
   const sortCategory = useRef();
+  const [sortDirection, setSortDirection] = useState(true); //True implies descending order
+  const handleSortDirection = () => {
+    setSortDirection(!sortDirection);
+    sortCategoryHandler();
+  };
 
   function sortCategoryHandler() {
     function dataComparator(sortCategoryValue) {
+      const numericalSortDirection = sortDirection ? 1 : -1;
       switch (sortCategoryValue) {
         case "Date":
-          return (a, b) => new Date(b.date) - new Date(a.date);
+          return (a, b) =>
+            numericalSortDirection * (new Date(b.date) - new Date(a.date));
         case "Amount":
-          return (a, b) => Number(b.amount) - Number(a.amount);
+          return (a, b) =>
+            numericalSortDirection * (Number(b.amount) - Number(a.amount));
         case "Transaction Name":
-          return (a, b) => (b.information < a.information ? -1 : 1);
+          return (a, b) =>
+            numericalSortDirection * (b.information < a.information ? -1 : 1);
       }
     }
 
@@ -120,6 +132,52 @@ function Personal() {
         alert(err.message);
       });
   };
+  const filterCategory = useRef();
+
+  function DateFilter() {
+    return <h1>Date</h1>;
+  }
+
+  function TransactionNameFilter() {
+    return <h1>Txn Name</h1>;
+  }
+
+  function CategoryFilter() {
+    return <h1>Cat</h1>;
+  }
+
+  function AmountFilter() {
+    return <h1>Amount</h1>;
+  }
+
+  function TransactionModeFilter() {
+    return <h1>Txn Mode</h1>;
+  }
+  const [filterComponent, setFilterComponent] = useState(<DateFilter />);
+
+  useEffect(() => {
+    let exist = filterCategory.current.value;
+
+    switch (exist) {
+      case "Date":
+        setFilterComponent(<DateFilter />);
+        break;
+      case "Transaction Name":
+        setFilterComponent(<TransactionNameFilter />);
+        break;
+      case "Category":
+        setFilterComponent(<CategoryFilter />);
+        break;
+      case "Amount":
+        setFilterComponent(<AmountFilter />);
+        break;
+      case "Transaction Mode":
+        setFilterComponent(<TransactionModeFilter />);
+        break;
+      default:
+        setFilterComponent(<h1>hey</h1>);
+    }
+  }, [filterCategory]);
 
   const popover = (
     <Popover id="popover-basic">
@@ -128,11 +186,14 @@ function Personal() {
       <Popover.Body>
         <Form.Group>
           <Form.Label> Choose Variable </Form.Label>
-          <Form.Select placeholder="Enter category">
+          <Form.Select ref={filterCategory} placeholder="Enter category">
+            <option> Date </option>
+            <option> Transaction Name </option>
             <option> Category </option>
-            <option> Transport </option>
-            <option> Bills </option>
+            <option> Amount </option>
+            <option> Transaction Mode </option>
           </Form.Select>
+          {filterComponent}
         </Form.Group>
       </Popover.Body>
       {/* <CloseButton /> */}
@@ -167,7 +228,7 @@ function Personal() {
               </Col>
               <Col xs="auto">
                 {" "}
-                <Button onClick={handleTransactionForm}>
+                <Button className={styles.btn} onClick={handleTransactionForm}>
                   {" "}
                   Add Transaction
                 </Button>
@@ -187,16 +248,25 @@ function Personal() {
                 </Form.Select>
               </Col>
               <Col xs="auto">
+                <Button className={styles.btn} onClick={handleSortDirection}>
+                  {sortDirection && <ArrowUpwardIcon />}
+                  {!sortDirection && <ArrowDownwardIcon />}
+                </Button>
+              </Col>
+
+              <Col xs="auto">
                 <OverlayTrigger
                   trigger="click"
                   placement="right"
+                  rootClose
                   overlay={popover}
                 >
-                  <FilterAltIcon />
+                  <Button variant="light" className={styles.btn}>
+                    <FilterAltIcon />
+                  </Button>
                 </OverlayTrigger>
               </Col>
             </Row>
-
             <Table striped bordered hover>
               <thead>
                 <tr>
