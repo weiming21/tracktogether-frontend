@@ -5,9 +5,14 @@ import { Form, Popover, Stack } from "react-bootstrap";
 const FilterComponent = (props) => {
   const currData = props.currData;
   const setCurrData = props.setCurrData;
+  const optionState = props.optionState;
+  const [localState, setLocalState] = useState(props.optionState);
+  console.log(props.optionState + " ahem");
+  console.log(localState + " post reee");
+  // const setOptionState = props.setOptionState;
+  // const optionRef = props.optionRef;
 
-  const [filterCategory, setFilterCategory] = useState("Date");
-  const [display, setDisplay] = useState("hi");
+  // const [filterCategory, setFilterCategory] = useState("Date");
 
   function DateFilter() {
     const uniqueYears = Array.from(
@@ -37,7 +42,6 @@ const FilterComponent = (props) => {
 
     const [currYear, setCurrYear] = useState("All");
     const handleYear = (e) => {
-      setDisplay("changed");
       console.log(currYear);
       setCurrYear(e.target.value);
 
@@ -128,25 +132,35 @@ const FilterComponent = (props) => {
       </Form.Group>
     );
   }
+  console.log(props.optionState + " post rerender");
+
+  function handleOption(e) {
+    console.log(props.optionState + " before setting state");
+    // console.log(e.target.value);
+    props.setOptionState(e.target.value);
+    console.log(props.optionState + " after setting state");
+    setLocalState(e.target.value);
+  }
 
   return (
     <Popover.Body className="border-bottom pb-0">
       <Form.Group>
-        <h1> {display}</h1>
         <Form.Label> Choose Variable </Form.Label>
         <Form.Select
-          onChange={(e) => setFilterCategory(e.target.value)}
+          value={localState}
+          // ref={optionRef}
+          onChange={handleOption}
           placeholder="Enter category"
         >
-          <option> Date </option>
-          <option> Category </option>
-          <option> Amount </option>
-          <option> Transaction Mode </option>
+          <option value="Date"> Date </option>
+          <option value="Category"> Category </option>
+          <option value="Amount"> Amount </option>
+          <option value="Transaction Mode"> Transaction Mode </option>
         </Form.Select>
-        {filterCategory == "Date" && <DateFilter />}
-        {filterCategory == "Category" && <CategoryFilter />}
-        {filterCategory == "Amount" && <AmountFilter />}
-        {filterCategory == "Transaction Mode" && <TransactionModeFilter />}
+        {optionState == "Date" && <DateFilter />}
+        {optionState == "Category" && <CategoryFilter />}
+        {optionState == "Amount" && <AmountFilter />}
+        {optionState == "Transaction Mode" && <TransactionModeFilter />}
       </Form.Group>
     </Popover.Body>
   );

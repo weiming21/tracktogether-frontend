@@ -139,13 +139,21 @@ function Personal() {
   };
 
   const [filterArray, setFilterArray] = useState([]);
+  const [optionState, setOptionState] = useState("Category");
+  const optionRef = useRef("Category");
 
   const addFilterHandler = () => {
     setFilterArray([
       ...filterArray,
       {
         displayComponent: (
-          <FilterComponent currData={currData} setCurrData={setCurrData} />
+          <FilterComponent
+            optionRef={optionRef}
+            optionState={optionState}
+            setOptionState={setOptionState}
+            currData={currData}
+            setCurrData={setCurrData}
+          />
         ),
       },
     ]);
@@ -155,7 +163,7 @@ function Personal() {
     newArr.pop();
     setFilterArray(newArr);
   };
-
+  console.log(optionState + " after setting state");
   const popover = (
     <Popover id="popover-basic">
       <Popover.Header>Filter By</Popover.Header>
@@ -189,6 +197,8 @@ function Personal() {
     handleClose: handleClose,
     handleAddTransaction: handleAddTransaction,
   };
+
+  const [testState, setTestState] = useState("first");
 
   return (
     <React.Fragment>
@@ -270,6 +280,19 @@ function Personal() {
                 })}
               </tbody>
             </Table>
+          </Box>
+          <Box>
+            <Form.Select
+              value={testState}
+              onChange={(e) => {
+                console.log(testState + "before");
+                setTestState(e.target.value);
+                console.log(testState + "after");
+              }}
+            >
+              <option> first </option>
+              <option> second </option>
+            </Form.Select>
           </Box>
         </div>
       </div>
