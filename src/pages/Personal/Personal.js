@@ -7,11 +7,15 @@ import React, { useState, useRef, useEffect, useContext } from "react";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from "@mui/icons-material/Remove";
 import AuthContext from "../../store/AuthContext";
+import FilterComponent from "./FilterComponent";
+
 // import Button from "@mui/material/Button";
 import {
   Table,
-  // Stack,
+  Stack,
   Button,
   // Dropdown,
   // DropdownButton,
@@ -20,6 +24,7 @@ import {
   Col,
   Popover,
   OverlayTrigger,
+  // Modal,
   // CloseButton,
 } from "react-bootstrap";
 
@@ -132,71 +137,45 @@ function Personal() {
         alert(err.message);
       });
   };
-  const filterCategory = useRef();
 
-  function DateFilter() {
-    return <h1>Date</h1>;
-  }
+  const [filterArray, setFilterArray] = useState([]);
 
-  function TransactionNameFilter() {
-    return <h1>Txn Name</h1>;
-  }
-
-  function CategoryFilter() {
-    return <h1>Cat</h1>;
-  }
-
-  function AmountFilter() {
-    return <h1>Amount</h1>;
-  }
-
-  function TransactionModeFilter() {
-    return <h1>Txn Mode</h1>;
-  }
-  const [filterComponent, setFilterComponent] = useState(<DateFilter />);
-
-  useEffect(() => {
-    let exist = filterCategory.current.value;
-
-    switch (exist) {
-      case "Date":
-        setFilterComponent(<DateFilter />);
-        break;
-      case "Transaction Name":
-        setFilterComponent(<TransactionNameFilter />);
-        break;
-      case "Category":
-        setFilterComponent(<CategoryFilter />);
-        break;
-      case "Amount":
-        setFilterComponent(<AmountFilter />);
-        break;
-      case "Transaction Mode":
-        setFilterComponent(<TransactionModeFilter />);
-        break;
-      default:
-        setFilterComponent(<h1>hey</h1>);
-    }
-  }, [filterCategory]);
+  const addFilterHandler = () => {
+    setFilterArray([
+      ...filterArray,
+      {
+        displayComponent: (
+          <FilterComponent currData={currData} setCurrData={setCurrData} />
+        ),
+      },
+    ]);
+  };
+  const removeFilterHandler = () => {
+    const newArr = [...filterArray];
+    newArr.pop();
+    setFilterArray(newArr);
+  };
 
   const popover = (
     <Popover id="popover-basic">
       <Popover.Header>Filter By</Popover.Header>
-
+      {filterArray.map((entry) => entry.displayComponent)}
       <Popover.Body>
-        <Form.Group>
-          <Form.Label> Choose Variable </Form.Label>
-          <Form.Select ref={filterCategory} placeholder="Enter category">
-            <option> Date </option>
-            <option> Transaction Name </option>
-            <option> Category </option>
-            <option> Amount </option>
-            <option> Transaction Mode </option>
-          </Form.Select>
-          {filterComponent}
-        </Form.Group>
+        {" "}
+        <Stack direction="horizontal" gap={3}>
+          <Button
+            className="ms-auto"
+            variant="secondary"
+            onClick={removeFilterHandler}
+          >
+            <RemoveIcon />
+          </Button>
+          <Button onClick={addFilterHandler}>
+            {" "}
+            <AddIcon />
+          </Button>
+        </Stack>
       </Popover.Body>
-      {/* <CloseButton /> */}
     </Popover>
   );
 
