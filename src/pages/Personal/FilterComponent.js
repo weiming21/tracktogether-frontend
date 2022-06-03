@@ -1,13 +1,20 @@
 // import styles from "./Personal.module.css";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import AuthContext from "../../store/AuthContext";
+
 import { Form, Popover, Stack } from "react-bootstrap";
 
 const FilterComponent = (props) => {
+  const authCtx = useContext(AuthContext);
+  const optionState = authCtx.optionState;
+
   const currData = props.currData;
   const setCurrData = props.setCurrData;
-  const optionState = props.optionState;
-  const [localState, setLocalState] = useState(props.optionState);
-  console.log(props.optionState + " ahem");
+  // const [optionState, setOptionState] = props.stuff;
+  // const optionState = props.optionState;
+  const [localState, setLocalState] = useState(optionState);
+  // console.log(props.optionState + " ahem");
+  console.log(authCtx.optionState + " authctx state passed into component");
   console.log(localState + " post reee");
   // const setOptionState = props.setOptionState;
   // const optionRef = props.optionRef;
@@ -132,13 +139,14 @@ const FilterComponent = (props) => {
       </Form.Group>
     );
   }
-  console.log(props.optionState + " post rerender");
+  console.log(optionState + " post rerender");
 
   function handleOption(e) {
-    console.log(props.optionState + " before setting state");
+    console.log(optionState + " before setting state");
     // console.log(e.target.value);
-    props.setOptionState(e.target.value);
-    console.log(props.optionState + " after setting state");
+    // setOptionState(e.target.value);
+    authCtx.setOptionState(e.target.value);
+    console.log(optionState + " after setting state");
     setLocalState(e.target.value);
   }
 
@@ -147,7 +155,7 @@ const FilterComponent = (props) => {
       <Form.Group>
         <Form.Label> Choose Variable </Form.Label>
         <Form.Select
-          value={localState}
+          value={optionState}
           // ref={optionRef}
           onChange={handleOption}
           placeholder="Enter category"

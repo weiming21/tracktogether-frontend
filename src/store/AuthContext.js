@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 const AuthContext = React.createContext({
-  token: '',
-  id: '',
-  username: '',
-  email: '',
-  contact: '',
+  token: "",
+  id: "",
+  username: "",
+  email: "",
+  contact: "",
   isLoggedIn: false,
   isDataFetched: false,
   login: () => {},
@@ -14,7 +14,7 @@ const AuthContext = React.createContext({
 });
 
 export const AuthContextProvider = (props) => {
-  const initialToken = localStorage.getItem('token');
+  const initialToken = localStorage.getItem("token");
   const [token, setToken] = useState(initialToken);
   const [id, setId] = useState(null);
   const [username, setUsername] = useState(null);
@@ -23,15 +23,17 @@ export const AuthContextProvider = (props) => {
 
   const [dataFetched, setDataFetched] = useState(false);
 
+  const [optionState, setOptionState] = useState("Category");
+
   if (!dataFetched && initialToken != null) {
-    const url = 'http://localhost:8080/api/account/refresh';
-    console.log('fetching data in auth context');
+    const url = "http://localhost:8080/api/account/refresh";
+    console.log("fetching data in auth context");
     fetch(url, {
-      method: 'GET',
+      method: "GET",
       // body: JSON.stringify(base),
       headers: {
-        'Content-Type': 'application/json',
-        authorization: 'Bearer ' + initialToken,
+        "Content-Type": "application/json",
+        authorization: "Bearer " + initialToken,
       },
     })
       .then((res) => {
@@ -52,7 +54,7 @@ export const AuthContextProvider = (props) => {
       })
       .then((data) => {
         loginData(data.data.account);
-        console.log('Successfully refreshed!');
+        console.log("Successfully refreshed!");
         setDataFetched(true);
       })
       .catch((err) => {
@@ -65,7 +67,7 @@ export const AuthContextProvider = (props) => {
 
   const loginHandler = (token) => {
     setToken(token);
-    localStorage.setItem('token', token);
+    localStorage.setItem("token", token);
   };
 
   const loginData = (account) => {
@@ -79,7 +81,7 @@ export const AuthContextProvider = (props) => {
 
   const logoutHandler = () => {
     setToken(null);
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
     // localStorage.removeItem("id");
   };
 
@@ -94,6 +96,8 @@ export const AuthContextProvider = (props) => {
     login: loginHandler,
     datalog: loginData,
     logout: logoutHandler,
+    optionState: optionState,
+    setOptionState: setOptionState,
   };
 
   return (

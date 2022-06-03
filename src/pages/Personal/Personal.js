@@ -139,7 +139,7 @@ function Personal() {
   };
 
   const [filterArray, setFilterArray] = useState([]);
-  const [optionState, setOptionState] = useState("Category");
+  const stuff /*[optionState, setOptionState]*/ = useState("Category");
   const optionRef = useRef("Category");
 
   const addFilterHandler = () => {
@@ -149,8 +149,9 @@ function Personal() {
         displayComponent: (
           <FilterComponent
             optionRef={optionRef}
-            optionState={optionState}
-            setOptionState={setOptionState}
+            stuff={stuff}
+            // optionState={optionState}
+            // setOptionState={setOptionState}
             currData={currData}
             setCurrData={setCurrData}
           />
@@ -163,29 +164,31 @@ function Personal() {
     newArr.pop();
     setFilterArray(newArr);
   };
-  console.log(optionState + " after setting state");
-  const popover = (
-    <Popover id="popover-basic">
-      <Popover.Header>Filter By</Popover.Header>
-      {filterArray.map((entry) => entry.displayComponent)}
-      <Popover.Body>
-        {" "}
-        <Stack direction="horizontal" gap={3}>
-          <Button
-            className="ms-auto"
-            variant="secondary"
-            onClick={removeFilterHandler}
-          >
-            <RemoveIcon />
-          </Button>
-          <Button onClick={addFilterHandler}>
-            {" "}
-            <AddIcon />
-          </Button>
-        </Stack>
-      </Popover.Body>
-    </Popover>
-  );
+  console.log(stuff[0] + " after setting state");
+  const popover = () => {
+    return (
+      <Popover id="popover-basic">
+        <Popover.Header>Filter By</Popover.Header>
+        {filterArray.map((entry) => entry.displayComponent)}
+        <Popover.Body>
+          {" "}
+          <Stack direction="horizontal" gap={3}>
+            <Button
+              className="ms-auto"
+              variant="secondary"
+              onClick={removeFilterHandler}
+            >
+              <RemoveIcon />
+            </Button>
+            <Button onClick={addFilterHandler}>
+              {" "}
+              <AddIcon />
+            </Button>
+          </Stack>
+        </Popover.Body>
+      </Popover>
+    );
+  };
 
   const formProps = {
     dateInput: dateInput,
@@ -246,9 +249,9 @@ function Personal() {
               <Col xs="auto">
                 <OverlayTrigger
                   trigger="click"
-                  placement="right"
+                  placement="auto"
                   rootClose
-                  overlay={popover}
+                  overlay={popover()}
                 >
                   <Button variant="light" className={styles.btn}>
                     <FilterAltIcon />
