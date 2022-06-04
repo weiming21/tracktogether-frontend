@@ -19,4 +19,5 @@
 .newApp {
   text-align: left;
   overflow: auto;
+  min-height: 100%;
 }

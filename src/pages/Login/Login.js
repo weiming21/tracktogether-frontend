@@ -1,6 +1,6 @@
-import styles from "./Login.module.css";
-import logo from "../../images/logo.png";
-import LoginForm from "./LoginForm";
+import styles from './Login.module.css';
+import logo from '../../images/logo.png';
+import LoginForm from './LoginForm';
 //import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 function Login() {
