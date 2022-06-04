@@ -1,153 +1,27 @@
 // import styles from "./Personal.module.css";
-import React, { useState, useContext } from "react";
-import AuthContext from "../../store/AuthContext";
+import React, { useContext } from "react";
+import FilterContext from "../../store/FilterContext";
 
-import { Form, Popover, Stack } from "react-bootstrap";
+import { Form, Popover } from "react-bootstrap";
+
+import DateFilter from "./FilterCateogryComponents/DateFilter";
+import CategoryFilter from "./FilterCateogryComponents/CategoryFilter";
+import AmountFilter from "./FilterCateogryComponents/AmountFilter";
+import TransactionModeFilter from "./FilterCateogryComponents/TransactionModeFilter";
 
 const FilterComponent = (props) => {
-  const authCtx = useContext(AuthContext);
-  const optionState = authCtx.optionState;
-
-  const currData = props.currData;
-  const setCurrData = props.setCurrData;
-  // const [optionState, setOptionState] = props.stuff;
-  // const optionState = props.optionState;
-  const [localState, setLocalState] = useState(optionState);
-  // console.log(props.optionState + " ahem");
-  console.log(authCtx.optionState + " authctx state passed into component");
-  console.log(localState + " post reee");
-  // const setOptionState = props.setOptionState;
-  // const optionRef = props.optionRef;
-
-  // const [filterCategory, setFilterCategory] = useState("Date");
-
-  function DateFilter() {
-    const uniqueYears = Array.from(
-      new Set(currData.map((entry) => new Date(entry.date).getFullYear()))
-    );
-
-    uniqueYears.unshift("All");
-    const months = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ];
-
-    const uniqueMonths = Array.from(
-      new Set(currData.map((entry) => months[new Date(entry.date).getMonth()]))
-    );
-    uniqueMonths.unshift("All");
-
-    const [currYear, setCurrYear] = useState("All");
-    const handleYear = (e) => {
-      console.log(currYear);
-      setCurrYear(e.target.value);
-
-      let newData = [...currData];
-      newData = newData.filter((entry) => {
-        return e.target.value === "All"
-          ? true
-          : new Date(entry.date).getFullYear() === Number(e.target.value);
-      });
-
-      setCurrData(newData);
-    };
-    const [currMonth, setCurrMonth] = useState("All");
-    const handleMonth = (e) => {
-      console.log(currMonth);
-      setCurrMonth(e.target.value);
-      const newData = [...currData];
-      newData.filter((entry) => {
-        return months[new Date(entry.date).getMonth()] === e.target.value;
-      });
-      setCurrData(newData);
-    };
-    return (
-      <Stack direction="horizontal" gap={3}>
-        <Form.Group className="my-3">
-          <Form.Label> Year </Form.Label>
-          <Form.Select name="selYear" onChange={handleYear}>
-            {uniqueYears.map((entry) => {
-              return <option> {entry} </option>;
-            })}
-          </Form.Select>
-        </Form.Group>
-        <Form.Group className="my-3" onChange={handleMonth}>
-          <Form.Label> Month </Form.Label>
-          <Form.Select>
-            {uniqueMonths.map((entry) => {
-              return <option> {entry} </option>;
-            })}
-          </Form.Select>
-        </Form.Group>
-      </Stack>
-    );
-  }
-
-  function CategoryFilter() {
-    const uniqueCategories = Array.from(
-      new Set(currData.map((entry) => entry.category))
-    );
-    return (
-      <Form.Group className="my-3">
-        <Form.Label> Select only </Form.Label>
-        <Form.Select>
-          {uniqueCategories.map((entry) => {
-            return <option> {entry} </option>;
-          })}
-        </Form.Select>
-      </Form.Group>
-    );
-  }
-
-  function AmountFilter() {
-    return (
-      <Stack direction="horizontal" gap={3}>
-        <Form.Group className="my-3">
-          <Form.Label> Greater than </Form.Label>
-          <Form.Control type="number" placeholder=" Amount" />
-        </Form.Group>
-        <Form.Group className="my-3">
-          <Form.Label> Smaller than </Form.Label>
-          <Form.Control type="number" placeholder=" Amount" />
-        </Form.Group>
-      </Stack>
-    );
-  }
-
-  function TransactionModeFilter() {
-    const uniqueModes = Array.from(
-      new Set(currData.map((entry) => entry.mode))
-    );
-    return (
-      <Form.Group className="my-3">
-        <Form.Label> Select only </Form.Label>
-        <Form.Select>
-          {uniqueModes.map((entry) => {
-            return <option> {entry} </option>;
-          })}
-        </Form.Select>
-      </Form.Group>
-    );
-  }
-  console.log(optionState + " post rerender");
+  const index = props.index;
+  const filterCtx = useContext(FilterContext);
+  const optionState = filterCtx.optionState[index];
+  const localData = props.localData;
+  const setLocalData = props.setLocalData;
 
   function handleOption(e) {
-    console.log(optionState + " before setting state");
-    // console.log(e.target.value);
-    // setOptionState(e.target.value);
-    authCtx.setOptionState(e.target.value);
-    console.log(optionState + " after setting state");
-    setLocalState(e.target.value);
+    filterCtx.changeFilterVariable(index, e.target.value);
+    filterCtx.refresh(index);
+    // setLocalData(currData);
+    const newData = filterCtx.filterAll();
+    setLocalData(newData);
   }
 
   return (
@@ -155,7 +29,7 @@ const FilterComponent = (props) => {
       <Form.Group>
         <Form.Label> Choose Variable </Form.Label>
         <Form.Select
-          value={optionState}
+          value={optionState.filterVariable}
           // ref={optionRef}
           onChange={handleOption}
           placeholder="Enter category"
@@ -165,10 +39,34 @@ const FilterComponent = (props) => {
           <option value="Amount"> Amount </option>
           <option value="Transaction Mode"> Transaction Mode </option>
         </Form.Select>
-        {optionState == "Date" && <DateFilter />}
-        {optionState == "Category" && <CategoryFilter />}
-        {optionState == "Amount" && <AmountFilter />}
-        {optionState == "Transaction Mode" && <TransactionModeFilter />}
+        {optionState.filterVariable == "Date" && (
+          <DateFilter
+            index={index}
+            localData={localData}
+            setLocalData={setLocalData}
+          />
+        )}
+        {optionState.filterVariable == "Category" && (
+          <CategoryFilter
+            index={index}
+            localData={localData}
+            setLocalData={setLocalData}
+          />
+        )}
+        {optionState.filterVariable == "Amount" && (
+          <AmountFilter
+            index={index}
+            localData={localData}
+            setLocalData={setLocalData}
+          />
+        )}
+        {optionState.filterVariable == "Transaction Mode" && (
+          <TransactionModeFilter
+            index={index}
+            localData={localData}
+            setLocalData={setLocalData}
+          />
+        )}
       </Form.Group>
     </Popover.Body>
   );

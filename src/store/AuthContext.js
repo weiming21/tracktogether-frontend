@@ -23,7 +23,7 @@ export const AuthContextProvider = (props) => {
 
   const [dataFetched, setDataFetched] = useState(false);
 
-  const [optionState, setOptionState] = useState("Category");
+  // const [optionState, setOptionState] = useState("Category");
 
   if (!dataFetched && initialToken != null) {
     const url = "http://localhost:8080/api/account/refresh";
@@ -91,13 +91,15 @@ export const AuthContextProvider = (props) => {
     username: username,
     email: email,
     contact: contact,
+
     isLoggedIn: userIsLoggedIn,
     isDataFetched: dataFetched,
+
     login: loginHandler,
     datalog: loginData,
     logout: logoutHandler,
-    optionState: optionState,
-    setOptionState: setOptionState,
+    // optionState: optionState,
+    // setOptionState: setOptionState,
   };
 
   return (

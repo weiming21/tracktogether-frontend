@@ -8,8 +8,10 @@ import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
+// import RemoveIcon from "@mui/icons-material/Remove";
 import AuthContext from "../../store/AuthContext";
+import FilterContext from "../../store/FilterContext";
+
 import FilterComponent from "./FilterComponent";
 
 // import Button from "@mui/material/Button";
@@ -30,10 +32,10 @@ import {
 
 function Personal() {
   const authCtx = useContext(AuthContext);
-  // console.log(authCtx.id + " personal");
-  // console.log(authCtx.isFetchingData + " Context Fetching Data");
-
-  const [currData, setCurrData] = useState([]);
+  const filterCtx = useContext(FilterContext);
+  const currData = filterCtx.currData;
+  const setCurrData = filterCtx.setCurrData;
+  const [localData, setLocalData] = useState([]);
 
   useEffect(() => {
     console.log(authCtx.isFetchingData + " use effect frames");
@@ -44,6 +46,7 @@ function Personal() {
         .then((response) => response.json())
         .then((data) => {
           setCurrData(data);
+          setLocalData(data);
         })
         .then((data) => {
           console.log(data);
@@ -78,9 +81,9 @@ function Personal() {
       }
     }
 
-    const newCurrData = [...currData];
-    newCurrData.sort(dataComparator(sortCategory.current.value));
-    setCurrData(newCurrData);
+    const newLocalData = [...localData];
+    newLocalData.sort(dataComparator(sortCategory.current.value));
+    setLocalData(newLocalData);
   }
 
   const dateInput = useRef();
@@ -139,32 +142,32 @@ function Personal() {
   };
 
   const [filterArray, setFilterArray] = useState([]);
-  const stuff /*[optionState, setOptionState]*/ = useState("Category");
-  const optionRef = useRef("Category");
 
   const addFilterHandler = () => {
+    filterCtx.addFilter();
     setFilterArray([
       ...filterArray,
       {
         displayComponent: (
           <FilterComponent
-            optionRef={optionRef}
-            stuff={stuff}
+            index={filterArray.length}
             // optionState={optionState}
             // setOptionState={setOptionState}
-            currData={currData}
-            setCurrData={setCurrData}
+            localData={localData}
+            setLocalData={setLocalData}
           />
         ),
       },
     ]);
   };
   const removeFilterHandler = () => {
-    const newArr = [...filterArray];
-    newArr.pop();
-    setFilterArray(newArr);
+    filterCtx.deleteAllFilter();
+    // const newArr = [...filterArray];
+    // newArr.pop();
+    setFilterArray([]);
+    setLocalData(currData);
   };
-  console.log(stuff[0] + " after setting state");
+
   const popover = () => {
     return (
       <Popover id="popover-basic">
@@ -178,7 +181,7 @@ function Personal() {
               variant="secondary"
               onClick={removeFilterHandler}
             >
-              <RemoveIcon />
+              Clear all
             </Button>
             <Button onClick={addFilterHandler}>
               {" "}
@@ -200,8 +203,6 @@ function Personal() {
     handleClose: handleClose,
     handleAddTransaction: handleAddTransaction,
   };
-
-  const [testState, setTestState] = useState("first");
 
   return (
     <React.Fragment>
@@ -270,7 +271,7 @@ function Personal() {
                 </tr>
               </thead>
               <tbody>
-                {currData.map((entry) => {
+                {localData.map((entry) => {
                   return (
                     <tr>
                       <td>{new Date(entry.date).toDateString()}</td>
@@ -283,19 +284,6 @@ function Personal() {
                 })}
               </tbody>
             </Table>
-          </Box>
-          <Box>
-            <Form.Select
-              value={testState}
-              onChange={(e) => {
-                console.log(testState + "before");
-                setTestState(e.target.value);
-                console.log(testState + "after");
-              }}
-            >
-              <option> first </option>
-              <option> second </option>
-            </Form.Select>
           </Box>
         </div>
       </div>
