@@ -15,3 +15,20 @@
   font-style: italic;
   font-weight: bold;
 }
+
+.piechart {
+  height: 500px;
+  width: 400px;
+}
+
+.linechart {
+  height: 500px;
+  width: 400px;
+}
+
+.barchart {
+  height: 500px;
+  width: 400px;
+  padding-left: 70px;
+  padding-right: 30px;
+}
