@@ -1,13 +1,13 @@
 //import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Navigator from '../../components/navbar/Navigator';
-import SideNavigator from '../../components/sidebar/SideNavigator';
-import Box from '../../components/Box';
-import styles from './Home.module.css';
-import React, { useState, useEffect, useContext } from 'react';
-import AuthContext from '../../store/AuthContext';
-import DonutChart from '../../charts/DonutChart';
-import BarChart from '../../charts/BarChart';
-import LineChart from '../../charts/LineChart';
+import Navigator from "../../components/navbar/Navigator";
+import SideNavigator from "../../components/sidebar/SideNavigator";
+import Box from "../../components/Box";
+import styles from "./Home.module.css";
+import React, { useState, useEffect, useContext } from "react";
+import AuthContext from "../../store/AuthContext";
+import DonutChart from "../../charts/DonutChart";
+import BarChart from "../../charts/BarChart";
+import LineChart from "../../charts/LineChart";
 
 function Home() {
   const authCtx = useContext(AuthContext);
@@ -16,7 +16,7 @@ function Home() {
   const [quote, setQuote] = useState([]);
 
   //Donut Chart
-  const defaultPieData = [{ category: 'Loading...', amount: 100 }];
+  const defaultPieData = [{ category: "Loading...", amount: 100 }];
   const [pieData, setPieData] = useState(defaultPieData);
 
   //Line Chart
@@ -29,27 +29,27 @@ function Home() {
   //   { y: 1, label: 'Unrealised Net Balance:\n$-40', fill: 'grey' },
   // ];
   const dummyBarData = [
-    { y: 20, label: 'How much others owe you:\n$10', fill: 'turquoise' },
-    { y: -50, label: 'How much you owe:\n$50', fill: 'red' },
-    { y: -30, label: 'Unrealised Net Balance:\n$-40', fill: 'blue' },
+    { y: 20, label: "How much others owe you:\n$10", fill: "turquoise" },
+    { y: -50, label: "How much you owe:\n$50", fill: "red" },
+    { y: -30, label: "Unrealised Net Balance:\n$-40", fill: "blue" },
   ];
   const [barData, setBarData] = useState([]);
 
   useEffect(() => {
     //Random Quote
-    fetch('https://api.quotable.io/random')
+    fetch("https://api.quotable.io/random")
       .then((response) => response.json())
       .then((data) => setQuote([data.content, data.author]))
       .catch((error) => setQuote(`Unable to retrieve quote. Error: ${error}`));
 
     //Donut Chart
-    fetch('http://localhost:8080/api/chart/piechart', {
-      method: 'PUT',
+    fetch("http://localhost:8080/api/chart/piechart", {
+      method: "PUT",
       body: JSON.stringify({
         _id: authCtx.id,
       }),
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     })
       .then((response) => response.json())
@@ -60,13 +60,13 @@ function Home() {
       .catch((error) => console.log(error));
 
     //Line Chart
-    fetch('http://localhost:8080/api/chart/linechart', {
-      method: 'PUT',
+    fetch("http://localhost:8080/api/chart/linechart", {
+      method: "PUT",
       body: JSON.stringify({
         _id: authCtx.id,
       }),
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     })
       .then((response) => response.json())
@@ -81,9 +81,9 @@ function Home() {
   }, [authCtx]);
 
   return (
-    <div style={{ minHeight: '100%', overflow: 'auto' }}>
+    <React.Fragment style={{ overflow: "auto" }}>
       <Navigator />
-      <div style={{ display: 'flex', height: '100%', overflow: 'auto' }}>
+      <div style={{ display: "flex", minHeight: "100%", overflow: "auto" }}>
         <div className={styles.left}>
           <SideNavigator />
         </div>
@@ -91,7 +91,7 @@ function Home() {
         <div className={styles.right}>
           <Box>
             <h2 className={styles.header}>Welcome Mr {authCtx.username}!</h2>
-            <div style={{ display: 'flex' }}>
+            <div style={{ display: "flex" }}>
               {/* <div style={styles.subheader}>
                 <h3> Spending</h3>
               </div> */}
@@ -115,7 +115,7 @@ function Home() {
           </Box>
         </div>
       </div>
-    </div>
+    </React.Fragment>
   );
 }
 

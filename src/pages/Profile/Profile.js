@@ -1,14 +1,14 @@
-import Navigator from '../../components/navbar/Navigator';
-import SideNavigator from '../../components/sidebar/SideNavigator';
-import AuthContext from '../../store/AuthContext';
-import imageAvatar from '../../images/img_avatar.png';
-import Box from '../../components/Box';
-import styles from './Profile.module.css';
-import React, { useState, useContext } from 'react';
-import { Form, Row, Col, Button, Image, Stack } from 'react-bootstrap';
-import EditIcon from '@mui/icons-material/Edit';
-import CameraAltIcon from '@mui/icons-material/CameraAlt';
-import { useNavigate } from 'react-router-dom';
+import Navigator from "../../components/navbar/Navigator";
+import SideNavigator from "../../components/sidebar/SideNavigator";
+import AuthContext from "../../store/AuthContext";
+import imageAvatar from "../../images/img_avatar.png";
+import Box from "../../components/Box";
+import styles from "./Profile.module.css";
+import React, { useState, useContext } from "react";
+import { Form, Row, Col, Button, Image, Stack } from "react-bootstrap";
+import EditIcon from "@mui/icons-material/Edit";
+import CameraAltIcon from "@mui/icons-material/CameraAlt";
+import { useNavigate } from "react-router-dom";
 
 function Profile() {
   const authCtx = useContext(AuthContext);
@@ -38,9 +38,9 @@ function Profile() {
 
   function handleSubmit(event) {
     event.preventDefault();
-    const url = 'http://localhost:8080/api/account/';
+    const url = "http://localhost:8080/api/account/";
     fetch(url, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify({
         _id: authCtx.id,
         username: username,
@@ -48,8 +48,8 @@ function Profile() {
         contact: contact,
       }),
       headers: {
-        'Content-Type': 'application/json',
-        authorization: 'Bearer ' + authCtx.token,
+        "Content-Type": "application/json",
+        authorization: "Bearer " + authCtx.token,
       },
     })
       .then((res) => {
@@ -57,7 +57,7 @@ function Profile() {
           return res.json();
         } else {
           return res.json().then((data) => {
-            let errorMessage = 'Authentication failed!';
+            let errorMessage = "Authentication failed!";
             console.log(JSON.stringify(data));
             if (data && data.error && data.error.message) {
               errorMessage = data.error.message;
@@ -73,7 +73,7 @@ function Profile() {
         // authCtx.login(data.data.token);
         authCtx.datalog(data.data.account);
         // console.log('working');
-        navigation('/home');
+        navigation("/home");
       })
       .catch((err) => {
         alert(err.message);
@@ -83,21 +83,21 @@ function Profile() {
   return (
     <div className={styles.newApp}>
       <Navigator />
-      <div style={{ display: 'flex', height: '100%', overflow: 'auto' }}>
+      <div style={{ display: "flex", height: "100%", overflow: "auto" }}>
         <div className={styles.left}>
           <SideNavigator />
         </div>
 
         <div className={styles.right}>
           <Box>
-            <h2 className={styles.header + ' pb-3'}>Your Profile</h2>
+            <h2 className={styles.header + " pb-3"}>Your Profile</h2>
             <Image
               className="m-3"
               src={imageAvatar}
               roundedCircle
               width="250"
               height="250"
-            />{' '}
+            />{" "}
             <CameraAltIcon />
             <Form>
               <Row className="mb-3">
@@ -178,7 +178,7 @@ function Profile() {
             <Stack direction="horizontal" gap={3}>
               <Button className="mt-3"> Change Password</Button>
               <Button variant="danger" className="mt-3">
-                Delete Account{' '}
+                Delete Account{" "}
               </Button>
             </Stack>
           </Box>
