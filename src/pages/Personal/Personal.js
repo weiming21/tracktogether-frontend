@@ -5,10 +5,19 @@ import SubmitTransactionModal from "./SubmitTransactionModal";
 import styles from "./Personal.module.css";
 import React, { useState, useRef, useEffect, useContext } from "react";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import AddIcon from "@mui/icons-material/Add";
+// import RemoveIcon from "@mui/icons-material/Remove";
 import AuthContext from "../../store/AuthContext";
+import FilterContext from "../../store/FilterContext";
+
+import FilterComponent from "./FilterComponent";
+
+// import Button from "@mui/material/Button";
 import {
   Table,
-  // Stack,
+  Stack,
   Button,
   // Dropdown,
   // DropdownButton,
@@ -17,15 +26,16 @@ import {
   Col,
   Popover,
   OverlayTrigger,
+  // Modal,
   // CloseButton,
 } from "react-bootstrap";
 
 function Personal() {
   const authCtx = useContext(AuthContext);
-  // console.log(authCtx.id + " personal");
-  // console.log(authCtx.isFetchingData + " Context Fetching Data");
-
-  const [currData, setCurrData] = useState([]);
+  const filterCtx = useContext(FilterContext);
+  const currData = filterCtx.currData;
+  const setCurrData = filterCtx.setCurrData;
+  const [localData, setLocalData] = useState([]);
 
   useEffect(() => {
     console.log(authCtx.isFetchingData + " use effect frames");
@@ -36,6 +46,7 @@ function Personal() {
         .then((response) => response.json())
         .then((data) => {
           setCurrData(data);
+          setLocalData(data);
         })
         .then((data) => {
           console.log(data);
@@ -48,22 +59,31 @@ function Personal() {
   }, [authCtx]);
 
   const sortCategory = useRef();
+  const [sortDirection, setSortDirection] = useState(true); //True implies descending order
+  const handleSortDirection = () => {
+    setSortDirection(!sortDirection);
+    sortCategoryHandler();
+  };
 
   function sortCategoryHandler() {
     function dataComparator(sortCategoryValue) {
+      const numericalSortDirection = sortDirection ? 1 : -1;
       switch (sortCategoryValue) {
         case "Date":
-          return (a, b) => new Date(b.date) - new Date(a.date);
+          return (a, b) =>
+            numericalSortDirection * (new Date(b.date) - new Date(a.date));
         case "Amount":
-          return (a, b) => Number(b.amount) - Number(a.amount);
+          return (a, b) =>
+            numericalSortDirection * (Number(b.amount) - Number(a.amount));
         case "Transaction Name":
-          return (a, b) => (b.information < a.information ? -1 : 1);
+          return (a, b) =>
+            numericalSortDirection * (b.information < a.information ? -1 : 1);
       }
     }
 
-    const newCurrData = [...currData];
-    newCurrData.sort(dataComparator(sortCategory.current.value));
-    setCurrData(newCurrData);
+    const newLocalData = [...localData];
+    newLocalData.sort(dataComparator(sortCategory.current.value));
+    setLocalData(newLocalData);
   }
 
   const dateInput = useRef();
@@ -121,23 +141,57 @@ function Personal() {
       });
   };
 
-  const popover = (
-    <Popover id="popover-basic">
-      <Popover.Header>Filter By</Popover.Header>
+  const [filterArray, setFilterArray] = useState([]);
 
-      <Popover.Body>
-        <Form.Group>
-          <Form.Label> Choose Variable </Form.Label>
-          <Form.Select placeholder="Enter category">
-            <option> Category </option>
-            <option> Transport </option>
-            <option> Bills </option>
-          </Form.Select>
-        </Form.Group>
-      </Popover.Body>
-      {/* <CloseButton /> */}
-    </Popover>
-  );
+  const addFilterHandler = () => {
+    filterCtx.addFilter();
+    setFilterArray([
+      ...filterArray,
+      {
+        displayComponent: (
+          <FilterComponent
+            index={filterArray.length}
+            // optionState={optionState}
+            // setOptionState={setOptionState}
+            localData={localData}
+            setLocalData={setLocalData}
+          />
+        ),
+      },
+    ]);
+  };
+  const removeFilterHandler = () => {
+    filterCtx.deleteAllFilter();
+    // const newArr = [...filterArray];
+    // newArr.pop();
+    setFilterArray([]);
+    setLocalData(currData);
+  };
+
+  const popover = () => {
+    return (
+      <Popover id="popover-basic">
+        <Popover.Header>Filter By</Popover.Header>
+        {filterArray.map((entry) => entry.displayComponent)}
+        <Popover.Body>
+          {" "}
+          <Stack direction="horizontal" gap={3}>
+            <Button
+              className="ms-auto"
+              variant="secondary"
+              onClick={removeFilterHandler}
+            >
+              Clear all
+            </Button>
+            <Button onClick={addFilterHandler}>
+              {" "}
+              <AddIcon />
+            </Button>
+          </Stack>
+        </Popover.Body>
+      </Popover>
+    );
+  };
 
   const formProps = {
     dateInput: dateInput,
@@ -167,7 +221,7 @@ function Personal() {
               </Col>
               <Col xs="auto">
                 {" "}
-                <Button onClick={handleTransactionForm}>
+                <Button className={styles.btn} onClick={handleTransactionForm}>
                   {" "}
                   Add Transaction
                 </Button>
@@ -187,16 +241,25 @@ function Personal() {
                 </Form.Select>
               </Col>
               <Col xs="auto">
+                <Button className={styles.btn} onClick={handleSortDirection}>
+                  {sortDirection && <ArrowUpwardIcon />}
+                  {!sortDirection && <ArrowDownwardIcon />}
+                </Button>
+              </Col>
+
+              <Col xs="auto">
                 <OverlayTrigger
                   trigger="click"
-                  placement="right"
-                  overlay={popover}
+                  placement="auto"
+                  rootClose
+                  overlay={popover()}
                 >
-                  <FilterAltIcon />
+                  <Button variant="light" className={styles.btn}>
+                    <FilterAltIcon />
+                  </Button>
                 </OverlayTrigger>
               </Col>
             </Row>
-
             <Table striped bordered hover>
               <thead>
                 <tr>
@@ -208,7 +271,7 @@ function Personal() {
                 </tr>
               </thead>
               <tbody>
-                {currData.map((entry) => {
+                {localData.map((entry) => {
                   return (
                     <tr>
                       <td>{new Date(entry.date).toDateString()}</td>

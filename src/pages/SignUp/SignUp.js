@@ -1,6 +1,6 @@
-import styles from './SignUp.module.css';
-import logo from '../../images/logo.png';
-import SignUpForm from './SignUpForm';
+import styles from "./SignUp.module.css";
+import logo from "../../images/logo.png";
+import SignUpForm from "./SignUpForm";
 //import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 function SignUp() {

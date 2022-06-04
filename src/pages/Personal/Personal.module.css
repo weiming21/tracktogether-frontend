@@ -16,3 +16,8 @@
   font-style: italic;
   font-weight: bold;
 }
+
+.btn:focus {
+  outline: none;
+  box-shadow: none;
+}
