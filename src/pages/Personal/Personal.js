@@ -8,26 +8,18 @@ import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import AddIcon from "@mui/icons-material/Add";
-// import RemoveIcon from "@mui/icons-material/Remove";
 import AuthContext from "../../store/AuthContext";
 import FilterContext from "../../store/FilterContext";
-
 import FilterComponent from "./FilterComponent";
-
-// import Button from "@mui/material/Button";
 import {
   Table,
   Stack,
   Button,
-  // Dropdown,
-  // DropdownButton,
   Form,
   Row,
   Col,
   Popover,
   OverlayTrigger,
-  // Modal,
-  // CloseButton,
 } from "react-bootstrap";
 
 function Personal() {
@@ -151,8 +143,6 @@ function Personal() {
         displayComponent: (
           <FilterComponent
             index={filterArray.length}
-            // optionState={optionState}
-            // setOptionState={setOptionState}
             localData={localData}
             setLocalData={setLocalData}
           />
@@ -162,8 +152,6 @@ function Personal() {
   };
   const removeFilterHandler = () => {
     filterCtx.deleteAllFilter();
-    // const newArr = [...filterArray];
-    // newArr.pop();
     setFilterArray([]);
     setLocalData(currData);
   };

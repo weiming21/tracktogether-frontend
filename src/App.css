@@ -7,3 +7,13 @@
   height: 100%;
   overflow: auto;
 }
+
+label {
+  display: flex;
+  text-align: left;
+}
+
+/* p {
+  display: flex;
+  text-align: left;
+} */
