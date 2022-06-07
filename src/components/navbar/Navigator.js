@@ -1,9 +1,9 @@
-import { React, useContext } from 'react';
-import logo from '../../images/logo.png';
-import imageAvatar from '../../images/img_avatar.png';
-import AuthContext from '../../store/AuthContext';
+import { React, useContext } from "react";
+import logo from "../../images/logo.png";
+import imageAvatar from "../../images/img_avatar.png";
+import AuthContext from "../../store/AuthContext";
 // import { useNavigate } from "react-router-dom";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 import {
   Nav,
@@ -17,27 +17,27 @@ import {
   OverlayTrigger,
   Stack,
   Image,
-} from 'react-bootstrap';
+} from "react-bootstrap";
 
 function Navigator() {
   const authCtx = useContext(AuthContext);
-  const navbar = { backgroundColor: '#64B5F6' };
+  const navbar = { backgroundColor: "#64B5F6" };
   const renderTooltip = (props) => (
     <Tooltip id="button-tooltip" {...props}>
       TrackTogether
     </Tooltip>
   );
 
-  const clientID = '00c74e4f-ce40-4652-be2a-05e632a5f82f';
+  const clientID = "00c74e4f-ce40-4652-be2a-05e632a5f82f";
   // const secret = "d06562dd-5d23-4e13-9646-76cc0d5ba5e0";
-  const redirectURL = 'http://localhost:3000/Home';
+  const redirectURL = "http://localhost:3000/Home";
   const authURL = `/https://www.dbs.com/sandbox/api/sg/v1/oauth/authorize?
   client_id=${clientID}&
   redirect_uri=${redirectURL}&
   scope=Read&
   response_type=code`;
 
-  const profileURL = '/profile/' + authCtx.username;
+  // const profileURL = "/profile/" + authCtx.username;
   // const  goToBankAccount = (event) => {
   //   event.preventDefault();
   //   const navigation = useNavigate();
@@ -78,11 +78,16 @@ function Navigator() {
         {/* <Navbar.Text> Auth Code: {authCtx.token} </Navbar.Text> */}
 
         <Stack direction="horizontal" gap={3}>
-          <Link to={profileURL}>
+          <Link to="/profile">
             <Navbar.Text> Signed in as: {authCtx.username} </Navbar.Text>
           </Link>
 
-          <Image src={imageAvatar} roundedCircle width="50" height="50" />
+          <Image
+            src={authCtx.image ? authCtx.image : imageAvatar}
+            roundedCircle
+            width="50"
+            height="50"
+          />
 
           <Link to={authURL}>
             {/* <Button variant="outline-primary">Sync with Bank Account</Button> */}
@@ -91,7 +96,7 @@ function Navigator() {
 
           <Nav
             className="me-auto my-2 my-lg-0"
-            style={{ maxHeight: '100px' }}
+            style={{ maxHeight: "100px" }}
             navbarScroll>
             <NavDropdown
               align="end"

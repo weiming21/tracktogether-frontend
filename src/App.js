@@ -5,6 +5,7 @@ import SignUp from "./pages/SignUp/SignUp";
 import Home from "./pages/Home/Home";
 import Personal from "./pages/Personal/Personal";
 import Profile from "./pages/Profile/Profile";
+import Outstanding from "./pages/Outstanding/Outstanding";
 import AuthContext from "./store/AuthContext";
 import { useContext } from "react";
 import { Navigate } from "react-router-dom";
@@ -13,7 +14,7 @@ import { FilterContextProvider } from "./store/FilterContext";
 
 function App() {
   const authCtx = useContext(AuthContext);
-  const profileURL = "/profile/" + authCtx.username;
+  // const profileURL = "/profile/" + authCtx.username;
   return (
     <div className="App">
       <FilterContextProvider>
@@ -28,7 +29,15 @@ function App() {
             )}
 
             {authCtx.isLoggedIn && (
-              <Route path={profileURL} element={<Profile />} />
+              <Route path="/profile" element={<Profile />} />
+            )}
+
+            {authCtx.isLoggedIn && (
+              <Route path="/group" element={<Outstanding />} />
+            )}
+
+            {authCtx.isLoggedIn && (
+              <Route path="/outstanding" element={<Outstanding />} />
             )}
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>

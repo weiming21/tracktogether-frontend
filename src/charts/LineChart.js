@@ -1,17 +1,19 @@
-import Victory from './victory';
+import Victory from "./victory";
 
-export default function DonutChart(props) {
+export default function LineChart(props) {
   const VictoryLine = Victory.VictoryLine;
   const VictoryChart = Victory.VictoryChart;
   const VictoryVoronoiContainer = Victory.VictoryVoronoiContainer;
   const VictoryAxis = Victory.VictoryAxis;
   const VictoryTooltip = Victory.VictoryTooltip;
+  const VictoryLabel = Victory.VictoryLabel;
+  //   const VictoryContainer = Victory.VictoryContainer;
 
   function subtractMonths(numOfMonths, date = new Date()) {
     date.setMonth(date.getMonth() - numOfMonths);
     return date;
   }
-
+  console.log(props);
   function filter_and_sort_dates(arr) {
     const filtered_arr = arr.filter(
       (item) =>
@@ -38,18 +40,18 @@ export default function DonutChart(props) {
 
   function map_month_to_value(arr) {
     const months = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
     ];
 
     const required_months = get_past_n_months(new Date(), 5).map(
@@ -59,11 +61,10 @@ export default function DonutChart(props) {
     let result = [];
     required_months.forEach((month) => {
       const item = arr.find((item) => month == months[item._id.month - 1]);
-      console.log(item);
       if (item) {
         const container = {};
-        container['month'] = months[item._id.month - 1];
-        container['amount'] = item.amount;
+        container["month"] = months[item._id.month - 1];
+        container["amount"] = item.amount;
         result.push(container);
       } else {
         result.push({ month: month, amount: 0 });
@@ -79,31 +80,40 @@ export default function DonutChart(props) {
 
   return (
     <VictoryChart
+      //   standalone={false}
       containerComponent={
         <VictoryVoronoiContainer
           voronoiDimension="x"
           labels={({ datum }) => `amount: $${datum.amount}`}
           labelComponent={
             <VictoryTooltip
-              style={{ fontSize: '15px' }}
-              flyoutStyle={{ fill: 'white' }}
+              style={{ fontSize: "15px" }}
+              flyoutStyle={{ fill: "white" }}
             />
           }
         />
       }>
       <VictoryAxis />
+
       <VictoryLine
-        animate={{ easing: 'exp' }}
+        animate
         data={transform_data(props.data)}
         style={{
           data: {
-            stroke: 'tomato',
+            stroke: "tomato",
             strokeWidth: ({ active }) => (active ? 5 : 2),
           },
-          labels: { fill: 'tomato' },
+          labels: { fill: "tomato" },
         }}
         x="month"
         y="amount"
+      />
+      <VictoryLabel
+        standalone={false}
+        text="Breakdown by Months"
+        x={50}
+        y={340}
+        style={{ fontSize: 35, fill: "grey" }}
       />
     </VictoryChart>
   );
