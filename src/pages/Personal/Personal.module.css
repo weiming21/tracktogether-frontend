@@ -5,7 +5,12 @@
 .right {
   flex-grow: 1;
 }
-
+.paginationBar {
+  display: inline-flex;
+  /* align-items: center; */
+  /* margin-left: auto;
+  margin-right: auto; */
+}
 .header {
   text-align: left;
   /* padding-bottom: 1rem; */

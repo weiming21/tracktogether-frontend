@@ -1,4 +1,4 @@
-import Victory from './victory';
+import Victory from "./victory";
 
 export default function DonutChart(props) {
   const VictoryLine = Victory.VictoryLine;
@@ -15,14 +15,14 @@ export default function DonutChart(props) {
   function filter_and_sort_dates(arr) {
     const filtered_arr = arr.filter(
       (item) =>
-        new Date(`${item._id.year}-${item._id.month}`) > subtractMonths(6),
+        new Date(`${item._id.year}-${item._id.month}`) > subtractMonths(6)
     );
     console.log(filtered_arr);
 
     const sorted_arr = filtered_arr.sort(
       (a, b) =>
         new Date(`${a._id.year}-${a._id.month}`) -
-        new Date(`${b._id.year}-${b._id.month}`),
+        new Date(`${b._id.year}-${b._id.month}`)
     );
     return sorted_arr;
   }
@@ -38,22 +38,22 @@ export default function DonutChart(props) {
 
   function map_month_to_value(arr) {
     const months = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
     ];
 
     const required_months = get_past_n_months(new Date(), 5).map(
-      (item) => months[item],
+      (item) => months[item]
     );
 
     let result = [];
@@ -62,8 +62,8 @@ export default function DonutChart(props) {
       console.log(item);
       if (item) {
         const container = {};
-        container['month'] = months[item._id.month - 1];
-        container['amount'] = item.amount;
+        container["month"] = months[item._id.month - 1];
+        container["amount"] = item.amount;
         result.push(container);
       } else {
         result.push({ month: month, amount: 0 });
@@ -85,22 +85,23 @@ export default function DonutChart(props) {
           labels={({ datum }) => `amount: $${datum.amount}`}
           labelComponent={
             <VictoryTooltip
-              style={{ fontSize: '15px' }}
-              flyoutStyle={{ fill: 'white' }}
+              style={{ fontSize: "15px" }}
+              flyoutStyle={{ fill: "white" }}
             />
           }
         />
-      }>
+      }
+    >
       <VictoryAxis />
       <VictoryLine
-        animate={{ easing: 'exp' }}
+        animate={{ easing: "exp" }}
         data={transform_data(props.data)}
         style={{
           data: {
-            stroke: 'tomato',
+            stroke: "tomato",
             strokeWidth: ({ active }) => (active ? 5 : 2),
           },
-          labels: { fill: 'tomato' },
+          labels: { fill: "tomato" },
         }}
         x="month"
         y="amount"

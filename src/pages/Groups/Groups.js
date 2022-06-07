@@ -3,10 +3,11 @@ import Navigator from "../../components/navbar/Navigator";
 import SideNavigator from "../../components/sidebar/SideNavigator";
 import Box from "../../components/Box";
 import styles from "./Groups.module.css";
-import React, { useContext } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../../store/AuthContext";
 import imageAvatar from "../../images/img_avatar.png";
+import AddGroupModal from "./AddGroupModal";
 import {
   // Table,
   Stack,
@@ -52,6 +53,16 @@ function Group() {
   }
   console.log(dummyGroups);
 
+  const [addGroupForm, setAddGroupForm] = useState(false);
+
+  const handleClose = () => setAddGroupForm(false);
+  const handleAddGroupForm = () => setAddGroupForm(true);
+
+  const formProps = {
+    addGroupForm: addGroupForm,
+    handleClose: handleClose,
+  };
+
   return (
     <React.Fragment style={{ overflow: "auto" }}>
       <Navigator />
@@ -80,10 +91,10 @@ function Group() {
                 <Button>Join</Button>
               </Col>
               <Col xs="auto">
-                <Button>Create</Button>
+                <Button onClick={handleAddGroupForm}>Create</Button>
               </Col>
             </Row>
-            <Row xs={1} sm={2} md={4} xl={6} className="g-4">
+            <Row xs={1} sm={2} xl={4} xxl={6} className="g-4">
               {dummyGroups.map((entry) => {
                 return (
                   <Col>
@@ -115,6 +126,7 @@ function Group() {
           </Box>
         </div>
       </div>
+      <AddGroupModal formProps={formProps} />
     </React.Fragment>
   );
 }

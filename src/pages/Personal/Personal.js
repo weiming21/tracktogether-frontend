@@ -18,8 +18,10 @@ import {
   Form,
   Row,
   Col,
+  // Container,
   Popover,
   OverlayTrigger,
+  Pagination,
 } from "react-bootstrap";
 
 function Personal() {
@@ -181,6 +183,28 @@ function Personal() {
     );
   };
 
+  const [activeTab, setActiveTab] = useState(1);
+  let items = [];
+  const numberOfEntries = localData.length;
+  const entriesPerPage = 3;
+  const tabs = Math.ceil(numberOfEntries / entriesPerPage);
+  for (let number = 1; number <= tabs; number++) {
+    items.push(
+      <Pagination.Item
+        key={number}
+        onClick={() => setActiveTab(number)}
+        active={number === activeTab}
+      >
+        {number}
+      </Pagination.Item>
+    );
+  }
+
+  const slicedLocalData = localData.slice(
+    (activeTab - 1) * entriesPerPage,
+    activeTab * entriesPerPage
+  );
+
   const formProps = {
     dateInput: dateInput,
     transNameInput: transNameInput,
@@ -248,30 +272,42 @@ function Personal() {
                 </OverlayTrigger>
               </Col>
             </Row>
-            <Table striped bordered hover>
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Transaction Name</th>
-                  <th>Category</th>
-                  <th>Amount($)</th>
-                  <th>Transaction Mode</th>
-                </tr>
-              </thead>
-              <tbody>
-                {localData.map((entry) => {
-                  return (
+            <Row>
+              <Col>
+                <Table striped bordered hover>
+                  <thead>
                     <tr>
-                      <td>{new Date(entry.date).toDateString()}</td>
-                      <td>{entry.information}</td>
-                      <td>{entry.category}</td>
-                      <td>{Number(entry.amount).toFixed(2)}</td>
-                      <td>{entry.mode}</td>
+                      <th>Date</th>
+                      <th>Transaction Name</th>
+                      <th>Category</th>
+                      <th>Amount($)</th>
+                      <th>Transaction Mode</th>
                     </tr>
-                  );
-                })}
-              </tbody>
-            </Table>
+                  </thead>
+                  <tbody>
+                    {slicedLocalData.map((entry) => {
+                      return (
+                        <tr>
+                          <td>{new Date(entry.date).toDateString()}</td>
+                          <td>{entry.information}</td>
+                          <td>{entry.category}</td>
+                          <td>{Number(entry.amount).toFixed(2)}</td>
+                          <td>{entry.mode}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </Table>
+              </Col>
+            </Row>
+
+            <Row>
+              <Col className="align-content-center">
+                <Pagination className={styles.paginationBar}>
+                  {items}
+                </Pagination>
+              </Col>
+            </Row>
           </Box>
         </div>
       </div>

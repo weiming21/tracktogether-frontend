@@ -1,16 +1,16 @@
-import Victory from './victory';
+import Victory from "./victory";
 
 export default function DonutChart(props) {
   const VictoryPie = Victory.VictoryPie;
   const VictoryTooltip = Victory.VictoryTooltip;
-  const graphicColor = ['#388087', '#6fb3b8', '#badfe7'];
+  const graphicColor = ["#388087", "#6fb3b8", "#badfe7"];
 
   function concatenate_labels(arr) {
     return arr.map((item) => {
-      if (item._id != 'Loading...') {
+      if (item._id != "Loading...") {
         const container = {};
-        container['category'] = `${item._id}:\n$${item.amount}`;
-        container['amount'] = item.amount;
+        container["category"] = `${item._id}:\n$${item.amount}`;
+        container["amount"] = item.amount;
         return container;
       } else {
         return item;
@@ -23,11 +23,11 @@ export default function DonutChart(props) {
       labelComponent={
         <VictoryTooltip
           flyoutStyle={{
-            fill: 'white',
+            fill: "white",
           }}
         />
       }
-      animate={{ easing: 'exp' }}
+      animate={{ easing: "exp" }}
       data={concatenate_labels(props.data)}
       x="category"
       y="amount"

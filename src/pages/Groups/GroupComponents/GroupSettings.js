@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-// import styles from "./PaymentForm.module.css";
+import styles from "./GroupComponent.module.css";
 import imageAvatar from "../../../images/img_avatar.png";
 import AuthContext from "../../../store/AuthContext";
 import CameraAltIcon from "@mui/icons-material/CameraAlt";
@@ -8,10 +8,11 @@ import {
   //   Tab,
   // Table,
   //   Stack,
+  Button,
   Image,
-  //   Form,
-  //   Row,
-  //   Col,
+  Form,
+  Row,
+  Col,
   //   ListGroup,
   //   CloseButton,
   //   Container,
@@ -37,7 +38,13 @@ function GroupSettings() {
   console.log(dummyData);
 
   return (
-    <>
+    <div className={styles.newApp}>
+      <Row>
+        <Col xs="auto">
+          <h2 className={styles.header + " mb-0"}>Group Settings</h2>{" "}
+        </Col>
+      </Row>
+
       <Image
         className="m-3"
         src={imageAvatar}
@@ -46,7 +53,25 @@ function GroupSettings() {
         height="250"
       />
       <CameraAltIcon />
-    </>
+      <Row className="my-4">
+        <Col xs="auto">
+          <h5 className={styles.header}> Edit Name </h5>
+        </Col>
+        <Col xs="auto">
+          <Form.Group>
+            <Form.Control></Form.Control>
+          </Form.Group>
+        </Col>
+      </Row>
+      <Row>
+        <Col xs="auto">
+          <Button> Save Changes</Button>
+        </Col>
+        <Col xs="auto">
+          <Button variant="danger"> Delete Group </Button>
+        </Col>
+      </Row>
+    </div>
   );
 }
 

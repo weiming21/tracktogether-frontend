@@ -1,4 +1,4 @@
-import Victory from './victory';
+import Victory from "./victory";
 //import { View, StyleSheet } from 'react-native';
 
 export default function BarChart(props) {
@@ -10,15 +10,15 @@ export default function BarChart(props) {
 
   return (
     <VictoryChart>
-      <VictoryAxis tickFormat={() => ''} />
+      <VictoryAxis tickFormat={() => ""} />
       <VictoryBar
         labelComponent={
           <VictoryTooltip
-            style={{ fontSize: '24px' }}
+            style={{ fontSize: "24px" }}
             pointerLength={30}
             cornerRadius={20}
             flyoutStyle={{
-              fill: 'white',
+              fill: "white",
             }}
           />
         }
