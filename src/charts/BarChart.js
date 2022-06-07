@@ -8,9 +8,6 @@ export default function BarChart(props) {
   const VictoryLabel = Victory.VictoryLabel;
 
   return (
-<<<<<<< HEAD
-    <VictoryChart>
-=======
     <VictoryChart domainPadding={30}>
       <VictoryLabel
         text="Debt Overview"
@@ -18,22 +15,15 @@ export default function BarChart(props) {
         textAnchor="middle"
         style={{ fontSize: 35, fill: "grey" }}
       />
->>>>>>> 605143036806bc5396b7985ef3fce55f23bc2c75
       <VictoryAxis tickFormat={() => ""} />
       <VictoryBar
         // standalone={false}
         horizontal
         labelComponent={
           <VictoryTooltip
-<<<<<<< HEAD
-            style={{ fontSize: "24px" }}
-            pointerLength={30}
-            cornerRadius={20}
-=======
             style={{ fontSize: "20px" }}
             pointerLength={20}
             cornerRadius={30}
->>>>>>> 605143036806bc5396b7985ef3fce55f23bc2c75
             flyoutStyle={{
               fill: "white",
             }}
