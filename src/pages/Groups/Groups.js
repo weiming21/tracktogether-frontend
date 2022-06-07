@@ -3,9 +3,10 @@ import Navigator from "../../components/navbar/Navigator";
 import SideNavigator from "../../components/sidebar/SideNavigator";
 import Box from "../../components/Box";
 import styles from "./Groups.module.css";
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../../store/AuthContext";
+import GroupContext from "../../store/GroupContext";
 import imageAvatar from "../../images/img_avatar.png";
 import AddGroupModal from "./AddGroupModal";
 import {
@@ -23,27 +24,40 @@ import {
 
 function Group() {
   const authCtx = useContext(AuthContext);
+  const groupCtx = useContext(GroupContext);
   const navigate = useNavigate();
 
   console.log(authCtx);
-  const dummyGroups = [
-    {
-      groupName: "Group 1",
-      groupID: 1234,
-    },
-    {
-      groupName: "Group 2",
-      groupID: 2468,
-    },
-    {
-      groupName: "A really really long group name",
-      groupID: 4201,
-    },
-    {
-      groupName: "Group 4",
-      groupID: 2882,
-    },
-  ];
+  console.log(groupCtx);
+
+  const [groups, setGroups] = useState([]);
+
+  function childToParent(childdata) {
+    const newGroups = groups;
+    newGroups.push(childdata);
+    setGroups(newGroups);
+  }
+
+  useEffect(() => setGroups(groupCtx.group), [groupCtx]);
+
+  // const dummyGroups = [
+  //   {
+  //     groupName: "Group 1",
+  //     groupID: 1234,
+  //   },
+  //   {
+  //     groupName: "Group 2",
+  //     groupID: 2468,
+  //   },
+  //   {
+  //     groupName: "A really really long group name",
+  //     groupID: 4201,
+  //   },
+  //   {
+  //     groupName: "Group 4",
+  //     groupID: 2882,
+  //   },
+  // ];
   function truncateName(name) {
     if (name.length > 12) {
       return name.slice(0, 9) + "...";
@@ -51,7 +65,7 @@ function Group() {
       return name;
     }
   }
-  console.log(dummyGroups);
+  // console.log(dummyGroups);
 
   const [addGroupForm, setAddGroupForm] = useState(false);
 
@@ -95,15 +109,14 @@ function Group() {
               </Col>
             </Row>
             <Row xs={1} sm={2} xl={4} xxl={6} className="g-4">
-              {dummyGroups.map((entry) => {
+              {groups.map((entry) => {
                 return (
                   <Col>
                     <Card
                       className={styles.groupCard + " m-5"}
                       onClick={() => {
                         navigate("./" + entry.groupID);
-                      }}
-                    >
+                      }}>
                       <Card.Body>
                         <Stack>
                           <Image
@@ -114,7 +127,7 @@ function Group() {
                             className={styles.groupImage + " mb-3"}
                           />
 
-                          <h4> {truncateName(entry.groupName)}</h4>
+                          <h4> {truncateName(entry.name)}</h4>
                           <p className="mb-0"> {entry.groupID}</p>
                         </Stack>
                       </Card.Body>
@@ -126,7 +139,7 @@ function Group() {
           </Box>
         </div>
       </div>
-      <AddGroupModal formProps={formProps} />
+      <AddGroupModal formProps={formProps} childToParent={childToParent} />
     </React.Fragment>
   );
 }
