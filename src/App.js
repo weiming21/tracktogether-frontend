@@ -16,7 +16,7 @@ import { FilterContextProvider } from "./store/FilterContext";
 
 function App() {
   const authCtx = useContext(AuthContext);
-  const profileURL = "/profile/" + authCtx.username;
+  // const profileURL = "/profile/" + authCtx.username;
   return (
     <div className="App">
       <FilterContextProvider>
@@ -31,7 +31,15 @@ function App() {
             )}
 
             {authCtx.isLoggedIn && (
-              <Route path={profileURL} element={<Profile />} />
+              <Route path="/profile" element={<Profile />} />
+            )}
+
+            {authCtx.isLoggedIn && (
+              <Route path="/group" element={<Outstanding />} />
+            )}
+
+            {authCtx.isLoggedIn && (
+              <Route path="/outstanding" element={<Outstanding />} />
             )}
             {authCtx.isLoggedIn && (
               <Route path={"/groups"} element={<Groups />} />

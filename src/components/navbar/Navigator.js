@@ -37,7 +37,7 @@ function Navigator() {
   scope=Read&
   response_type=code`;
 
-  const profileURL = "/profile/" + authCtx.username;
+  // const profileURL = "/profile/" + authCtx.username;
   // const  goToBankAccount = (event) => {
   //   event.preventDefault();
   //   const navigation = useNavigate();
@@ -79,11 +79,16 @@ function Navigator() {
         {/* <Navbar.Text> Auth Code: {authCtx.token} </Navbar.Text> */}
 
         <Stack direction="horizontal" gap={3}>
-          <Link to={profileURL}>
+          <Link to="/profile">
             <Navbar.Text> Signed in as: {authCtx.username} </Navbar.Text>
           </Link>
 
-          <Image src={imageAvatar} roundedCircle width="50" height="50" />
+          <Image
+            src={authCtx.image ? authCtx.image : imageAvatar}
+            roundedCircle
+            width="50"
+            height="50"
+          />
 
           <Link to={authURL}>
             {/* <Button variant="outline-primary">Sync with Bank Account</Button> */}

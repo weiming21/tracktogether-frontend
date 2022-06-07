@@ -6,6 +6,7 @@ const AuthContext = React.createContext({
   username: "",
   email: "",
   contact: "",
+  image: "",
   isLoggedIn: false,
   isDataFetched: false,
   login: () => {},
@@ -20,6 +21,7 @@ export const AuthContextProvider = (props) => {
   const [username, setUsername] = useState(null);
   const [email, setEmail] = useState(null);
   const [contact, setContact] = useState(null);
+  const [image, setImage] = useState(null);
 
   const [dataFetched, setDataFetched] = useState(false);
 
@@ -76,6 +78,7 @@ export const AuthContextProvider = (props) => {
     setUsername(account.username);
     setEmail(account.email);
     setContact(account.contact);
+    setImage(account.image);
     // localStorage.setItem("id", account._id);
   };
 
@@ -91,7 +94,7 @@ export const AuthContextProvider = (props) => {
     username: username,
     email: email,
     contact: contact,
-
+    image: image,
     isLoggedIn: userIsLoggedIn,
     isDataFetched: dataFetched,
 
