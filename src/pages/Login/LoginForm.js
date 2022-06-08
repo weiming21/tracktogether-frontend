@@ -8,6 +8,7 @@ import { purple } from "@mui/material/colors";
 import { styled } from "@mui/material/styles";
 import AuthContext from "../../store/AuthContext";
 import { useNavigate } from "react-router-dom";
+import GroupContext from "../../store/GroupContext";
 
 function LoginForm() {
   const ColorButton = styled(Button)(({ theme }) => ({
@@ -26,6 +27,7 @@ function LoginForm() {
   const [isSubmit, setIsSubmit] = useState(false);
   const navigation = useNavigate();
   const authCtx = useContext(AuthContext);
+  const grpCtx = useContext(GroupContext);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -42,8 +44,7 @@ function LoginForm() {
     setFormErrors(validate(credentials));
     setIsSubmit(true);
 
-    const url = "http://localhost:8080/api/account/login";
-    fetch(url, {
+    fetch("http://localhost:8080/api/account/login", {
       method: "POST",
       body: JSON.stringify({
         username: credentials.username,
@@ -80,6 +81,32 @@ function LoginForm() {
       .catch((err) => {
         //alert(err.message);
         console.log(err.message);
+      });
+
+    const url =
+      "http://localhost:8080/api/group/summary/" + credentials.username;
+    fetch(url)
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          return res.json().then((data) => {
+            let errorMessage; // = 'Authentication failed!';
+            console.log(JSON.stringify(data));
+            if (data && data.error && data.error.message) {
+              errorMessage = data.error.message;
+            }
+            console.log(errorMessage);
+
+            throw new Error(errorMessage);
+          });
+        }
+      })
+      .then((data) => {
+        grpCtx.datalog(data);
+      })
+      .catch((err) => {
+        alert(err.message);
       });
   }
 
