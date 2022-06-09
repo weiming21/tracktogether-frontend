@@ -1,12 +1,12 @@
 import React from "react";
 import { Row, Col, Table } from "react-bootstrap";
-import Box from "../../components/Box";
+// import Box from "../../components/Box";
 import EditIcon from "@mui/icons-material/Edit";
 import AcceptIcon from "@mui/icons-material/CheckCircle";
 import RejectIcon from "@mui/icons-material/Cancel";
 import { Pagination } from "react-bootstrap";
 import { useState } from "react";
-import { entries } from "lodash";
+// import { entries } from "lodash";
 
 export default function PersonalOutstanding(props) {
   const [active, setActive] = useState(1);
@@ -19,15 +19,16 @@ export default function PersonalOutstanding(props) {
       <Pagination.Item
         key={number}
         active={number === active}
-        onClick={() => setActive(number)}>
+        onClick={() => setActive(number)}
+      >
         {number}
-      </Pagination.Item>,
+      </Pagination.Item>
     );
   }
 
   const slicedData = props.data.slice(
     (active - 1) * entriesPerPage,
-    active * entriesPerPage,
+    active * entriesPerPage
   );
   return (
     <>

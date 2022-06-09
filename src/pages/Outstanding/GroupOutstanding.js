@@ -1,7 +1,7 @@
 import React from "react";
 import { Row, Col, Table } from "react-bootstrap";
-import Box from "../../components/Box";
-import EditIcon from "@mui/icons-material/Edit";
+// import Box from "../../components/Box";
+// import EditIcon from "@mui/icons-material/Edit";
 import AcceptIcon from "@mui/icons-material/CheckCircle";
 
 export default function GroupOutstanding(props) {

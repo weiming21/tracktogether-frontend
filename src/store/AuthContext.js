@@ -16,6 +16,7 @@ const AuthContext = React.createContext({
 
 export const AuthContextProvider = (props) => {
   const initialToken = localStorage.getItem("token");
+  console.log("rendering Auth Context");
   const [token, setToken] = useState(initialToken);
   const [id, setId] = useState(null);
   const [username, setUsername] = useState(null);
@@ -27,7 +28,7 @@ export const AuthContextProvider = (props) => {
 
   // const [optionState, setOptionState] = useState("Category");
 
-  if (!dataFetched && initialToken != null) {
+  const fetchData = (token) => {
     const url = "http://localhost:8080/api/account/refresh";
     console.log("fetching data in auth context");
     fetch(url, {
@@ -35,7 +36,7 @@ export const AuthContextProvider = (props) => {
       // body: JSON.stringify(base),
       headers: {
         "Content-Type": "application/json",
-        authorization: "Bearer " + initialToken,
+        authorization: "Bearer " + token,
       },
     })
       .then((res) => {
@@ -55,36 +56,43 @@ export const AuthContextProvider = (props) => {
         }
       })
       .then((data) => {
-        loginData(data.data.account);
-        console.log("Successfully refreshed!");
+        let account = data.data.account;
+        setId(account._id);
+        setUsername(account.username);
+        setEmail(account.email);
+        setContact(account.contact);
+        setImage(account.image);
         setDataFetched(true);
+        console.log("Successfully refreshed!");
       })
       .catch((err) => {
         alert(err.message);
       });
-  }
+  };
 
   // const initialId = localStorage.getItem("id");
   const userIsLoggedIn = !!token;
 
+  if (!dataFetched && initialToken != null) {
+    fetchData(initialToken);
+  }
+
   const loginHandler = (token) => {
     setToken(token);
     localStorage.setItem("token", token);
-  };
-
-  const loginData = (account) => {
-    console.log(account);
-    setId(account._id);
-    setUsername(account.username);
-    setEmail(account.email);
-    setContact(account.contact);
-    setImage(account.image);
-    // localStorage.setItem("id", account._id);
+    fetchData(token);
   };
 
   const logoutHandler = () => {
     setToken(null);
     localStorage.removeItem("token");
+    setId(null);
+    setUsername(null);
+    setEmail(null);
+    setContact(null);
+    setImage(null);
+    setDataFetched(false);
+    console.log("Successfully logged out!");
     // localStorage.removeItem("id");
   };
 
@@ -99,7 +107,7 @@ export const AuthContextProvider = (props) => {
     isDataFetched: dataFetched,
 
     login: loginHandler,
-    datalog: loginData,
+    // datalog: loginData,
     logout: logoutHandler,
     // optionState: optionState,
     // setOptionState: setOptionState,

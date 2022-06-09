@@ -26,6 +26,9 @@ import {
 
 function Personal() {
   const authCtx = useContext(AuthContext);
+  console.log("rendering personal");
+  console.log(authCtx);
+
   const filterCtx = useContext(FilterContext);
   const currData = filterCtx.currData;
   const setCurrData = filterCtx.setCurrData;

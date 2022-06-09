@@ -265,7 +265,7 @@ function SignUpForm() {
       .then((data) => {
         // console.log(data.data.account);
         authCtx.login(data.data.token);
-        authCtx.datalog(data.data.account);
+        // authCtx.datalog(data.data.account);
         console.log("working");
         navigation("/");
       })

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Row, Col, Table } from "react-bootstrap";
-import Box from "../../components/Box";
+// import Box from "../../components/Box";
 import PaidIcon from "@mui/icons-material/Paid";
 
 export default function Alerts(props) {

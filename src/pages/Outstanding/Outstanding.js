@@ -6,12 +6,18 @@ import AuthContext from "../../store/AuthContext";
 import PersonalOutstanding from "./PersonalOutstanding";
 import GroupOutstanding from "./GroupOutstanding";
 import Alerts from "./Alerts";
-import { Row, Col, Table, Tabs, Tab } from "react-bootstrap";
+import {
+  // Row,
+  // Col,
+  // Table,
+  Tabs,
+  Tab,
+} from "react-bootstrap";
 import Box from "../../components/Box";
-import EditIcon from "@mui/icons-material/Edit";
-import AcceptIcon from "@mui/icons-material/CheckCircle";
-import RejectIcon from "@mui/icons-material/Cancel";
-import PaidIcon from "@mui/icons-material/Paid";
+// import EditIcon from "@mui/icons-material/Edit";
+// import AcceptIcon from "@mui/icons-material/CheckCircle";
+// import RejectIcon from "@mui/icons-material/Cancel";
+// import PaidIcon from "@mui/icons-material/Paid";
 
 function Outstanding() {
   const authCtx = useContext(AuthContext);
@@ -171,7 +177,8 @@ function Outstanding() {
             <Tabs
               defaultActiveKey="Personal"
               id="uncontrolled-tab-example"
-              className="mb-3">
+              className="mb-3"
+            >
               <Tab eventKey="Personal" title="Personal">
                 <PersonalOutstanding data={localData} />
               </Tab>

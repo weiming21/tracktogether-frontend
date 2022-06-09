@@ -19,7 +19,8 @@ import { Container, Row, Col, Spinner } from "react-bootstrap";
 
 function Home() {
   const authCtx = useContext(AuthContext);
-
+  console.log("rendering home");
+  console.log(authCtx);
   //Random Quote
 
   const initialValues = {
@@ -72,11 +73,12 @@ function Home() {
 
   const fetchData = async () => {
     console.log("entering home frame:" + JSON.stringify(data));
-    const quote_result = await fetch("https://api.quotable.io/random")
-      .then((response) => response.json())
-      .then((data) => {
-        return [data.content, data.author];
-      });
+    // const quote_result = await fetch("https://api.quotable.io/random")
+    //   .then((response) => response.json())
+    //   .then((data) => {
+    //     return [data.content, data.author];
+    //   });
+    const quote_result = ["Test Quote", "Test Author"];
 
     const pie_result = await fetch("http://localhost:8080/api/chart/piechart", {
       method: "PUT",
@@ -103,7 +105,7 @@ function Home() {
         headers: {
           "Content-Type": "application/json",
         },
-      },
+      }
     )
       .then((response) => response.json())
       .then((data) => {

@@ -116,7 +116,8 @@ function Group() {
                       className={styles.groupCard + " m-5"}
                       onClick={() => {
                         navigate("./" + entry.groupID);
-                      }}>
+                      }}
+                    >
                       <Card.Body>
                         <Stack>
                           <Image

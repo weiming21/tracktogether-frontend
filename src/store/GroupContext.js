@@ -20,7 +20,15 @@ export const GroupContextProvider = (props) => {
   if (!dataFetched && authCtx.isDataFetched) {
     const url = "http://localhost:8080/api/group/summary/" + authCtx.username;
     console.log("fetching data in group context");
-    fetch(url)
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: authCtx.username,
+      }),
+    })
       .then((res) => {
         if (res.ok) {
           return res.json();
@@ -38,7 +46,8 @@ export const GroupContextProvider = (props) => {
         }
       })
       .then((data) => {
-        setGroup(data);
+        console.log(data);
+        setGroup(data.data.groups);
         setDataFetched(true);
       })
       .catch((err) => {
