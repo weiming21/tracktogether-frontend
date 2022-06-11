@@ -18,8 +18,8 @@ import {
   Col,
   Card,
   Image,
-  // Popover,
-  // OverlayTrigger,
+  Popover,
+  OverlayTrigger,
 } from "react-bootstrap";
 
 function Group() {
@@ -31,33 +31,82 @@ function Group() {
   console.log(groupCtx);
 
   const [groups, setGroups] = useState([]);
+  const [groupToJoin, setGroupToJoin] = useState(null);
+  const [joinErrorMessage, setJoinErrorMessage] = useState("");
+
+  console.log(groups);
 
   function childToParent(childdata) {
-    const newGroups = groups;
+    const newGroups = [...groups];
     newGroups.push(childdata);
+    console.log(newGroups);
     setGroups(newGroups);
   }
 
+  function handleJoin() {
+    if (groupToJoin) {
+      fetch("http://localhost:8080/api/group/join", {
+        method: "PUT",
+        body: JSON.stringify({
+          groupID: groupToJoin,
+          _id: authCtx._id,
+          username: authCtx.username,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          authorization: "Bearer " + authCtx.token,
+        },
+      })
+        .then((res) => {
+          if (res.ok) {
+            return res.json();
+          } else {
+            return res.json().then((data) => {
+              // let errorMessage;
+              // console.log(JSON.stringify(data));
+              // if (data && data.error && data.error.message) {
+              //   errorMessage = data.error.message;
+              // }
+              // console.log(errorMessage);
+              // throw new Error(errorMessage);
+              console.log(data.message);
+              setJoinErrorMessage(data.message);
+            });
+          }
+        })
+        .then((data) => {
+          const newGroups = [...groups];
+          newGroups.push(data.data.group);
+          console.log(newGroups);
+          setGroups(newGroups);
+        });
+      // .catch((err) => {
+      //   alert(err.message);
+      // });
+    }
+  }
+
+  const popover = (
+    <Popover id="popover-basic">
+      <Popover.Header as="h3">Please Try Again!</Popover.Header>
+      <Popover.Body>
+        <div>
+          <strong>{joinErrorMessage}</strong>
+        </div>
+        <div class="form-row text-center">
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => setJoinErrorMessage("")}>
+            Close
+          </Button>
+        </div>
+      </Popover.Body>
+    </Popover>
+  );
+
   useEffect(() => setGroups(groupCtx.group), [groupCtx]);
 
-  // const dummyGroups = [
-  //   {
-  //     groupName: "Group 1",
-  //     groupID: 1234,
-  //   },
-  //   {
-  //     groupName: "Group 2",
-  //     groupID: 2468,
-  //   },
-  //   {
-  //     groupName: "A really really long group name",
-  //     groupID: 4201,
-  //   },
-  //   {
-  //     groupName: "Group 4",
-  //     groupID: 2882,
-  //   },
-  // ];
   function truncateName(name) {
     if (name.length > 12) {
       return name.slice(0, 9) + "...";
@@ -65,7 +114,6 @@ function Group() {
       return name;
     }
   }
-  // console.log(dummyGroups);
 
   const [addGroupForm, setAddGroupForm] = useState(false);
 
@@ -99,10 +147,16 @@ function Group() {
                   placeholder="Search"
                   className="me-2"
                   aria-label="Search"
+                  onChange={(e) => setGroupToJoin(e.target.value)}
                 />
               </Col>
               <Col xs="auto">
-                <Button>Join</Button>
+                <OverlayTrigger
+                  show={joinErrorMessage}
+                  placement="right"
+                  overlay={popover}>
+                  <Button onClick={handleJoin}>Join</Button>
+                </OverlayTrigger>
               </Col>
               <Col xs="auto">
                 <Button onClick={handleAddGroupForm}>Create</Button>
@@ -116,8 +170,7 @@ function Group() {
                       className={styles.groupCard + " m-5"}
                       onClick={() => {
                         navigate("./" + entry.groupID);
-                      }}
-                    >
+                      }}>
                       <Card.Body>
                         <Stack>
                           <Image

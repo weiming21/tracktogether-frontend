@@ -16,10 +16,12 @@ function AddGroupModal(props) {
       method: "POST",
       body: JSON.stringify({
         name: groupName,
+        _id: authCtx._id,
         username: authCtx.username,
       }),
       headers: {
         "Content-Type": "application/json",
+        authorization: "Bearer " + authCtx.token,
       },
     })
       .then((res) => {
@@ -40,10 +42,7 @@ function AddGroupModal(props) {
       })
       .then((data) => {
         formProps.handleClose();
-        props.childToParent({
-          groupID: data.data.group.groupID,
-          name: data.data.group.name,
-        });
+        props.childToParent(data.data.group);
       })
       .catch((err) => {
         alert(err.message);

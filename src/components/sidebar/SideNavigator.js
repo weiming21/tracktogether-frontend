@@ -11,10 +11,18 @@ import { NavLink } from "react-router-dom";
 import AuthContext from "../../store/AuthContext";
 import { matchPath } from "react-router";
 import { useLocation } from "react-router-dom";
+import GroupContext from "../../store/GroupContext";
 
 function SideNavigator() {
   const authCtx = useContext(AuthContext);
+  const groupCtx = useContext(GroupContext);
   const location = useLocation();
+
+  function handleLogout(e) {
+    e.preventDefault();
+    authCtx.logout();
+    groupCtx.logout();
+  }
 
   return (
     <div
@@ -22,16 +30,13 @@ function SideNavigator() {
         display: "flex",
         height: "100%",
         overflow: "auto",
-        // position: 'absolute',
-      }}
-    >
+      }}>
       <CDBSidebar textColor="#fff" backgroundColor="#333">
         <CDBSidebarHeader prefix={<i className="fa fa-bars fa-large"></i>}>
           <a
             href="/"
             className="text-decoration-none"
-            style={{ color: "inherit" }}
-          >
+            style={{ color: "inherit" }}>
             TrackTogether
           </a>
         </CDBSidebarHeader>
@@ -41,8 +46,7 @@ function SideNavigator() {
             <NavLink exact to="/home">
               <CDBSidebarMenuItem
                 icon="home"
-                active={matchPath(location.pathname, "/home")}
-              >
+                active={matchPath(location.pathname, "/home")}>
                 {" "}
                 Home
               </CDBSidebarMenuItem>
@@ -51,24 +55,21 @@ function SideNavigator() {
             <NavLink exact to="/personal">
               <CDBSidebarMenuItem
                 icon="user"
-                active={matchPath(location.pathname, "/personal")}
-              >
+                active={matchPath(location.pathname, "/personal")}>
                 Personal
               </CDBSidebarMenuItem>
             </NavLink>
             <NavLink exact to="/groups" activeClassName="activeClicked">
               <CDBSidebarMenuItem
                 icon="users"
-                active={matchPath(location.pathname, "/groups")}
-              >
+                active={matchPath(location.pathname, "/groups")}>
                 Groups
               </CDBSidebarMenuItem>
             </NavLink>
             <NavLink exact to="/outstanding" activeClassName="activeClicked">
               <CDBSidebarMenuItem
                 icon="hand-holding-usd"
-                active={matchPath(location.pathname, "/outstanding")}
-              >
+                active={matchPath(location.pathname, "/outstanding")}>
                 Outstanding
               </CDBSidebarMenuItem>
             </NavLink>
@@ -78,8 +79,7 @@ function SideNavigator() {
             exact
             to="/"
             activeClassName="activeClicked"
-            onClick={authCtx.logout}
-          >
+            onClick={handleLogout}>
             <CDBSidebarMenuItem icon="sign-out-alt">Logout</CDBSidebarMenuItem>
           </NavLink>
         </CDBSidebarContent>

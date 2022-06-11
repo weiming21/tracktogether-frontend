@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import styles from "./GroupComponent.module.css";
 import imageAvatar from "../../../images/img_avatar.png";
 import AuthContext from "../../../store/AuthContext";
@@ -13,6 +13,7 @@ import {
   Form,
   Row,
   Col,
+  Modal,
   //   ListGroup,
   //   CloseButton,
   //   Container,
@@ -21,21 +22,34 @@ import {
   // Popover,
   // OverlayTrigger,
 } from "react-bootstrap";
+import { useParams } from "react-router-dom";
 
-function GroupSettings() {
+function GroupSettings(props) {
   const authCtx = useContext(AuthContext);
   console.log(authCtx);
-  const dummyData = [
-    {
-      username: "John",
-      amount: 10,
-    },
-    {
-      username: "Ben",
-      amount: 20,
-    },
-  ];
-  console.log(dummyData);
+  const id = useParams();
+  console.log(id);
+
+  const [deleteShow, setDeleteShow] = useState(false);
+  const [leaveShow, setLeaveShow] = useState(false);
+
+  function handleOpen(name) {
+    return () => {
+      name == "delete" ? setDeleteShow(true) : setLeaveShow(true);
+    };
+  }
+
+  function handleClose(name) {
+    return () => {
+      name == "delete" ? setDeleteShow(false) : setLeaveShow(false);
+    };
+  }
+
+  const [groupName, setGroupName] = useState(props.name);
+
+  // function handleEdit(e) {
+  //   e.preventDefault();
+  // }
 
   return (
     <div className={styles.newApp}>
@@ -55,20 +69,56 @@ function GroupSettings() {
       <CameraAltIcon />
       <Row className="my-4">
         <Col xs="auto">
-          <h5 className={styles.header}> Edit Name </h5>
+          <h5 className={styles.header}>Name</h5>
         </Col>
         <Col xs="auto">
-          <Form.Group>
-            <Form.Control></Form.Control>
-          </Form.Group>
+          <Row>
+            <Col>
+              <Form.Group>
+                <Form.Control placeholder={groupName}></Form.Control>
+              </Form.Group>
+            </Col>
+            <Col>
+              <Button> Save Changes</Button>
+            </Col>
+          </Row>
         </Col>
       </Row>
       <Row>
+        {/* <Col xs="auto"></Col> */}
         <Col xs="auto">
-          <Button> Save Changes</Button>
+          <Button variant="danger" onClick={handleOpen("delete")}>
+            {" "}
+            Delete Group{" "}
+          </Button>
+          <Modal show={deleteShow} onHide={handleClose("delete")}>
+            <Modal.Body>
+              <strong>Are you sure you want to delete the group?</strong>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={handleClose("delete")}>
+                Close
+              </Button>
+              <Button variant="danger">Delete</Button>
+            </Modal.Footer>
+          </Modal>
         </Col>
         <Col xs="auto">
-          <Button variant="danger"> Delete Group </Button>
+          <Button variant="danger" onClick={handleOpen("leave")}>
+            {" "}
+            Leave Group{" "}
+          </Button>
+          <Modal show={leaveShow} onHide={handleClose("leave")}>
+            <Modal.Body>
+              <strong>Are you sure you want to leave the group?</strong>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={handleClose("leave")}>
+                Close
+              </Button>
+              <Button variant="danger">Leave</Button>
+            </Modal.Footer>
+          </Modal>
         </Col>
       </Row>
     </div>
