@@ -30,7 +30,9 @@ function Group() {
   console.log(authCtx);
   console.log(groupCtx);
 
-  const [groups, setGroups] = useState([]);
+  // const [groups, setGroups] = useState([]);
+  const groups = groupCtx.group;
+  const setGroups = groupCtx.setGroup;
   const [groupToJoin, setGroupToJoin] = useState(null);
   const [joinErrorMessage, setJoinErrorMessage] = useState("");
 
@@ -51,6 +53,7 @@ function Group() {
           groupID: groupToJoin,
           _id: authCtx._id,
           username: authCtx.username,
+          contact: authCtx.contact,
         }),
         headers: {
           "Content-Type": "application/json",
@@ -97,7 +100,8 @@ function Group() {
           <Button
             variant="secondary"
             size="sm"
-            onClick={() => setJoinErrorMessage("")}>
+            onClick={() => setJoinErrorMessage("")}
+          >
             Close
           </Button>
         </div>
@@ -113,6 +117,14 @@ function Group() {
     } else {
       return name;
     }
+  }
+
+  function padWithZeroes(groupID) {
+    let groupIDString = groupID.toString();
+    for (let i = 0; i < 4 - groupID.toString().length; i++) {
+      groupIDString = "0" + groupIDString;
+    }
+    return groupIDString;
   }
 
   const [addGroupForm, setAddGroupForm] = useState(false);
@@ -154,7 +166,8 @@ function Group() {
                 <OverlayTrigger
                   show={joinErrorMessage}
                   placement="right"
-                  overlay={popover}>
+                  overlay={popover}
+                >
                   <Button onClick={handleJoin}>Join</Button>
                 </OverlayTrigger>
               </Col>
@@ -163,6 +176,11 @@ function Group() {
               </Col>
             </Row>
             <Row xs={1} sm={2} xl={4} xxl={6} className="g-4">
+              {groups.length == 0 && (
+                <p className={"p-5 " + styles.noGroupMessage}>
+                  You have not joined any groups
+                </p>
+              )}
               {groups.map((entry) => {
                 return (
                   <Col>
@@ -170,7 +188,8 @@ function Group() {
                       className={styles.groupCard + " m-5"}
                       onClick={() => {
                         navigate("./" + entry.groupID);
-                      }}>
+                      }}
+                    >
                       <Card.Body>
                         <Stack>
                           <Image
@@ -182,7 +201,10 @@ function Group() {
                           />
 
                           <h4> {truncateName(entry.name)}</h4>
-                          <p className="mb-0"> {entry.groupID}</p>
+                          <p className="mb-0">
+                            {" "}
+                            {padWithZeroes(entry.groupID)}
+                          </p>
                         </Stack>
                       </Card.Body>
                     </Card>

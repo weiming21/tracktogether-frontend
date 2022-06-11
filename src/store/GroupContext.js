@@ -58,10 +58,53 @@ export const GroupContextProvider = (props) => {
     setDataFetched(false);
   };
 
+  const findGroupWithID = (groupID) => {
+    let baseGroup = {
+      groupID: null,
+      name: null,
+      image: null,
+      users: [],
+      log: [],
+    };
+
+    group.forEach((group) => {
+      if (group.groupID.toString() === groupID) {
+        baseGroup = group;
+      }
+    });
+    return baseGroup;
+  };
+
+  const updateGroupWithID = (groupID, groupName) => {
+    let newGroupArray = [...group];
+    newGroupArray = newGroupArray.map((group) => {
+      if (group.groupID.toString() === groupID) {
+        group.name = groupName;
+      }
+      return group;
+    });
+    setGroup(newGroupArray);
+  };
+
+  const deleteGroupWithID = (groupID) => {
+    let newGroupArray = [...group];
+    newGroupArray = newGroupArray.filter((group) => {
+      if (group.groupID.toString() === groupID) {
+        return false;
+      }
+      return true;
+    });
+    setGroup(newGroupArray);
+  };
+
   const contextValue = {
     group: group,
+    setGroup: setGroup,
     isDataFetched: dataFetched,
     logout: logoutHandler,
+    findGroupWithID: findGroupWithID,
+    updateGroupWithID: updateGroupWithID,
+    deleteGroupWithID: deleteGroupWithID,
   };
 
   return (

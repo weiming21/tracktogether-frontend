@@ -11,6 +11,11 @@
   /* padding-bottom: 1rem; */
 }
 
+.noGroupMessage {
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .quote {
   color: blue;
   font-style: italic;

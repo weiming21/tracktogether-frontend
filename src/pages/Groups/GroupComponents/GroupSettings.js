@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styles from "./GroupComponent.module.css";
 import imageAvatar from "../../../images/img_avatar.png";
 import AuthContext from "../../../store/AuthContext";
@@ -22,16 +22,36 @@ import {
   // Popover,
   // OverlayTrigger,
 } from "react-bootstrap";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import GroupContext from "../../../store/GroupContext";
 
-function GroupSettings(props) {
+function GroupSettings() {
+  const navigation = useNavigate();
+  const initialToken = localStorage.getItem("token");
   const authCtx = useContext(AuthContext);
+  const grpCtx = useContext(GroupContext);
   console.log(authCtx);
-  const id = useParams();
-  console.log(id);
+  const groupID = useParams().groupID;
+  // console.log(id);
+
+  const groupInformation = grpCtx.findGroupWithID(groupID);
 
   const [deleteShow, setDeleteShow] = useState(false);
   const [leaveShow, setLeaveShow] = useState(false);
+
+  const [currGroupName, setCurrGroupName] = useState(groupInformation.name);
+
+  const [showUpdatedMessage, setShowUpdatedMessage] = useState(false);
+
+  useEffect(() => {
+    console.log("groupCtx has changed!");
+
+    const groupInformation = grpCtx.findGroupWithID(groupID);
+    console.log(groupInformation);
+    setCurrGroupName(groupInformation.name);
+  }, [grpCtx]);
+
+  // console.log(setCurrGroupName);
 
   function handleOpen(name) {
     return () => {
@@ -45,7 +65,94 @@ function GroupSettings(props) {
     };
   }
 
-  const [groupName, setGroupName] = useState(props.name);
+  function handleChangeGroupDetails() {
+    const url = "http://localhost:8080/api/group/";
+    fetch(url, {
+      method: "PUT",
+      // body: JSON.stringify(base),
+      headers: {
+        "Content-Type": "application/json",
+        authorization: "Bearer " + initialToken,
+      },
+      body: JSON.stringify({
+        groupID: groupID,
+        name: currGroupName,
+      }),
+    })
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          console.log(res.json().data.message);
+        }
+      })
+      .then((data) => {
+        const newGroupData = data.data.group;
+        const groupName = newGroupData.name;
+        grpCtx.updateGroupWithID(groupID, groupName);
+        setShowUpdatedMessage(true);
+        console.log("Group name updated successfully");
+      });
+  }
+
+  function handleDeleteGroup() {
+    const url = "http://localhost:8080/api/group/delete-group";
+    fetch(url, {
+      method: "PUT",
+      // body: JSON.stringify(base),
+      headers: {
+        "Content-Type": "application/json",
+        authorization: "Bearer " + initialToken,
+      },
+      body: JSON.stringify({
+        groupID: groupID,
+      }),
+    })
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          console.log(res.json().data.message);
+        }
+      })
+      .then(() => {
+        grpCtx.deleteGroupWithID(groupID);
+        console.log("Group deleted successfully");
+      });
+    navigation(-1);
+  }
+
+  function handleLeaveGroup() {
+    const url = "http://localhost:8080/api/group/delete-member";
+    fetch(url, {
+      method: "PUT",
+      // body: JSON.stringify(base),
+      headers: {
+        "Content-Type": "application/json",
+        authorization: "Bearer " + initialToken,
+      },
+      body: JSON.stringify({
+        groupID: groupID,
+        username: authCtx.username,
+      }),
+    })
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          console.log(res.json().data.message);
+        }
+      })
+      .then(() => {
+        grpCtx.deleteGroupWithID(groupID);
+        console.log("Successfully left the group");
+      });
+    navigation(-1);
+  }
+
+  // const [groupName, setGroupName] = useState(props.name);
+
+  // console.log(setGroupName);
 
   // function handleEdit(e) {
   //   e.preventDefault();
@@ -75,15 +182,25 @@ function GroupSettings(props) {
           <Row>
             <Col>
               <Form.Group>
-                <Form.Control placeholder={groupName}></Form.Control>
+                <Form.Control
+                  value={currGroupName}
+                  // placeholder={groupName}
+                  onChange={(e) => setCurrGroupName(e.target.value)}
+                ></Form.Control>
               </Form.Group>
             </Col>
             <Col>
-              <Button> Save Changes</Button>
+              <Button onClick={handleChangeGroupDetails}> Save Changes</Button>
             </Col>
           </Row>
         </Col>
       </Row>
+      {showUpdatedMessage && (
+        <strong>
+          {" "}
+          <p style={{ color: "green" }}> Group Updated Successfully!</p>{" "}
+        </strong>
+      )}
       <Row>
         {/* <Col xs="auto"></Col> */}
         <Col xs="auto">
@@ -99,7 +216,9 @@ function GroupSettings(props) {
               <Button variant="secondary" onClick={handleClose("delete")}>
                 Close
               </Button>
-              <Button variant="danger">Delete</Button>
+              <Button variant="danger" onClick={handleDeleteGroup}>
+                Delete
+              </Button>
             </Modal.Footer>
           </Modal>
         </Col>
@@ -116,7 +235,9 @@ function GroupSettings(props) {
               <Button variant="secondary" onClick={handleClose("leave")}>
                 Close
               </Button>
-              <Button variant="danger">Leave</Button>
+              <Button variant="danger" onClick={handleLeaveGroup}>
+                Leave
+              </Button>
             </Modal.Footer>
           </Modal>
         </Col>
