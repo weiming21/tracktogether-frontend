@@ -16,21 +16,29 @@ const AuthContext = React.createContext({
 
 export const AuthContextProvider = (props) => {
   const initialToken = localStorage.getItem("token");
-  console.log("rendering Auth Context");
+
   const [token, setToken] = useState(initialToken);
-  const [id, setId] = useState(null);
-  const [username, setUsername] = useState(null);
-  const [email, setEmail] = useState(null);
-  const [contact, setContact] = useState(null);
-  const [image, setImage] = useState(null);
+
+  const [accountDetails, setAccountDetails] = useState({
+    id: null,
+    username: null,
+    email: null,
+    contact: null,
+    image: null,
+  });
 
   const [dataFetched, setDataFetched] = useState(false);
 
+  console.log("rendering Auth Context");
+  console.log("auth Ctx reload");
+  console.log("authDatafetched " + dataFetched);
+  console.log(accountDetails);
   // const [optionState, setOptionState] = useState("Category");
 
   const fetchData = (token) => {
     const url = "http://localhost:8080/api/account/refresh";
     console.log("fetching data in auth context");
+    setDataFetched(true);
     fetch(url, {
       method: "GET",
       // body: JSON.stringify(base),
@@ -56,13 +64,18 @@ export const AuthContextProvider = (props) => {
         }
       })
       .then((data) => {
+        // setDataFetched(true);
         let account = data.data.account;
-        setId(account._id);
-        setUsername(account.username);
-        setEmail(account.email);
-        setContact(account.contact);
-        setImage(account.image);
-        setDataFetched(true);
+
+        // setToken(null);
+        setAccountDetails({
+          id: account._id,
+          username: account.username,
+          email: account.email,
+          contact: account.contact,
+          image: account.image,
+        });
+
         console.log("Successfully refreshed!");
       })
       .catch((err) => {
@@ -86,11 +99,13 @@ export const AuthContextProvider = (props) => {
   const logoutHandler = () => {
     setToken(null);
     localStorage.removeItem("token");
-    setId(null);
-    setUsername(null);
-    setEmail(null);
-    setContact(null);
-    setImage(null);
+    setAccountDetails({
+      id: null,
+      username: null,
+      email: null,
+      contact: null,
+      image: null,
+    });
     setDataFetched(false);
     console.log("Successfully logged out!");
     // localStorage.removeItem("id");
@@ -98,11 +113,11 @@ export const AuthContextProvider = (props) => {
 
   const contextValue = {
     token: token,
-    id: id,
-    username: username,
-    email: email,
-    contact: contact,
-    image: image,
+    id: accountDetails.id,
+    username: accountDetails.username,
+    email: accountDetails.email,
+    contact: accountDetails.contact,
+    image: accountDetails.image,
     isLoggedIn: userIsLoggedIn,
     isDataFetched: dataFetched,
 

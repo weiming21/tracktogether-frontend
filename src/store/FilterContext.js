@@ -1,17 +1,75 @@
 import React, { useState } from "react";
+// import AuthContext from "./AuthContext";
 
 const FilterContext = React.createContext({
   optionState: [],
-
+  isDataFetched: false,
   setOptionState: () => {},
   addFilter: () => {},
   deleteFilter: () => {},
 });
 
 export const FilterContextProvider = (props) => {
+  const initialToken = localStorage.getItem("token");
+
+  // const token = get
+
   const [optionState, setOptionState] = useState([]);
 
   const [currData, setCurrData] = useState([]);
+  const [localData, setLocalData] = useState([]);
+
+  const [dataFetched, setDataFetch] = useState(false);
+
+  // const [localDataFunction, setLocalDataFunction] = useState((props) => {
+  //   console.log(props);
+  //   return [];
+  // });
+
+  console.log("filter Ctx reload");
+  console.log(initialToken);
+  console.log("datafected " + dataFetched);
+
+  // const [localDataFunction, setLocalDataFunction] = useState(() => {});
+
+  // const [sortCategoryHandlerFunction, setSortCategoryHandlerFunction] =
+  //   useState(() => {});
+
+  // const authCtx = useContext(AuthContext);
+
+  // if (!dataFetched) {
+
+  if (!dataFetched && initialToken != null) {
+    const url = "http://localhost:8080/api/account/transactions/";
+    console.log("fetching data in personal ");
+    setDataFetch(true);
+    fetch(url, {
+      method: "GET",
+      // body: JSON.stringify(base),
+      headers: {
+        "Content-Type": "application/json",
+        authorization: "Bearer " + initialToken,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setCurrData(data.data);
+        setLocalData(data.data);
+        // localDataFunction(data.data);
+
+        // console.log("fetched data in filterctx");
+        // console.log(data.data);
+        // localDataFunction(data);
+      })
+      // .then((data) => {
+      //   console.log(data);
+      // })
+      .catch((error) =>
+        setCurrData(`Unable to retrieve quote. Error: ${error}`)
+      );
+
+    // sortCategoryHandlerFunction();
+  }
 
   // const [localData, setLocalData] = useState([]);
 
@@ -104,11 +162,17 @@ export const FilterContextProvider = (props) => {
   };
 
   const contextValue = {
+    isDataFetched: dataFetched,
     optionState: optionState,
     currData: currData,
     // localData: localData,
     setOptionState: setOptionState,
     setCurrData: setCurrData,
+    localData: localData,
+    setLocalData: setLocalData,
+    // setLocalDataFunction: setLocalDataFunction,
+    // setSortCategoryHandlerFunction: setSortCategoryHandlerFunction,
+
     // setLocalData: setLocalData,
     addFilter: addFilter,
     deleteAllFilter: deleteAllFilter,

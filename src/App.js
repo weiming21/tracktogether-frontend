@@ -12,52 +12,52 @@ import AuthContext from "./store/AuthContext";
 import { useContext } from "react";
 import { Navigate } from "react-router-dom";
 import "./App.css";
-import { FilterContextProvider } from "./store/FilterContext";
-import { GroupContextProvider } from "./store/GroupContext";
+// import { FilterContextProvider } from "./store/FilterContext";
+// import { GroupContextProvider } from "./store/GroupContext";
 
 function App() {
   const authCtx = useContext(AuthContext);
   // const profileURL = "/profile/" + authCtx.username;
   return (
     <div className="App">
-      <GroupContextProvider>
-        <FilterContextProvider>
-          <BrowserRouter>
-            <Routes>
-              <Route exact path="/" element={<Login />} />
-              <Route path="/signup" element={<SignUp />} />
-              {authCtx.isLoggedIn && <Route path="/Home" element={<Home />} />}
+      {/* <GroupContextProvider> */}
+      {/* <FilterContextProvider> */}
+      <BrowserRouter>
+        <Routes>
+          <Route exact path="/" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          {authCtx.isLoggedIn && <Route path="/Home" element={<Home />} />}
 
-              {authCtx.isLoggedIn && (
-                <Route path="/personal" element={<Personal />} />
-              )}
+          {authCtx.isLoggedIn && (
+            <Route path="/personal" element={<Personal />} />
+          )}
 
-              {authCtx.isLoggedIn && (
-                <Route path="/profile" element={<Profile />} />
-              )}
+          {authCtx.isLoggedIn && (
+            <Route path="/profile" element={<Profile />} />
+          )}
 
-              {authCtx.isLoggedIn && (
-                <Route path="/group" element={<Outstanding />} />
-              )}
+          {authCtx.isLoggedIn && (
+            <Route path="/group" element={<Outstanding />} />
+          )}
 
-              {authCtx.isLoggedIn && (
-                <Route path="/outstanding" element={<Outstanding />} />
-              )}
-              {authCtx.isLoggedIn && (
-                <Route path={"/groups"} element={<Groups />} />
-              )}
-              {authCtx.isLoggedIn && (
-                <Route path="/groups/:groupID" element={<GroupDetails />} />
-              )}
+          {authCtx.isLoggedIn && (
+            <Route path="/outstanding" element={<Outstanding />} />
+          )}
+          {authCtx.isLoggedIn && (
+            <Route path={"/groups"} element={<Groups />} />
+          )}
+          {authCtx.isLoggedIn && (
+            <Route path="/groups/:groupID" element={<GroupDetails />} />
+          )}
 
-              {authCtx.isLoggedIn && (
-                <Route path={"/outstanding"} element={<Outstanding />} />
-              )}
-              <Route path="*" element={<Navigate to="/" />} />
-            </Routes>
-          </BrowserRouter>
-        </FilterContextProvider>
-      </GroupContextProvider>
+          {authCtx.isLoggedIn && (
+            <Route path={"/outstanding"} element={<Outstanding />} />
+          )}
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </BrowserRouter>
+      {/* </FilterContextProvider> */}
+      {/* </GroupContextProvider> */}
     </div>
   );
 }

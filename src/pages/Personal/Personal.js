@@ -3,7 +3,7 @@ import SideNavigator from "../../components/sidebar/SideNavigator";
 import Box from "../../components/Box";
 import SubmitTransactionModal from "./SubmitTransactionModal";
 import styles from "./Personal.module.css";
-import React, { useState, useRef, useEffect, useContext } from "react";
+import React, { useState, useRef, useContext, useEffect } from "react";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
@@ -32,37 +32,32 @@ function Personal() {
   const filterCtx = useContext(FilterContext);
   const currData = filterCtx.currData;
   const setCurrData = filterCtx.setCurrData;
-  const [localData, setLocalData] = useState([]);
+  const localData = filterCtx.localData;
+  const setLocalData = filterCtx.setLocalData;
+
+  // const [localData, setLocalData] = useState([...currData]);
+
+  // useEffect(() => {
+  //   setLocalData([...currData]);
+  // }, [filterCtx]);
+  // filterCtx.setLocalDataFunction(setLocalData);
+
+  // const childToParent = (props) => {
+  //   setLocalData: setLocalData
+  // }
 
   useEffect(() => {
-    console.log(authCtx.isFetchingData + " use effect frames");
-    if (authCtx.isDataFetched) {
-      const url = "http://localhost:8080/api/account/" + authCtx.id;
-      console.log("fetching data in personal " + url);
-      fetch(url)
-        .then((response) => response.json())
-        .then((data) => {
-          setCurrData(data);
-          setLocalData(data);
-        })
-        .then((data) => {
-          console.log(data);
-        })
-        .catch((error) =>
-          setCurrData(`Unable to retrieve quote. Error: ${error}`)
-        );
-      sortCategoryHandler();
-    }
-  }, [authCtx]);
+    sortCategoryHandler(sortCategory, sortDirection);
+  }, []);
 
-  const sortCategory = useRef();
+  const [sortCategory, setSortCategory] = useState("Date");
   const [sortDirection, setSortDirection] = useState(true); //True implies descending order
   const handleSortDirection = () => {
     setSortDirection(!sortDirection);
-    sortCategoryHandler();
+    sortCategoryHandler(sortCategory, !sortDirection);
   };
 
-  function sortCategoryHandler() {
+  function sortCategoryHandler(sortCategory, sortDirection) {
     function dataComparator(sortCategoryValue) {
       const numericalSortDirection = sortDirection ? 1 : -1;
       switch (sortCategoryValue) {
@@ -79,9 +74,14 @@ function Personal() {
     }
 
     const newLocalData = [...localData];
-    newLocalData.sort(dataComparator(sortCategory.current.value));
+    newLocalData.sort(dataComparator(sortCategory));
     setLocalData(newLocalData);
   }
+
+  // sortCategoryHandler();
+
+  // filterCtx.setLocalDataFunction(setLocalData);
+  // filterCtx.setSortCategoryHandlerFunction(sortCategoryHandler);
 
   const dateInput = useRef();
   const transNameInput = useRef();
@@ -246,13 +246,16 @@ function Personal() {
               </Col>
               <Col xs="auto">
                 <Form.Select
-                  ref={sortCategory}
-                  onChange={sortCategoryHandler}
+                  value={sortCategory}
+                  onChange={(e) => {
+                    setSortCategory(e.target.value);
+                    sortCategoryHandler(e.target.value, sortDirection);
+                  }}
                   placeholder="Enter category"
                 >
-                  <option> Date </option>
-                  <option> Amount </option>
-                  <option> Transaction Name </option>
+                  <option value="Date"> Date </option>
+                  <option vale="Amount"> Amount </option>
+                  <option value="Transaction Name"> Transaction Name </option>
                 </Form.Select>
               </Col>
               <Col xs="auto">
