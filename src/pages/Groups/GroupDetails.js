@@ -8,6 +8,7 @@ import GroupSettings from "./GroupComponents/GroupSettings";
 import styles from "./Groups.module.css";
 import React, { useContext } from "react";
 import AuthContext from "../../store/AuthContext";
+import GroupContext from "../../store/GroupContext";
 import { useParams } from "react-router-dom";
 import {
   Tabs,
@@ -27,11 +28,11 @@ import {
 function GroupDetails() {
   const authCtx = useContext(AuthContext);
   console.log(authCtx);
+  const grpCtx = useContext(GroupContext);
   //Use this to find the specific route of the group
   const params = useParams();
-  console.log(params.groupID);
 
-  return (
+  return grpCtx.validateGroupWithID(parseInt(params.groupID)) ? (
     <React.Fragment style={{ overflow: "auto" }}>
       <Navigator />
       <div style={{ display: "flex", minHeight: "100%", overflow: "auto" }}>
@@ -44,8 +45,7 @@ function GroupDetails() {
             <Tabs
               defaultActiveKey="payment"
               id="uncontrolled-tab-example"
-              className="mb-3"
-            >
+              className="mb-3">
               <Tab eventKey="payment" title="Initiate Payment">
                 <PaymentForm />
               </Tab>
@@ -60,6 +60,10 @@ function GroupDetails() {
         </div>
       </div>
     </React.Fragment>
+  ) : (
+    <div>
+      <h1>Error 404 not found</h1>
+    </div>
   );
 }
 

@@ -18,6 +18,7 @@ function AddGroupModal(props) {
         name: groupName,
         _id: authCtx._id,
         username: authCtx.username,
+        contact: authCtx.contact,
       }),
       headers: {
         "Content-Type": "application/json",

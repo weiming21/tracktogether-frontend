@@ -5,6 +5,7 @@ const GroupContext = React.createContext({
   isDataFetched: false,
   //   login: () => {},
   //   datalog: () => {},
+  validateGroupWithID: () => {},
   logout: () => {},
 });
 
@@ -97,6 +98,13 @@ export const GroupContextProvider = (props) => {
     setGroup(newGroupArray);
   };
 
+  const validateGroupWithID = (groupID) => {
+    let newGroupArray = [...group];
+    newGroupArray = newGroupArray.map((group) => group.groupID);
+    console.log(newGroupArray.includes(groupID));
+    return newGroupArray.includes(groupID);
+  };
+
   const contextValue = {
     group: group,
     setGroup: setGroup,
@@ -105,6 +113,7 @@ export const GroupContextProvider = (props) => {
     findGroupWithID: findGroupWithID,
     updateGroupWithID: updateGroupWithID,
     deleteGroupWithID: deleteGroupWithID,
+    validateGroupWithID: validateGroupWithID,
   };
 
   return (
