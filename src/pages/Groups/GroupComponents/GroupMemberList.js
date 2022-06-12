@@ -1,8 +1,10 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import styles from "./GroupComponent.module.css";
 import AuthContext from "../../../store/AuthContext";
+import GroupContext from "../../../store/GroupContext";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import { useParams } from "react-router-dom";
 import {
   //   Tabs,
   //   Tab,
@@ -24,19 +26,19 @@ import {
 function GroupMemberList() {
   const authCtx = useContext(AuthContext);
   console.log(authCtx);
-  const dummyData = [
-    {
-      username: "Really",
-      contact: 11112222,
-      amount: 10,
-    },
-    {
-      username: "Ben",
-      contact: 44445555,
-      amount: 20,
-    },
-  ];
-  console.log(dummyData);
+  const grpCtx = useContext(GroupContext);
+
+  const groupID = useParams().groupID;
+
+  const [groupInformation, setGroupInformation] = useState(
+    grpCtx.findGroupWithID(groupID).users
+  );
+
+  useEffect(() => {
+    const newGroupInformation = grpCtx.findGroupWithID(groupID).users;
+    setGroupInformation(newGroupInformation);
+  }, [grpCtx]);
+
   const [sortDirection, setSortDirection] = useState(true); //True implies descending order
   const handleSortDirection = () => {
     setSortDirection(!sortDirection);
@@ -72,7 +74,7 @@ function GroupMemberList() {
           </tr>
         </thead>
         <tbody>
-          {dummyData.map((entry) => {
+          {groupInformation.map((entry) => {
             return (
               <tr>
                 <td className="py-3">{entry.username}</td>
