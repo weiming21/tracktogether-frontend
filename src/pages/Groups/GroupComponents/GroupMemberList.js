@@ -24,6 +24,7 @@ import {
 } from "react-bootstrap";
 
 function GroupMemberList() {
+  // const initialToken = localStorage.getItem("token");
   const authCtx = useContext(AuthContext);
   console.log(authCtx);
   const grpCtx = useContext(GroupContext);
@@ -45,6 +46,33 @@ function GroupMemberList() {
     // sortCategoryHandler();
   };
 
+  const handleResetPayments = () => {
+    const url = "http://localhost:8080/api/group/reset-payment";
+    fetch(url, {
+      method: "POST",
+      // body: JSON.stringify(base),
+      headers: {
+        "Content-Type": "application/json",
+        // authorization: "Bearer " + initialToken,
+      },
+      body: JSON.stringify({
+        groupID: groupID,
+      }),
+    })
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          console.log(res.json().data.message);
+        }
+      })
+      .then((data) => {
+        const newGroupData = data.data.group;
+        grpCtx.updateGroupInformation(groupID, newGroupData);
+        console.log("Successfully initiated payment");
+      });
+  };
+
   return (
     <React.Fragment style={{ overflow: "auto" }}>
       <Row className="align-items-center pb-3">
@@ -52,7 +80,10 @@ function GroupMemberList() {
           <h2 className={styles.header}>Group Members</h2>{" "}
         </Col>
         <Col xs="auto">
-          <Button variant="warning"> Reset Payments </Button>
+          <Button variant="warning" onClick={handleResetPayments}>
+            {" "}
+            Reset Payments{" "}
+          </Button>
         </Col>
         <Col xs="auto">
           <Form.Text>Sort by Amount</Form.Text>
@@ -79,7 +110,7 @@ function GroupMemberList() {
               <tr>
                 <td className="py-3">{entry.username}</td>
                 <td className="py-3">{entry.contact}</td>
-                <td className="py-3">{entry.amount}</td>
+                <td className="py-3">{Number(entry.amount).toFixed(2)}</td>
                 <td>
                   <Button variant="danger"> Remove</Button>
                 </td>

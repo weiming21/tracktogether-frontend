@@ -76,6 +76,32 @@ export const GroupContextProvider = (props) => {
     return baseGroup;
   };
 
+  const findUserIDWithName = (groupID, username) => {
+    let userID = 0;
+    group.forEach((group) => {
+      if (group.groupID.toString() === groupID) {
+        group.users.forEach((user) => {
+          if (user.username === username) {
+            userID = user.userID;
+          }
+        });
+      }
+    });
+    console.log(userID);
+    return userID;
+  };
+
+  const updateGroupInformation = (groupID, newGroupInformation) => {
+    let newGroupArray = [...group];
+    newGroupArray = newGroupArray.map((group) => {
+      if (group.groupID.toString() === groupID) {
+        return newGroupInformation;
+      }
+      return group;
+    });
+    setGroup(newGroupArray);
+  };
+
   const updateGroupWithID = (groupID, groupName) => {
     let newGroupArray = [...group];
     newGroupArray = newGroupArray.map((group) => {
@@ -111,6 +137,8 @@ export const GroupContextProvider = (props) => {
     isDataFetched: dataFetched,
     logout: logoutHandler,
     findGroupWithID: findGroupWithID,
+    findUserIDWithName: findUserIDWithName,
+    updateGroupInformation: updateGroupInformation,
     updateGroupWithID: updateGroupWithID,
     deleteGroupWithID: deleteGroupWithID,
     validateGroupWithID: validateGroupWithID,

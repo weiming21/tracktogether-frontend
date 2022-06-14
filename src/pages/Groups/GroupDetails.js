@@ -45,7 +45,8 @@ function GroupDetails() {
             <Tabs
               defaultActiveKey="payment"
               id="uncontrolled-tab-example"
-              className="mb-3">
+              className="mb-3"
+            >
               <Tab eventKey="payment" title="Initiate Payment">
                 <PaymentForm />
               </Tab>

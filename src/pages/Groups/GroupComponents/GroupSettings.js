@@ -185,9 +185,8 @@ function GroupSettings() {
                 <Form.Control
                   value={currGroupName}
                   // placeholder={groupName}
-                  onChange={(e) =>
-                    setCurrGroupName(e.target.value)
-                  }></Form.Control>
+                  onChange={(e) => setCurrGroupName(e.target.value)}
+                ></Form.Control>
               </Form.Group>
             </Col>
             <Col>

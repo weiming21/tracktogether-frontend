@@ -22,7 +22,7 @@ import {
 } from "react-bootstrap";
 
 function PaymentForm() {
-  // const initialToken = localStorage.getItem("token");
+  const initialToken = localStorage.getItem("token");
   const authCtx = useContext(AuthContext);
   console.log(authCtx);
   const grpCtx = useContext(GroupContext);
@@ -50,38 +50,40 @@ function PaymentForm() {
   const [initiatingMember, setInitiatingMember] = useState(authCtx.username);
   const [currMember, setCurrMember] = useState("All");
 
-  /*
   function handleSubmitInitiatePayment() {
-
     let hasInitiatingMember = false;
 
-    const processedInformation = localData.map(entry => {
+    const processedInformation = localData.map((entry) => {
       const json = {
+        date: new Date(),
         username: entry.username,
-        amount: amount,
+        userID: grpCtx.findUserIDWithName(groupID, entry.username),
+        amount: Number(entry.amount),
         description: currDescription,
         category: currCategory,
-        status: false
-      }
+        status: false,
+      };
       if (entry.username === initiatingMember) {
         hasInitiatingMember = true;
         json.status = true;
         json.amount = json.amount - currAmount;
-      } 
+      }
       return json;
-    })
+    });
 
     if (!hasInitiatingMember) {
       processedInformation.push({
+        date: new Date(),
         username: initiatingMember,
-        amount : -currAmount,
+        userID: grpCtx.findUserIDWithName(groupID, initiatingMember),
+        amount: -currAmount,
         description: currDescription,
         category: currCategory,
-        status:true
-      })
+        status: true,
+      });
     }
 
-    const url = "http://localhost:8080/api/group/initiatePayment";
+    const url = "http://localhost:8080/api/group/initiate-payment";
     fetch(url, {
       method: "POST",
       // body: JSON.stringify(base),
@@ -91,7 +93,7 @@ function PaymentForm() {
       },
       body: JSON.stringify({
         groupID: groupID,
-        name: currGroupName,
+        userAmounts: processedInformation,
       }),
     })
       .then((res) => {
@@ -103,12 +105,10 @@ function PaymentForm() {
       })
       .then((data) => {
         const newGroupData = data.data.group;
-        const groupName = newGroupData.name;
-        grpCtx.updateGroupWithID(groupID, groupName);
-        setShowUpdatedMessage(true);
-        console.log("Group name updated successfully");
+        grpCtx.updateGroupInformation(groupID, newGroupData);
+        console.log("Successfully initiated payment");
       });
-  }*/
+  }
 
   function handleCurrAmount(e) {
     setCurrAmount(e.target.value);
@@ -324,7 +324,11 @@ function PaymentForm() {
               );
             })}
           </ListGroup>
-          <Button style={{ display: "flex" }} className="my-3">
+          <Button
+            onClick={handleSubmitInitiatePayment}
+            style={{ display: "flex" }}
+            className="my-3"
+          >
             {" "}
             Send Transaction Request{" "}
           </Button>{" "}
