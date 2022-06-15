@@ -1,10 +1,23 @@
-import React from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Row, Col, Table } from "react-bootstrap";
 // import Box from "../../components/Box";
 // import EditIcon from "@mui/icons-material/Edit";
 import AcceptIcon from "@mui/icons-material/CheckCircle";
+import AuthContext from "../../store/AuthContext";
+import GroupContext from "../../store/GroupContext";
 
-export default function GroupOutstanding(props) {
+export default function GroupOutstanding() {
+  // const initialToken = localStorage.getItem("token");
+  const authCtx = useContext(AuthContext);
+  const grpCtx = useContext(GroupContext);
+  const notifications = grpCtx.findNotifications(authCtx.username);
+  const [currNotifications, setCurrNotifications] = useState(notifications);
+
+  useEffect(() => {
+    const notifications = grpCtx.findNotifications(authCtx.username);
+    setCurrNotifications(notifications);
+  }, [grpCtx]);
+
   return (
     <>
       <Row className="align-items-center pb-3">
@@ -18,17 +31,17 @@ export default function GroupOutstanding(props) {
         <thead>
           <tr>
             <th>Group</th>
-            <th>Member</th>
+            <th>Member to pay</th>
             <th>Amount($)</th>
             <th>Confirm</th>
           </tr>
         </thead>
         <tbody>
-          {props.data.map((entry) => {
+          {currNotifications.map((entry) => {
             return (
               <tr>
-                <td>{new Date(entry.date).toDateString()}</td>
-                <td>{entry.information}</td>
+                <td>{entry.groupName}</td>
+                <td>{entry.targetUsername}</td>
                 <td>{Number(entry.amount).toFixed(2)}</td>
                 <td>
                   <AcceptIcon style={{ color: "green" }} />

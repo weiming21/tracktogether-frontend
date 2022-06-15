@@ -69,3 +69,7 @@
   background-color: rgb(231, 231, 231);
   /* border-color: #0d6efd; */
 }
+
+.entryAmount {
+  color: chartreuse;
+}

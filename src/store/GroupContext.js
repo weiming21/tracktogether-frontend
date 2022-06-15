@@ -131,6 +131,22 @@ export const GroupContextProvider = (props) => {
     return newGroupArray.includes(groupID);
   };
 
+  const findNotifications = (username) => {
+    const finalArray = [];
+    group.forEach((entry) => {
+      entry.log.forEach((log) => {
+        if (log.username === username && log.status == false) {
+          const json = {
+            ...log,
+            groupName: entry.name,
+          };
+          finalArray.push(json);
+        }
+      });
+    });
+    return finalArray;
+  };
+
   const contextValue = {
     group: group,
     setGroup: setGroup,
@@ -142,6 +158,7 @@ export const GroupContextProvider = (props) => {
     updateGroupWithID: updateGroupWithID,
     deleteGroupWithID: deleteGroupWithID,
     validateGroupWithID: validateGroupWithID,
+    findNotifications: findNotifications,
   };
 
   return (
