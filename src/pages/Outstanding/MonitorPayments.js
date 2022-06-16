@@ -1,10 +1,9 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Row, Col, Table } from "react-bootstrap";
 // import Box from "../../components/Box";
-import PaidIcon from "@mui/icons-material/Paid";
 import FilterContext from "../../store/FilterContext";
 
-export default function Alerts() {
+export default function MonitorPayments() {
   const filterCtx = useContext(FilterContext);
 
   const [alert, setAlert] = useState(filterCtx.alertData);
@@ -13,20 +12,20 @@ export default function Alerts() {
     setAlert(filterCtx.alertData);
   }, [filterCtx]);
 
-  function handleAlert(index) {
-    return () => {
-      const newAlert = [...alert];
-      newAlert.splice(index, 1);
-      setAlert(newAlert);
-    };
-  }
+  //   function handleAlert(index) {
+  //     return () => {
+  //       const newAlert = [...alert];
+  //       newAlert.splice(index, 1);
+  //       setAlert(newAlert);
+  //     };
+  //   }
 
   return (
     <>
       <Row className="align-items-center pb-3">
         <Col xs="auto">
           {" "}
-          <h2>Alerts</h2>
+          <h2>Payments Due</h2>
         </Col>
         <Col xs="auto"> </Col>
       </Row>
@@ -34,28 +33,21 @@ export default function Alerts() {
         <thead>
           <tr>
             <th>Group</th>
-            <th>Payment to</th>
+            <th>Payment from</th>
             <th>Contact</th>
             <th>Amount($)</th>
-            <th>Confirm</th>
           </tr>
         </thead>
         <tbody>
           {alert
-            .filter((entry) => entry.amount > 0)
-            .map((entry, idx) => {
+            .filter((entry) => entry.amount < 0)
+            .map((entry) => {
               return (
                 <tr>
                   <td>{entry.group}</td>
                   <td>{entry.user}</td>
                   <td>{entry.contact}</td>
-                  <td>{Number(entry.amount).toFixed(2)}</td>
-                  <td>
-                    <PaidIcon
-                      style={{ color: "green" }}
-                      onClick={handleAlert(idx)}
-                    />
-                  </td>
+                  <td>{Number(-entry.amount).toFixed(2)}</td>
                 </tr>
               );
             })}

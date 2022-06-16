@@ -4,11 +4,12 @@ import Box from "../../components/Box";
 import SubmitTransactionModal from "./SubmitTransactionModal";
 import styles from "./Personal.module.css";
 import React, { useState, useRef, useContext, useEffect } from "react";
+// import { useNavigate } from "react-router-dom";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import AddIcon from "@mui/icons-material/Add";
-import AuthContext from "../../store/AuthContext";
+// import AuthContext from "../../store/AuthContext";
 import FilterContext from "../../store/FilterContext";
 import FilterComponent from "./FilterComponent";
 import {
@@ -25,30 +26,39 @@ import {
 } from "react-bootstrap";
 
 function Personal() {
-  const authCtx = useContext(AuthContext);
-  console.log("rendering personal");
-  console.log(authCtx);
+  // const authCtx = useContext(AuthContext);
+  const token = localStorage.getItem("token");
+  // const navigation = useNavigate();
 
   const filterCtx = useContext(FilterContext);
   const currData = filterCtx.currData;
-  const setCurrData = filterCtx.setCurrData;
+  // const setCurrData = filterCtx.setCurrData;
   const localData = filterCtx.localData;
   const setLocalData = filterCtx.setLocalData;
 
+  const [totalAmount, setTotalAmount] = useState(
+    localData.reduce((curr, next) => curr + next.amount, 0).toFixed(2)
+  );
+
+  useEffect(() => {
+    setTotalAmount(
+      filterCtx.localData
+        .reduce((curr, next) => curr + next.amount, 0)
+        .toFixed(2)
+    );
+  }, [filterCtx]);
+
   // const [localData, setLocalData] = useState([...currData]);
 
-  // useEffect(() => {
-  //   setLocalData([...currData]);
-  // }, [filterCtx]);
   // filterCtx.setLocalDataFunction(setLocalData);
 
   // const childToParent = (props) => {
   //   setLocalData: setLocalData
   // }
 
-  useEffect(() => {
-    sortCategoryHandler(sortCategory, sortDirection);
-  }, []);
+  // useEffect(() => {
+  //   sortCategoryHandler(sortCategory, sortDirection);
+  // }, []);
 
   const [sortCategory, setSortCategory] = useState("Date");
   const [sortDirection, setSortDirection] = useState(true); //True implies descending order
@@ -78,6 +88,28 @@ function Personal() {
     setLocalData(newLocalData);
   }
 
+  function sortStream(data, sortCategory, sortDirection) {
+    function dataComparator(sortCategoryValue) {
+      const numericalSortDirection = sortDirection ? 1 : -1;
+      switch (sortCategoryValue) {
+        case "Date":
+          return (a, b) =>
+            numericalSortDirection * (new Date(b.date) - new Date(a.date));
+        case "Amount":
+          return (a, b) =>
+            numericalSortDirection * (Number(b.amount) - Number(a.amount));
+        case "Transaction Name":
+          return (a, b) =>
+            numericalSortDirection * (b.information < a.information ? -1 : 1);
+      }
+    }
+    const newLocalData = [...data];
+    newLocalData.sort(dataComparator(sortCategory));
+    return newLocalData;
+  }
+
+  const dataToDisplay = sortStream(localData, sortCategory, sortDirection);
+
   // sortCategoryHandler();
 
   // filterCtx.setLocalDataFunction(setLocalData);
@@ -106,15 +138,22 @@ function Personal() {
       mode: enteredTransMode,
     };
     console.log(newData);
-    setCurrData([...currData, newData]);
+    if (enteredDate === "" || enteredAmount === "") {
+      setShowValidationText(true);
+      return;
+    }
+
     setTransactionForm(false);
-    const url = "http://localhost:8080/api/account/" + authCtx.id;
+    const url = "http://localhost:8080/api/account/transactions/";
     console.log(url);
     fetch(url, {
       method: "PUT",
-      body: JSON.stringify(newData),
+      body: JSON.stringify({
+        data: newData,
+      }),
       headers: {
         "Content-Type": "application/json",
+        authorization: "Bearer " + token,
       },
     })
       .then((res) => {
@@ -133,6 +172,11 @@ function Personal() {
           });
         }
       })
+      .then(() => {
+        // setCurrData([...currData, newData]);
+        // setLocalData([...localData, newData]);
+        location.reload();
+      })
       .catch((err) => {
         alert(err.message);
       });
@@ -150,6 +194,7 @@ function Personal() {
             index={filterArray.length}
             localData={localData}
             setLocalData={setLocalData}
+            setActiveTab={setActiveTab}
           />
         ),
       },
@@ -189,7 +234,7 @@ function Personal() {
   const [activeTab, setActiveTab] = useState(1);
   let items = [];
   const numberOfEntries = localData.length;
-  const entriesPerPage = 3;
+  const entriesPerPage = 15;
   const tabs = Math.ceil(numberOfEntries / entriesPerPage);
   for (let number = 1; number <= tabs; number++) {
     items.push(
@@ -203,7 +248,7 @@ function Personal() {
     );
   }
 
-  const slicedLocalData = localData.slice(
+  const slicedLocalData = dataToDisplay.slice(
     (activeTab - 1) * entriesPerPage,
     activeTab * entriesPerPage
   );
@@ -219,10 +264,36 @@ function Personal() {
     handleAddTransaction: handleAddTransaction,
   };
 
+  const handleTransactionLogs = () => {
+    filterCtx.setLogState(0);
+    let newData = filterCtx.filterAll(0);
+    // newData = sortStream(newData, sortCategory, sortDirection);
+    setLocalData(newData);
+    // sortCategoryHandler(sortCategory, sortDirection);
+  };
+
+  const handleAdjustmentLogs = () => {
+    filterCtx.setLogState(1);
+    let newData = filterCtx.filterAll(1);
+    // newData = sortStream(newData, sortCategory, sortDirection);
+    setLocalData(newData);
+    // sortCategoryHandler(sortCategory, sortDirection);
+  };
+
+  const handleBothLogs = () => {
+    filterCtx.setLogState(2);
+    let newData = filterCtx.filterAll(2);
+    // newData = sortStream(newData, sortCategory, sortDirection);
+    setLocalData(newData);
+    // sortCategoryHandler(sortCategory, sortDirection);
+  };
+
+  const [showValidationText, setShowValidationText] = useState(false);
+
   return (
     <React.Fragment style={{ overflow: "auto" }}>
       <Navigator />
-      <div style={{ display: "flex", height: "100%", overflow: "auto" }}>
+      <div style={{ display: "flex", minHeight: "100%", overflow: "auto" }}>
         <div className={styles.left}>
           <SideNavigator />
         </div>
@@ -277,6 +348,41 @@ function Personal() {
                   </Button>
                 </OverlayTrigger>
               </Col>
+              <Col xs="auto">
+                <strong>
+                  {" "}
+                  <label> Total Amount: ${totalAmount} </label>
+                </strong>
+              </Col>
+              <Col xs="auto">
+                <Form.Check
+                  inline
+                  defaultChecked={filterCtx.logState === 0}
+                  label="Transaction Logs"
+                  name="group1"
+                  type="radio"
+                  id="inline-radio-1"
+                  onClick={handleTransactionLogs}
+                />
+                <Form.Check
+                  inline
+                  defaultChecked={filterCtx.logState === 1}
+                  label="Adjustment Logs"
+                  name="group1"
+                  type="radio"
+                  id="inline-radio-2"
+                  onClick={handleAdjustmentLogs}
+                />
+                <Form.Check
+                  inline
+                  defaultChecked={filterCtx.logState === 2}
+                  label="Both"
+                  name="group1"
+                  type="radio"
+                  id="inline-radio-3"
+                  onClick={handleBothLogs}
+                />
+              </Col>
             </Row>
             <Row>
               <Col>
@@ -318,7 +424,10 @@ function Personal() {
         </div>
       </div>
 
-      <SubmitTransactionModal formProps={formProps} />
+      <SubmitTransactionModal
+        showValidationText={showValidationText}
+        formProps={formProps}
+      />
     </React.Fragment>
   );
 }

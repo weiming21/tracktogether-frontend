@@ -73,3 +73,13 @@
 .entryAmount {
   color: chartreuse;
 }
+
+.success {
+  text-align: left;
+  color: rgb(0, 148, 0);
+}
+
+.warning {
+  text-align: left;
+  color: red;
+}

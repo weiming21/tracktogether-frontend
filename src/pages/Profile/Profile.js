@@ -6,7 +6,7 @@ import Box from "../../components/Box";
 import styles from "./Profile.module.css";
 import React, { useState, useContext, useRef } from "react";
 import { Form, Row, Col, Button, Image, Stack } from "react-bootstrap";
-import EditIcon from "@mui/icons-material/Edit";
+// import EditIcon from "@mui/icons-material/Edit";
 import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import { useNavigate } from "react-router-dom";
 
@@ -22,22 +22,10 @@ function Profile() {
   // const [imageName, setImageName] = useState(null);
   const inputRef = useRef(null);
 
-  const [nameState, setNameState] = useState(true);
-  const handleNameClick = (event) => {
-    event.preventDefault();
-    setNameState(!nameState);
-  };
+  const [formState, setFormState] = useState(true);
 
-  const [contactState, setContactState] = useState(true);
-  const handleContactClick = (event) => {
-    event.preventDefault();
-    setContactState(!contactState);
-  };
-
-  const [emailState, setEmailState] = useState(true);
-  const handleEmailClick = (event) => {
-    event.preventDefault();
-    setEmailState(!emailState);
+  const handleEditableState = () => {
+    setFormState(false);
   };
 
   function handleSubmit(event) {
@@ -163,11 +151,11 @@ function Profile() {
             </div>
             <Form>
               <Row className="mb-3">
-                <Col xs={5}>
+                <Col xs="auto">
                   <Form.Group controlId="profileName">
                     <Form.Label className="text-start">Name</Form.Label>
                     <Form.Control
-                      disabled={nameState}
+                      disabled
                       placeholder="Enter Name"
                       value={authCtx.username}
                       onChange={(e) => setUserName(e.target.value)}
@@ -175,11 +163,7 @@ function Profile() {
                   </Form.Group>
                 </Col>
 
-                <Col xs={1}>
-                  <EditIcon onClick={handleNameClick} />
-                </Col>
-
-                <Col>
+                <Col xs="auto">
                   <Form.Group controlId="profileBank">
                     <Form.Label className="text-start"> Bank</Form.Label>
                     <Form.Control disabled placeholder="Bank Name" />
@@ -188,13 +172,13 @@ function Profile() {
               </Row>
 
               <Row className="mb-3">
-                <Col xs={5}>
+                <Col xs="auto">
                   <Form.Group controlId="profileName">
                     <Form.Label className="text-start">
                       Contact Number
                     </Form.Label>
                     <Form.Control
-                      disabled={contactState}
+                      disabled={formState}
                       placeholder="Enter Contact"
                       value={authCtx.contact}
                       onChange={(e) => setContact(e.target.value)}
@@ -202,11 +186,7 @@ function Profile() {
                   </Form.Group>
                 </Col>
 
-                <Col xs={1}>
-                  <EditIcon onClick={handleContactClick} />
-                </Col>
-
-                <Col>
+                <Col xs="auto">
                   <Form.Group controlId="profileAccNumber">
                     <Form.Label className="text-start">
                       Account Number
@@ -217,25 +197,24 @@ function Profile() {
               </Row>
 
               <Row className="mb-3">
-                <Col xs={5}>
+                <Col xs="auto">
                   <Form.Group controlId="profileEmail">
                     <Form.Label className="text-start">Email</Form.Label>
                     <Form.Control
-                      disabled={emailState}
+                      disabled={formState}
                       placeholder="Enter Email"
                       value={authCtx.email}
                       onChange={(e) => setEmail(e.target.value)}
                     />
                   </Form.Group>
                 </Col>
-                <Col xs={1}>
-                  <EditIcon onClick={handleEmailClick} />
-                </Col>
               </Row>
-
-              <Button variant="primary" type="submit" onClick={handleSubmit}>
-                Submit
-              </Button>
+              <Stack direction="horizontal" gap={3}>
+                <Button variant="primary" type="submit" onClick={handleSubmit}>
+                  Submit
+                </Button>
+                <Button onClick={handleEditableState}>Edit Profile</Button>
+              </Stack>
             </Form>
             <Stack direction="horizontal" gap={3}>
               <Button className="mt-3"> Change Password</Button>

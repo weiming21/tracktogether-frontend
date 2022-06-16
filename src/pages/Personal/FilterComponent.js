@@ -15,13 +15,15 @@ const FilterComponent = (props) => {
   const optionState = filterCtx.optionState[index];
   const localData = props.localData;
   const setLocalData = props.setLocalData;
+  const setActiveTab = props.setActiveTab;
 
   function handleOption(e) {
     filterCtx.changeFilterVariable(index, e.target.value);
     filterCtx.refresh(index);
     // setLocalData(currData);
-    const newData = filterCtx.filterAll();
+    const newData = filterCtx.filterAll(filterCtx.logState);
     setLocalData(newData);
+    setActiveTab(1);
   }
 
   return (

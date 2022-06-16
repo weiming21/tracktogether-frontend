@@ -11,8 +11,6 @@ const GroupContext = React.createContext({
 
 export const GroupContextProvider = (props) => {
   const token = localStorage.getItem("token");
-  console.log(token);
-
   const [group, setGroup] = useState([]);
   const [dataFetched, setDataFetched] = useState(false);
 
@@ -79,7 +77,7 @@ export const GroupContextProvider = (props) => {
   const findUserIDWithName = (groupID, username) => {
     let userID = 0;
     group.forEach((group) => {
-      if (group.groupID.toString() === groupID) {
+      if (group.groupID.toString() === groupID.toString()) {
         group.users.forEach((user) => {
           if (user.username === username) {
             userID = user.userID;
@@ -94,7 +92,7 @@ export const GroupContextProvider = (props) => {
   const updateGroupInformation = (groupID, newGroupInformation) => {
     let newGroupArray = [...group];
     newGroupArray = newGroupArray.map((group) => {
-      if (group.groupID.toString() === groupID) {
+      if (group.groupID.toString() === groupID.toString()) {
         return newGroupInformation;
       }
       return group;
@@ -105,8 +103,19 @@ export const GroupContextProvider = (props) => {
   const updateGroupWithID = (groupID, groupName) => {
     let newGroupArray = [...group];
     newGroupArray = newGroupArray.map((group) => {
-      if (group.groupID.toString() === groupID) {
+      if (group.groupID.toString() === groupID.toString()) {
         group.name = groupName;
+      }
+      return group;
+    });
+    setGroup(newGroupArray);
+  };
+
+  const updateGroupMemberListWithID = (groupID, username) => {
+    let newGroupArray = [...group];
+    newGroupArray = newGroupArray.map((group) => {
+      if (group.groupID.toString() === groupID.toString()) {
+        group.users = group.users.filter((user) => user.username !== username);
       }
       return group;
     });
@@ -116,7 +125,7 @@ export const GroupContextProvider = (props) => {
   const deleteGroupWithID = (groupID) => {
     let newGroupArray = [...group];
     newGroupArray = newGroupArray.filter((group) => {
-      if (group.groupID.toString() === groupID) {
+      if (group.groupID.toString() === groupID.toString()) {
         return false;
       }
       return true;
@@ -127,7 +136,7 @@ export const GroupContextProvider = (props) => {
   const validateGroupWithID = (groupID) => {
     let newGroupArray = [...group];
     newGroupArray = newGroupArray.map((group) => group.groupID);
-    console.log(newGroupArray.includes(groupID));
+    // console.log(newGroupArray.includes(groupID));
     return newGroupArray.includes(groupID);
   };
 
@@ -139,6 +148,7 @@ export const GroupContextProvider = (props) => {
           const json = {
             ...log,
             groupName: entry.name,
+            groupID: entry.groupID,
           };
           finalArray.push(json);
         }
@@ -147,18 +157,41 @@ export const GroupContextProvider = (props) => {
     return finalArray;
   };
 
+  const accepNotification = (groupID, entry) => {
+    // const entryDate = new Date(entry.date).getTime();
+    // console.log(entryDate);
+    console.log(groupID);
+    let newGroupArray = [...group];
+    newGroupArray = newGroupArray.map((group) => {
+      if (group.groupID.toString() === groupID.toString()) {
+        group.log.forEach((log) => {
+          // console.log(new Date(log.date).getTime());
+
+          if (new Date(log.date).getTime() === new Date(entry.date).getTime()) {
+            log.status = true;
+          }
+        });
+      }
+      return group;
+    });
+    setGroup(newGroupArray);
+  };
+
   const contextValue = {
     group: group,
     setGroup: setGroup,
     isDataFetched: dataFetched,
+    setDataFetched: setDataFetched,
     logout: logoutHandler,
     findGroupWithID: findGroupWithID,
     findUserIDWithName: findUserIDWithName,
     updateGroupInformation: updateGroupInformation,
+    updateGroupMemberListWithID: updateGroupMemberListWithID,
     updateGroupWithID: updateGroupWithID,
     deleteGroupWithID: deleteGroupWithID,
     validateGroupWithID: validateGroupWithID,
     findNotifications: findNotifications,
+    accepNotification: accepNotification,
   };
 
   return (

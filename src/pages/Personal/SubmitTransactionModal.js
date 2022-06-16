@@ -1,8 +1,11 @@
 import React from "react";
-import { Button, Modal, Form } from "react-bootstrap";
+import styles from "./Personal.module.css";
+import { Button, Modal, Form, Stack } from "react-bootstrap";
 
 function SubmitTransactionModal(props) {
   const formProps = props.formProps;
+  const showValidationText = props.showValidationText;
+
   return (
     <Modal show={formProps.transactionForm} onHide={formProps.handleClose}>
       <Modal.Header closeButton>
@@ -55,12 +58,17 @@ function SubmitTransactionModal(props) {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={formProps.handleClose}>
-          Cancel
-        </Button>
-        <Button variant="primary" onClick={formProps.handleAddTransaction}>
-          Add Transaction
-        </Button>
+        <Stack direction="horizontal" gap={3}>
+          {showValidationText && (
+            <label className={styles.warningText}> Date or Amount empty!</label>
+          )}
+          <Button variant="secondary" onClick={formProps.handleClose}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={formProps.handleAddTransaction}>
+            Add Transaction
+          </Button>
+        </Stack>
       </Modal.Footer>
     </Modal>
   );

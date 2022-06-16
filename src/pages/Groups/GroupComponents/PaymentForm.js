@@ -4,21 +4,12 @@ import AuthContext from "../../../store/AuthContext";
 import GroupContext from "../../../store/GroupContext";
 import { useParams } from "react-router-dom";
 import {
-  //   Tabs,
-  //   Tab,
-  // Table,
-  //   Stack,
   Button,
   Form,
   Row,
   Col,
   ListGroup,
   CloseButton,
-  //   Container,
-  // Card,
-  // Image,
-  // Popover,
-  // OverlayTrigger,
 } from "react-bootstrap";
 
 function PaymentForm() {
@@ -30,11 +21,19 @@ function PaymentForm() {
   const groupID = useParams().groupID;
 
   const [groupInformation, setGroupInformation] = useState(
-    grpCtx.findGroupWithID(groupID).users
+    grpCtx.findGroupWithID(groupID).users.map((entry) => {
+      // entry.amount = 0;
+      return entry;
+    })
   );
 
   useEffect(() => {
-    const newGroupInformation = grpCtx.findGroupWithID(groupID).users;
+    const newGroupInformation = grpCtx
+      .findGroupWithID(groupID)
+      .users.map((entry) => {
+        // entry.amount = 0;
+        return entry;
+      });
     setGroupInformation(newGroupInformation);
   }, [grpCtx]);
 
@@ -50,8 +49,58 @@ function PaymentForm() {
   const [initiatingMember, setInitiatingMember] = useState(authCtx.username);
   const [currMember, setCurrMember] = useState("All");
 
+  function refresh() {
+    setLocalData([]);
+    setCurrDescription("");
+    setCurrAmount(0);
+    setCurrCategory("Food");
+    setInitiatingMember(authCtx.username);
+    setCurrMember("All");
+  }
+
   function handleSubmitInitiatePayment() {
+    let validForm = true;
+
+    if (splitEvenly) {
+      if (currAmount === 0) {
+        setShowAmountWarning(true);
+        validForm = false;
+      } else {
+        setShowAmountWarning(false);
+      }
+    } else {
+      if (localData.filter((entry) => entry.amount === 0).length > 0) {
+        setShowAmountWarning(true);
+        validForm = false;
+      } else {
+        setShowAmountWarning(false);
+      }
+    }
+
+    if (localData.length === 0) {
+      setShowMemberWarning(true);
+      validForm = false;
+    } else {
+      setShowMemberWarning(false);
+    }
+
+    if (localData.length === 1 && localData[0].username === initiatingMember) {
+      setShowSelfPaymentWarning(true);
+      validForm = false;
+    } else {
+      setShowSelfPaymentWarning(false);
+    }
+
+    if (!validForm) {
+      return;
+    }
+
     let hasInitiatingMember = false;
+
+    const totalAmount = localData.reduce(
+      (curr, next) => curr + Number(next.amount),
+      0
+    );
 
     const processedInformation = localData.map((entry) => {
       const json = {
@@ -67,8 +116,10 @@ function PaymentForm() {
       if (entry.username === initiatingMember) {
         hasInitiatingMember = true;
         json.status = true;
-        json.amount = json.amount - currAmount;
+        json.amount = Number(json.amount) - Number(totalAmount);
       }
+      console.log(totalAmount);
+      console.log(json.amount);
       return json;
     });
 
@@ -78,7 +129,7 @@ function PaymentForm() {
         username: initiatingMember,
         userID: grpCtx.findUserIDWithName(groupID, initiatingMember),
         targetUsername: initiatingMember,
-        amount: -currAmount,
+        amount: -1 * Number(totalAmount),
         description: currDescription,
         category: currCategory,
         status: true,
@@ -109,6 +160,8 @@ function PaymentForm() {
         const newGroupData = data.data.group;
         grpCtx.updateGroupInformation(groupID, newGroupData);
         console.log("Successfully initiated payment");
+        setShowSuccessText(true);
+        refresh();
       });
   }
 
@@ -142,7 +195,10 @@ function PaymentForm() {
 
   function handleAddMembers() {
     if (currMember === "All") {
-      const newLocalData = [...groupInformation];
+      const newLocalData = [...groupInformation].map((entry) => {
+        entry.amount = 0;
+        return entry;
+      });
       const updatedLocalAmounts = resetIndivAmount(splitEvenly)(
         newLocalData,
         currAmount
@@ -156,6 +212,7 @@ function PaymentForm() {
       if (
         !localData.map((member) => member.username).includes(entry.username)
       ) {
+        entry.amount = 0;
         newLocalData.push(entry);
         const updatedLocalAmounts = resetIndivAmount(splitEvenly)(
           newLocalData,
@@ -186,6 +243,11 @@ function PaymentForm() {
     };
   }
 
+  const [showSuccessText, setShowSuccessText] = useState(false);
+  const [showAmountWarning, setShowAmountWarning] = useState(false);
+  const [showMemberWarning, setShowMemberWarning] = useState(false);
+  const [showSelfPaymentWarning, setShowSelfPaymentWarning] = useState(false);
+
   return (
     <>
       {/* <h2 className={styles.header}> This Group </h2> */}
@@ -204,6 +266,7 @@ function PaymentForm() {
               <Form.Check
                 type="switch"
                 id="custom-switch"
+                defaultChecked={!splitEvenly}
                 onClick={() => {
                   setSplitEvenly(!splitEvenly);
                   const updatedLocalAmounts = resetIndivAmount(!splitEvenly)(
@@ -334,6 +397,18 @@ function PaymentForm() {
             {" "}
             Send Transaction Request{" "}
           </Button>{" "}
+          {showSuccessText && (
+            <p className={styles.success}> Payment successfully initiated!</p>
+          )}
+          {showAmountWarning && (
+            <p className={styles.warning}> Amount cannot be 0!</p>
+          )}
+          {showMemberWarning && (
+            <p className={styles.warning}> Memberlist cannot be empty!</p>
+          )}
+          {showSelfPaymentWarning && (
+            <p className={styles.warning}> Cannot pay yourself!</p>
+          )}
         </Col>
       </Row>
     </>

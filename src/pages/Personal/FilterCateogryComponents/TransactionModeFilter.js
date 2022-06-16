@@ -20,7 +20,7 @@ function TransactionModeFilter(props) {
 
   const handleTransactionMode = (e) => {
     filterCtx.changeTransactionMode(index, e.target.value);
-    const newData = filterCtx.filterAll();
+    const newData = filterCtx.filterAll(filterCtx.logState);
     setLocalData(newData);
   };
 

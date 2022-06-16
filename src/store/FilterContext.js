@@ -19,6 +19,12 @@ export const FilterContextProvider = (props) => {
   const [currData, setCurrData] = useState([]);
   const [localData, setLocalData] = useState([]);
 
+  const [alertData, setAlertData] = useState([]);
+
+  const [adjustmentData, setAdjustmentData] = useState([]);
+
+  const [logState, setLogState] = useState(0); //0 is trans log, 1 is adjustment log, 2 is both.
+
   const [dataFetched, setDataFetch] = useState(false);
 
   // const [localDataFunction, setLocalDataFunction] = useState((props) => {
@@ -55,15 +61,55 @@ export const FilterContextProvider = (props) => {
       .then((data) => {
         setCurrData(data.data);
         setLocalData(data.data);
-        // localDataFunction(data.data);
-
-        // console.log("fetched data in filterctx");
-        // console.log(data.data);
-        // localDataFunction(data);
       })
-      // .then((data) => {
-      //   console.log(data);
-      // })
+      .catch((error) =>
+        setCurrData(`Unable to retrieve quote. Error: ${error}`)
+      );
+
+    const alertUrl = "http://localhost:8080/api/account/alerts/";
+    fetch(alertUrl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: "Bearer " + initialToken,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setAlertData(data.data.pending);
+      })
+      .catch((error) =>
+        setCurrData(`Unable to retrieve quote. Error: ${error}`)
+      );
+
+    const adjustmentUrl = "http://localhost:8080/api/account/adjustment/";
+    fetch(adjustmentUrl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: "Bearer " + initialToken,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        const adjustments = data.data.adjustments.map((entry) => {
+          const newInfo =
+            entry.description.trim() === ""
+              ? "No information logged"
+              : entry.information;
+          const newMode = "Groups";
+          const json = {
+            date: entry.date,
+            information: newInfo,
+            category: entry.category,
+            amount: entry.amount,
+            mode: newMode,
+            groupID: entry.groupID,
+          };
+          return json;
+        });
+        setAdjustmentData(adjustments);
+      })
       .catch((error) =>
         setCurrData(`Unable to retrieve quote. Error: ${error}`)
       );
@@ -144,8 +190,13 @@ export const FilterContextProvider = (props) => {
     setOptionState(newState);
   };
 
-  const filterAll = () => {
-    let dataStream = currData;
+  const filterAll = (logType) => {
+    let dataStream =
+      logType === 0
+        ? currData
+        : logType === 1
+        ? adjustmentData
+        : currData.concat(adjustmentData);
     for (let i = 0; i < optionState.length; i++) {
       dataStream = optionState[i].filterIndividual(dataStream);
     }
@@ -165,6 +216,10 @@ export const FilterContextProvider = (props) => {
     isDataFetched: dataFetched,
     optionState: optionState,
     currData: currData,
+    alertData: alertData,
+    adjustmentData: adjustmentData,
+    logState: logState,
+    setLogState: setLogState,
     // localData: localData,
     setOptionState: setOptionState,
     setCurrData: setCurrData,

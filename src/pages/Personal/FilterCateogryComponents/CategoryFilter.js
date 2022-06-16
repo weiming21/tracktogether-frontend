@@ -22,7 +22,7 @@ function CategoryFilter(props) {
 
   const handleCategory = (e) => {
     filterCtx.changeCategory(index, e.target.value);
-    const newData = filterCtx.filterAll();
+    const newData = filterCtx.filterAll(filterCtx.logState);
     setLocalData(newData);
   };
 
