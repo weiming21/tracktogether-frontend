@@ -4,6 +4,7 @@ import React, { useState } from "react";
 const FilterContext = React.createContext({
   optionState: [],
   isDataFetched: false,
+  localData: null,
   setOptionState: () => {},
   addFilter: () => {},
   deleteFilter: () => {},
@@ -65,7 +66,7 @@ export const FilterContextProvider = (props) => {
       //   console.log(data);
       // })
       .catch((error) =>
-        setCurrData(`Unable to retrieve quote. Error: ${error}`)
+        setCurrData(`Unable to retrieve quote. Error: ${error}`),
       );
 
     // sortCategoryHandlerFunction();

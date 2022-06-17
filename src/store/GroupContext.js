@@ -5,6 +5,7 @@ const GroupContext = React.createContext({
   isDataFetched: false,
   //   login: () => {},
   //   datalog: () => {},
+  findGroupWithID: () => {},
   validateGroupWithID: () => {},
   logout: () => {},
 });

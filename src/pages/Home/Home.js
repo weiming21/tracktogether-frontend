@@ -15,13 +15,15 @@ import DonutChart from "../../charts/DonutChart";
 import BarChart from "../../charts/BarChart";
 import LineChart from "../../charts/LineChart";
 import { Container, Row, Col, Spinner } from "react-bootstrap";
+import FilterContext from "../../store/FilterContext";
 // import { unstable_batchedUpdates } from 'react-dom';
 
 function Home() {
   const authCtx = useContext(AuthContext);
   console.log("rendering home");
-  console.log(authCtx);
-  //Random Quote
+  // console.log(authCtx);
+  const filterCtx = useContext(FilterContext);
+  console.log(filterCtx);
 
   const initialValues = {
     quote: [],
@@ -71,63 +73,131 @@ function Home() {
     { y: -40, label: "Movie Group:\n$-40", fill: "red" },
   ];
 
-  const fetchData = async () => {
-    console.log("entering home frame:" + JSON.stringify(data));
-    // const quote_result = await fetch("https://api.quotable.io/random")
-    //   .then((response) => response.json())
-    //   .then((data) => {
-    //     return [data.content, data.author];
-    //   });
-    const quote_result = ["Test Quote", "Test Author"];
+  // const fetchData = async () => {
+  //   await timeout(1000);
+  //   console.log("entering home frame:" + JSON.stringify(data));
+  //   const quote_result = await fetch("https://api.quotable.io/random")
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       return [data.content, data.author];
+  //     });
+  //   // const quote_result = ["Test Quote", "Test Author"];
 
-    const pie_result = await fetch("http://localhost:8080/api/chart/piechart", {
-      method: "PUT",
-      body: JSON.stringify({
-        _id: authCtx.id,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        return data.data;
-      })
-      .catch((error) => console.log(error));
+  //   const pie_result = await fetch("http://localhost:8080/api/chart/piechart", {
+  //     method: "GET",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       authorization: "Bearer " + authCtx.token,
+  //     },
+  //   })
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       return data.data;
+  //     })
+  //     .catch((error) => console.log(error));
 
-    const line_result = await fetch(
-      "http://localhost:8080/api/chart/linechart",
-      {
-        method: "PUT",
-        body: JSON.stringify({
-          _id: authCtx.id,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        return data.data;
-      });
+  //   const line_result = await fetch(
+  //     "http://localhost:8080/api/chart/linechart",
+  //     {
+  //       method: "GET",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         authorization: "Bearer " + authCtx.token,
+  //       },
+  //     },
+  //   )
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       return data.data;
+  //     })
+  //     .catch((error) => console.log(error));
 
-    console.log("successfully made all api calls in home");
-    if (quote_result && pie_result && line_result) {
-      console.log("setting data");
-      setData({
-        quote: quote_result,
-        pieData: pie_result,
-        lineData: line_result,
-        barData: dummyBarData,
-      });
-    }
-  };
+  //   console.log("successfully made all api calls in home");
+  //   if (quote_result && pie_result && line_result && !isCancelled) {
+  //     console.log("setting data");
+  //     setData({
+  //       quote: quote_result,
+  //       pieData: pie_result,
+  //       lineData: line_result,
+  //       barData: dummyBarData,
+  //     });
+  //   }
+  // };
+
+  function timeout(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
 
   useEffect(() => {
+    let isCancelled = false;
+    console.log("entering home useEffect frame");
+    const fetchData = async () => {
+      const quote_result = await fetch("https://api.quotable.io/random")
+        .then((response) => response.json())
+        .then((data) => {
+          return [data.content, data.author];
+        });
+
+      const pie_result = await fetch(
+        "http://localhost:8080/api/chart/piechart",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: "Bearer " + authCtx.token,
+          },
+        },
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          return data.data;
+        })
+        .catch((error) => console.log(error));
+
+      const line_result = await fetch(
+        "http://localhost:8080/api/chart/linechart",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: "Bearer " + authCtx.token,
+          },
+        },
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          return data.data;
+        })
+        .catch((error) => console.log(error));
+
+      const promises = [quote_result, pie_result, line_result];
+      console.log("successfully made all api calls in home");
+
+      await timeout(500);
+
+      if (!isCancelled) {
+        console.log("setting all data in Home");
+        Promise.all(promises).then((responses) => {
+          setData({
+            // quote: quote_result,
+            // pieData: pie_result,
+            // lineData: line_result,
+            // barData: dummyBarData,
+            quote: responses[0],
+            pieData: responses[1],
+            lineData: responses[2],
+            barData: dummyBarData,
+          });
+        });
+      }
+    };
     if (authCtx.isDataFetched) {
       fetchData();
     }
+    //cleanup function is executed when useEffect is called again or on unmount
+    return () => {
+      isCancelled = true;
+    };
   }, [authCtx]);
 
   return (

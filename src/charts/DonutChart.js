@@ -10,6 +10,21 @@ export default function DonutChart(props) {
   // const VictoryChart = Victory.VictoryChart;
   const graphicColor = ["#388087", "#6fb3b8", "#badfe7"];
 
+  // function transform_data(arr) {
+  //   let temp = arr.reduce((json, current) => {
+  //     if (json[current.category]) {
+  //       json[current.category].amount += current.amount;
+  //     } else {
+  //       json[current.category] = {
+  //         category: current.category,
+  //         amount: current.amount,
+  //       };
+  //     }
+  //     return json;
+  //   }, {});
+  //   return Object.values(temp);
+  // }
+
   function concatenate_labels(arr) {
     return arr.map((item) => {
       if (item.category != "Loading...") {
