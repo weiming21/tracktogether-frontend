@@ -178,7 +178,8 @@ function Profile() {
                       <Button
                         onClick={() => {
                           inputRef.current?.click();
-                        }}>
+                        }}
+                      >
                         Upload
                       </Button>
                     </div>
@@ -262,7 +263,8 @@ function Profile() {
                     <Button
                       variant="primary"
                       type="submit"
-                      onClick={handleSubmit}>
+                      onClick={handleSubmit}
+                    >
                       Submit
                     </Button>
                     <Button onClick={handleEditableState}>Edit Profile</Button>

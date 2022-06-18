@@ -76,6 +76,7 @@ function LoginForm() {
         // authCtx.datalog(data.data.account);
         console.log("working");
         navigation("/home");
+        // location.reload();
       })
       .catch((err) => {
         //alert(err.message);

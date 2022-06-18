@@ -35,14 +35,14 @@ export default function LineChart(props) {
   function filter_and_sort_dates(arr) {
     const filtered_arr = arr.filter(
       (item) =>
-        new Date(`${item._id.year}-${item._id.month}`) > subtractMonths(6),
+        new Date(`${item._id.year}-${item._id.month}`) > subtractMonths(6)
     );
     // console.log(filtered_arr);
 
     const sorted_arr = filtered_arr.sort(
       (a, b) =>
         new Date(`${a._id.year}-${a._id.month}`) -
-        new Date(`${b._id.year}-${b._id.month}`),
+        new Date(`${b._id.year}-${b._id.month}`)
     );
     return sorted_arr;
   }
@@ -73,7 +73,7 @@ export default function LineChart(props) {
     ];
 
     const required_months = get_past_n_months(new Date(), 5).map(
-      (item) => months[item],
+      (item) => months[item]
     );
 
     let result = [];
@@ -111,7 +111,8 @@ export default function LineChart(props) {
             />
           }
         />
-      }>
+      }
+    >
       <VictoryAxis />
 
       <VictoryLine

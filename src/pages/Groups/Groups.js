@@ -104,7 +104,8 @@ function Group() {
           <Button
             variant="secondary"
             size="sm"
-            onClick={() => setJoinErrorMessage("")}>
+            onClick={() => setJoinErrorMessage("")}
+          >
             Close
           </Button>
         </div>
@@ -169,7 +170,8 @@ function Group() {
                 <OverlayTrigger
                   show={joinErrorMessage}
                   placement="right"
-                  overlay={popover}>
+                  overlay={popover}
+                >
                   <Button onClick={handleJoin}>Join</Button>
                 </OverlayTrigger>
               </Col>
@@ -190,7 +192,8 @@ function Group() {
                       className={styles.groupCard + " m-5"}
                       onClick={() => {
                         navigate("./" + entry.groupID);
-                      }}>
+                      }}
+                    >
                       <Card.Body>
                         <Stack>
                           <Image

@@ -48,7 +48,13 @@ function GroupMemberList() {
 
   const handleRemoveMember = (username) => {
     return () => {
+      if (username === authCtx.username) {
+        setShowWarning(true);
+        setWarningText("You cannot remove yourself!");
+        return;
+      }
       const amountOwed = findAmountWithUsername(username);
+
       if (amountOwed !== 0) {
         setShowWarning(true);
         setWarningText("You cannot remove a member with outstanding money!");
@@ -126,13 +132,17 @@ function GroupMemberList() {
   const [showSuccess, setShowSuccess] = useState(false);
 
   function findAmountWithUsername(username) {
+    let amount = null;
     groupInformation.forEach((user) => {
       if (user.username === username) {
-        return user.amount;
+        amount = user.amount;
       }
     });
+
+    return amount;
   }
 
+  console.log(groupInformation);
   return (
     <React.Fragment style={{ overflow: "auto" }}>
       <Row className="align-items-center pb-3">

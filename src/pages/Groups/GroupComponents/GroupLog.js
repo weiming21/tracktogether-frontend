@@ -75,6 +75,12 @@ function GroupLogs() {
           })}
         </tbody>
       </Table>
+      {currGrpLog.length === 0 && (
+        <p className={"p-5 " + styles.noGroupMessage}>
+          {" "}
+          No group transaction information has been logged at the moment{" "}
+        </p>
+      )}
     </>
   );
 }

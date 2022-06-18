@@ -129,6 +129,13 @@ function GroupSettings() {
   }
 
   function handleLeaveGroup() {
+    const amountOwed = findAmountWithUsername(authCtx.username);
+
+    if (amountOwed !== 0) {
+      setShowWarning(true);
+      return;
+    }
+
     const url = "http://localhost:8080/api/group/delete-member";
     fetch(url, {
       method: "PUT",
@@ -231,6 +238,22 @@ function GroupSettings() {
       });
   };
 
+  function findAmountWithUsername(username) {
+    let amount = null;
+    groupInformation.users.forEach((user) => {
+      if (user.username === username) {
+        amount = user.amount;
+      }
+    });
+
+    return amount;
+  }
+
+  const [showWarning, setShowWarning] = useState(false);
+
+  // console.log(groupInformation);
+  // console.log(currGroupName + " is the currgrpname");
+
   return (
     <div className={styles.newApp}>
       <Row>
@@ -258,7 +281,8 @@ function GroupSettings() {
           <Button
             onClick={() => {
               inputRef.current?.click();
-            }}>
+            }}
+          >
             Upload
           </Button>
         </div>
@@ -279,9 +303,8 @@ function GroupSettings() {
                 <Form.Control
                   value={currGroupName}
                   // placeholder={groupName}
-                  onChange={(e) =>
-                    setCurrGroupName(e.target.value)
-                  }></Form.Control>
+                  onChange={(e) => setCurrGroupName(e.target.value)}
+                ></Form.Control>
               </Form.Group>
             </Col>
             <Col>
@@ -325,7 +348,14 @@ function GroupSettings() {
           <Modal show={leaveShow} onHide={handleClose("leave")}>
             <Modal.Body>
               <strong>Are you sure you want to leave the group?</strong>
+              {showWarning && (
+                <label className="py-3" style={{ color: "red" }}>
+                  {" "}
+                  You still have outstanding money!
+                </label>
+              )}
             </Modal.Body>
+
             <Modal.Footer>
               <Button variant="secondary" onClick={handleClose("leave")}>
                 Close

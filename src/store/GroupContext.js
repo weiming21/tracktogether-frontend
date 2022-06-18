@@ -67,7 +67,7 @@ export const GroupContextProvider = (props) => {
     };
 
     group.forEach((group) => {
-      if (group.groupID.toString() === groupID) {
+      if (group.groupID.toString() === groupID.toString()) {
         baseGroup = group;
       }
     });

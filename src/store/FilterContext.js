@@ -97,7 +97,7 @@ export const FilterContextProvider = (props) => {
         setAdjustmentData(adjustments);
       })
       .catch((error) =>
-        setCurrData(`Unable to retrieve quote. Error: ${error}`),
+        setCurrData(`Unable to retrieve quote. Error: ${error}`)
       );
 
     // sortCategoryHandlerFunction();

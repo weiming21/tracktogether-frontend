@@ -89,7 +89,7 @@ function Home() {
     console.log("entering home useEffect frame");
     const fetchData = async () => {
       const quote_result = await fetch(
-        "https://goquotes-api.herokuapp.com/api/v1/all?type=tag&val=money",
+        "https://goquotes-api.herokuapp.com/api/v1/all?type=tag&val=money"
       )
         .then((response) => response.json())
         .then((data) => {
