@@ -47,45 +47,49 @@ function Group() {
 
   function handleJoin() {
     if (groupToJoin) {
-      fetch("http://localhost:8080/api/group/join", {
-        method: "PUT",
-        body: JSON.stringify({
-          groupID: groupToJoin,
-          _id: authCtx._id,
-          username: authCtx.username,
-          contact: authCtx.contact,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-          authorization: "Bearer " + authCtx.token,
-        },
-      })
-        .then((res) => {
-          if (res.ok) {
-            return res.json();
-          } else {
-            return res.json().then((data) => {
-              // let errorMessage;
-              // console.log(JSON.stringify(data));
-              // if (data && data.error && data.error.message) {
-              //   errorMessage = data.error.message;
-              // }
-              // console.log(errorMessage);
-              // throw new Error(errorMessage);
-              console.log(data.message);
-              setJoinErrorMessage(data.message);
-            });
-          }
+      if (groupCtx.validateGroupWithID(parseInt(groupToJoin))) {
+        setJoinErrorMessage("You are already in the group");
+      } else {
+        fetch("http://localhost:8080/api/group/join", {
+          method: "PUT",
+          body: JSON.stringify({
+            groupID: parseInt(groupToJoin),
+            _id: authCtx._id,
+            username: authCtx.username,
+            contact: authCtx.contact,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+            authorization: "Bearer " + authCtx.token,
+          },
         })
-        .then((data) => {
-          const newGroups = [...groups];
-          newGroups.push(data.data.group);
-          console.log(newGroups);
-          setGroups(newGroups);
-        });
-      // .catch((err) => {
-      //   alert(err.message);
-      // });
+          .then((res) => {
+            if (res.ok) {
+              return res.json();
+            } else {
+              return res.json().then((data) => {
+                // let errorMessage;
+                // console.log(JSON.stringify(data));
+                // if (data && data.error && data.error.message) {
+                //   errorMessage = data.error.message;
+                // }
+                // console.log(errorMessage);
+                // throw new Error(errorMessage);
+                console.log(data.message);
+                setJoinErrorMessage(data.message);
+              });
+            }
+          })
+          .then((data) => {
+            const newGroups = [...groups];
+            newGroups.push(data.data.group);
+            console.log(newGroups);
+            setGroups(newGroups);
+          });
+        // .catch((err) => {
+        //   alert(err.message);
+        // });
+      }
     }
   }
 
@@ -100,8 +104,7 @@ function Group() {
           <Button
             variant="secondary"
             size="sm"
-            onClick={() => setJoinErrorMessage("")}
-          >
+            onClick={() => setJoinErrorMessage("")}>
             Close
           </Button>
         </div>
@@ -166,8 +169,7 @@ function Group() {
                 <OverlayTrigger
                   show={joinErrorMessage}
                   placement="right"
-                  overlay={popover}
-                >
+                  overlay={popover}>
                   <Button onClick={handleJoin}>Join</Button>
                 </OverlayTrigger>
               </Col>
@@ -188,8 +190,7 @@ function Group() {
                       className={styles.groupCard + " m-5"}
                       onClick={() => {
                         navigate("./" + entry.groupID);
-                      }}
-                    >
+                      }}>
                       <Card.Body>
                         <Stack>
                           <Image

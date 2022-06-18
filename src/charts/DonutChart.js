@@ -8,13 +8,28 @@ export default function DonutChart(props) {
   const VictoryLabel = Victory.VictoryLabel;
   // const VictoryAxis = Victory.VictoryAxis;
   // const VictoryChart = Victory.VictoryChart;
-  const graphicColor = ["#388087", "#6fb3b8", "#badfe7"];
+  const graphicColor = ["#1e47f0", "#0096ff", "#00cfff", "#00ffff"];
+
+  function transform_data(arr) {
+    let temp = arr.reduce((json, current) => {
+      if (json[current.category]) {
+        json[current.category].amount += current.amount;
+      } else {
+        json[current.category] = {
+          category: current.category,
+          amount: current.amount,
+        };
+      }
+      return json;
+    }, {});
+    return Object.values(temp);
+  }
 
   function concatenate_labels(arr) {
     return arr.map((item) => {
       if (item.category != "Loading...") {
         const container = {};
-        container["category"] = `${item._id}:\n$${item.amount}`;
+        container["category"] = `${item.category}:\n$${item.amount}`;
         container["amount"] = item.amount;
         return container;
       } else {
@@ -43,7 +58,7 @@ export default function DonutChart(props) {
         }
         standalone={false}
         animate={{ easing: "exp" }}
-        data={concatenate_labels(props.data)}
+        data={concatenate_labels(transform_data(props.data))}
         x="category"
         y="amount"
         width={240}

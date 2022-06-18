@@ -5,6 +5,8 @@ const GroupContext = React.createContext({
   isDataFetched: false,
   //   login: () => {},
   //   datalog: () => {},
+  findGroupWithID: () => {},
+  findImageWithID: () => {},
   validateGroupWithID: () => {},
   logout: () => {},
 });
@@ -70,6 +72,12 @@ export const GroupContextProvider = (props) => {
       }
     });
     return baseGroup;
+  };
+
+  const findImageWithID = (groupID) => {
+    const grp = group.filter((item) => item.groupID == groupID);
+    console.log(grp[0].image);
+    return grp[0].image;
   };
 
   const findUserIDWithName = (groupID, username) => {
@@ -182,6 +190,7 @@ export const GroupContextProvider = (props) => {
     setDataFetched: setDataFetched,
     logout: logoutHandler,
     findGroupWithID: findGroupWithID,
+    findImageWithID: findImageWithID,
     findUserIDWithName: findUserIDWithName,
     updateGroupInformation: updateGroupInformation,
     updateGroupMemberListWithID: updateGroupMemberListWithID,
