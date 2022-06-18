@@ -7,7 +7,7 @@ import styles from "./Profile.module.css";
 import React, { useState, useContext, useRef } from "react";
 import { Form, Row, Col, Button, Image, Stack } from "react-bootstrap";
 import EditIcon from "@mui/icons-material/Edit";
-import CameraAltIcon from "@mui/icons-material/CameraAlt";
+// import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import { useNavigate } from "react-router-dom";
 
 function Profile() {
@@ -17,7 +17,7 @@ function Profile() {
   const [username, setUserName] = useState(authCtx.username);
   const [contact, setContact] = useState(authCtx.contact);
   const [email, setEmail] = useState(authCtx.email);
-  const [image, setImage] = useState(authCtx.image);
+  // const [image, setImage] = useState(authCtx.image);
 
   // const [imageName, setImageName] = useState(null);
   const inputRef = useRef(null);
@@ -86,16 +86,15 @@ function Profile() {
 
   const handleUpload = (event) => {
     event.preventDefault();
-    setImage(URL.createObjectURL(inputRef.current.files[0]));
-    console.log(image);
+    // setImage(URL.createObjectURL(inputRef.current.files[0]));
+    const imageData = new FormData();
+    imageData.append("id", authCtx.id);
+    imageData.append("image", event.target.files[0]);
+    console.log(imageData);
     fetch("http://localhost:8080/api/account/upload", {
       method: "PUT",
-      body: JSON.stringify({
-        _id: authCtx.id,
-        image: URL.createObjectURL(inputRef.current.files[0]),
-      }),
+      body: imageData,
       headers: {
-        "Content-Type": "application/json",
         authorization: "Bearer " + authCtx.token,
       },
     })
@@ -104,7 +103,7 @@ function Profile() {
           return res.json();
         } else {
           return res.json().then((data) => {
-            let errorMessage = "Authentication failed!";
+            let errorMessage;
             console.log(JSON.stringify(data));
             if (data && data.error && data.error.message) {
               errorMessage = data.error.message;
@@ -116,11 +115,41 @@ function Profile() {
         }
       })
       .then((data) => {
-        // console.log(data.data.account);
-        // authCtx.login(data.data.token);
-        authCtx.datalog(data.data.account);
-        // console.log('working');
-        // navigation("/home");
+        console.log(data.data.account);
+        location.reload();
+      })
+      .catch((err) => {
+        alert(err.message);
+      });
+  };
+
+  const handleRemove = (event) => {
+    event.preventDefault();
+    fetch("http://localhost:8080/api/account/remove", {
+      method: "DELETE",
+      headers: {
+        authorization: "Bearer " + authCtx.token,
+      },
+    })
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          return res.json().then((data) => {
+            let errorMessage;
+            console.log(JSON.stringify(data));
+            if (data && data.error && data.error.message) {
+              errorMessage = data.error.message;
+            }
+            console.log(errorMessage);
+
+            throw new Error(errorMessage);
+          });
+        }
+      })
+      .then((data) => {
+        console.log(data.data.account);
+        location.reload();
       })
       .catch((err) => {
         alert(err.message);
@@ -138,7 +167,7 @@ function Profile() {
         <div className={styles.right}>
           <Box>
             <h2 className={styles.header + " pb-3"}>Your Profile</h2>
-            <div style={{ display: "flex" }}>
+            <div>
               <Image
                 className="m-3"
                 src={authCtx.image ? authCtx.image : imageAvatar}
@@ -154,11 +183,19 @@ function Profile() {
                   type="file"
                   accept="image/*"
                 />
-                <CameraAltIcon
-                  onClick={() => {
-                    inputRef.current?.click();
-                  }}
-                />
+                <div style={{ paddingLeft: 30 }}>
+                  <Button
+                    onClick={() => {
+                      inputRef.current?.click();
+                    }}>
+                    Upload
+                  </Button>
+                </div>
+                <div style={{ paddingLeft: 30 }}>
+                  <Button variant="danger" onClick={handleRemove}>
+                    Remove
+                  </Button>
+                </div>
               </div>
             </div>
             <Form>

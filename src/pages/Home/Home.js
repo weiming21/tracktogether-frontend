@@ -4,10 +4,10 @@ import SideNavigator from "../../components/sidebar/SideNavigator";
 import Box from "../../components/Box";
 import styles from "./Home.module.css";
 import React, {
-  useState,
+  // useState,
   useEffect,
   useContext,
-  // useReducer,
+  useReducer,
   // useRef,
 } from "react";
 import AuthContext from "../../store/AuthContext";
@@ -34,22 +34,22 @@ function Home() {
 
   // const reducer = (state, [type, payload]) => {
   //   switch (type) {
-  //     case 'quote':
+  //     case "quote":
   //       return {
   //         ...state,
   //         quote: payload,
   //       };
-  //     case 'pie':
+  //     case "pie":
   //       return {
   //         ...state,
   //         pieData: payload,
   //       };
-  //     case 'line':
+  //     case "line":
   //       return {
   //         ...state,
   //         lineData: payload,
   //       };
-  //     case 'bar':
+  //     case "bar":
   //       return {
   //         ...state,
   //         barData: payload,
@@ -59,11 +59,14 @@ function Home() {
   //   }
   // };
 
-  // const [state, dispatch] = useReducer(reducer, initialValues);
+  const reducer = (state, payload) => {
+    return payload;
+  };
 
-  const [data, setData] = useState(initialValues);
-  // const [isDataFetched, setDataFetched] = useState(false);
-  console.log(data);
+  const [data, dispatch] = useReducer(reducer, initialValues);
+
+  // const [data, setData] = useState(initialValues);
+
   // Bar Chart
   const dummyBarData = [
     { y: 10, label: "Net:\n$10", fill: "turquoise" },
@@ -73,56 +76,9 @@ function Home() {
     { y: -40, label: "Movie Group:\n$-40", fill: "red" },
   ];
 
-  // const fetchData = async () => {
-  //   await timeout(1000);
-  //   console.log("entering home frame:" + JSON.stringify(data));
-  //   const quote_result = await fetch("https://api.quotable.io/random")
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       return [data.content, data.author];
-  //     });
-  //   // const quote_result = ["Test Quote", "Test Author"];
-
-  //   const pie_result = await fetch("http://localhost:8080/api/chart/piechart", {
-  //     method: "GET",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       authorization: "Bearer " + authCtx.token,
-  //     },
-  //   })
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       return data.data;
-  //     })
-  //     .catch((error) => console.log(error));
-
-  //   const line_result = await fetch(
-  //     "http://localhost:8080/api/chart/linechart",
-  //     {
-  //       method: "GET",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         authorization: "Bearer " + authCtx.token,
-  //       },
-  //     },
-  //   )
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       return data.data;
-  //     })
-  //     .catch((error) => console.log(error));
-
-  //   console.log("successfully made all api calls in home");
-  //   if (quote_result && pie_result && line_result && !isCancelled) {
-  //     console.log("setting data");
-  //     setData({
-  //       quote: quote_result,
-  //       pieData: pie_result,
-  //       lineData: line_result,
-  //       barData: dummyBarData,
-  //     });
-  //   }
-  // };
+  function getRndInteger(max) {
+    return Math.floor(Math.random() * max);
+  }
 
   function timeout(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -132,73 +88,36 @@ function Home() {
     let isCancelled = false;
     console.log("entering home useEffect frame");
     const fetchData = async () => {
-      const quote_result = await fetch("https://api.quotable.io/random")
+      const quote_result = await fetch(
+        "https://goquotes-api.herokuapp.com/api/v1/all?type=tag&val=money",
+      )
         .then((response) => response.json())
         .then((data) => {
-          return [data.content, data.author];
+          let quote = data.quotes[getRndInteger(503)];
+          return [quote.text, quote.author];
         });
-
-      const pie_result = await fetch(
-        "http://localhost:8080/api/chart/piechart",
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            authorization: "Bearer " + authCtx.token,
-          },
-        },
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          return data.data;
-        })
-        .catch((error) => console.log(error));
-
-      const line_result = await fetch(
-        "http://localhost:8080/api/chart/linechart",
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            authorization: "Bearer " + authCtx.token,
-          },
-        },
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          return data.data;
-        })
-        .catch((error) => console.log(error));
-
-      const promises = [quote_result, pie_result, line_result];
-      console.log("successfully made all api calls in home");
 
       await timeout(500);
 
       if (!isCancelled) {
         console.log("setting all data in Home");
-        Promise.all(promises).then((responses) => {
-          setData({
-            // quote: quote_result,
-            // pieData: pie_result,
-            // lineData: line_result,
-            // barData: dummyBarData,
-            quote: responses[0],
-            pieData: responses[1],
-            lineData: responses[2],
-            barData: dummyBarData,
-          });
+        dispatch({
+          quote: quote_result,
+          pieData: filterCtx.localData,
+          lineData: filterCtx.localData,
+          barData: dummyBarData,
         });
       }
     };
-    if (authCtx.isDataFetched) {
+
+    if (authCtx.isDataFetched && filterCtx.isDataFetched) {
       fetchData();
     }
     //cleanup function is executed when useEffect is called again or on unmount
     return () => {
       isCancelled = true;
     };
-  }, [authCtx]);
+  }, [authCtx, filterCtx]);
 
   return (
     <React.Fragment style={{ overflow: "auto" }}>
