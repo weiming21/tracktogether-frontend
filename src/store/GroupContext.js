@@ -14,9 +14,6 @@ export const GroupContextProvider = (props) => {
   const [group, setGroup] = useState([]);
   const [dataFetched, setDataFetched] = useState(false);
 
-  console.log("group data fetched: " + dataFetched);
-  console.log(group);
-
   if (!dataFetched && token != null) {
     const url = "http://localhost:8080/api/group/summary/";
     console.log("fetching data in group context");
@@ -55,6 +52,7 @@ export const GroupContextProvider = (props) => {
 
   const logoutHandler = () => {
     setDataFetched(false);
+    setGroup([]);
   };
 
   const findGroupWithID = (groupID) => {

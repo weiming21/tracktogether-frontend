@@ -7,7 +7,7 @@ import PersonalOutstanding from "./PersonalOutstanding";
 import GroupOutstanding from "./GroupOutstanding";
 import Alerts from "./Alerts";
 import MonitorPayments from "./MonitorPayments";
-import AdjustmentLogs from "./AdjustmentLogs";
+// import AdjustmentLogs from "./AdjustmentLogs";
 import styles from "./Outstanding.module.css";
 import {
   // Row,
@@ -194,9 +194,9 @@ function Outstanding() {
               <Tab eventKey="Monitor" title="Monitor Payments">
                 <MonitorPayments data={localData} />
               </Tab>
-              <Tab eventKey="AdjustmentLogs" title="Adjustment Logs">
+              {/* <Tab eventKey="AdjustmentLogs" title="Adjustment Logs">
                 <AdjustmentLogs data={localData} />
-              </Tab>
+              </Tab> */}
             </Tabs>
           </Box>
         </div>

@@ -4,6 +4,7 @@ import { Row, Col, Table } from "react-bootstrap";
 import EditIcon from "@mui/icons-material/Edit";
 import AcceptIcon from "@mui/icons-material/CheckCircle";
 import RejectIcon from "@mui/icons-material/Cancel";
+import styles from "./Outstanding.module.css";
 import { Pagination } from "react-bootstrap";
 import { useState } from "react";
 // import { entries } from "lodash";
@@ -72,6 +73,11 @@ export default function PersonalOutstanding(props) {
           })}
         </tbody>
       </Table>
+      {slicedData.length == 0 && (
+        <p className={"p-5 " + styles.noGroupMessage}>
+          You have no items that require classifications at the moment
+        </p>
+      )}
       <Pagination>{items}</Pagination>
     </>
   );

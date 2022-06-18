@@ -5,6 +5,7 @@ import { Row, Col, Table, Button } from "react-bootstrap";
 import AcceptIcon from "@mui/icons-material/CheckCircle";
 import AuthContext from "../../store/AuthContext";
 import GroupContext from "../../store/GroupContext";
+import styles from "./Outstanding.module.css";
 
 export default function GroupOutstanding() {
   const initialToken = localStorage.getItem("token");
@@ -94,6 +95,11 @@ export default function GroupOutstanding() {
           })}
         </tbody>
       </Table>
+      {currNotifications.length == 0 && (
+        <p className={"p-5 " + styles.noGroupMessage}>
+          You have no group payments to acknowledge at the moment
+        </p>
+      )}
     </>
   );
 }

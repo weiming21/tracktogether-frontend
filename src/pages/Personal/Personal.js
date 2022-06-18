@@ -26,13 +26,9 @@ import {
 } from "react-bootstrap";
 
 function Personal() {
-  // const authCtx = useContext(AuthContext);
   const token = localStorage.getItem("token");
-  // const navigation = useNavigate();
-
   const filterCtx = useContext(FilterContext);
   const currData = filterCtx.currData;
-  // const setCurrData = filterCtx.setCurrData;
   const localData = filterCtx.localData;
   const setLocalData = filterCtx.setLocalData;
 
@@ -47,18 +43,6 @@ function Personal() {
         .toFixed(2)
     );
   }, [filterCtx]);
-
-  // const [localData, setLocalData] = useState([...currData]);
-
-  // filterCtx.setLocalDataFunction(setLocalData);
-
-  // const childToParent = (props) => {
-  //   setLocalData: setLocalData
-  // }
-
-  // useEffect(() => {
-  //   sortCategoryHandler(sortCategory, sortDirection);
-  // }, []);
 
   const [sortCategory, setSortCategory] = useState("Date");
   const [sortDirection, setSortDirection] = useState(true); //True implies descending order
@@ -410,6 +394,11 @@ function Personal() {
                     })}
                   </tbody>
                 </Table>
+                {slicedLocalData.length == 0 && (
+                  <p className={"p-5 " + styles.noGroupMessage}>
+                    You have no transaction information logged
+                  </p>
+                )}
               </Col>
             </Row>
 

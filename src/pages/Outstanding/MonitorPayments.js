@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { Row, Col, Table } from "react-bootstrap";
 // import Box from "../../components/Box";
 import FilterContext from "../../store/FilterContext";
-
+import styles from "./Outstanding.module.css";
 export default function MonitorPayments() {
   const filterCtx = useContext(FilterContext);
 
@@ -53,6 +53,11 @@ export default function MonitorPayments() {
             })}
         </tbody>
       </Table>
+      {alert.length == 0 && (
+        <p className={"p-5 " + styles.noGroupMessage}>
+          You have no one that owe you money at the moment
+        </p>
+      )}
     </>
   );
 }

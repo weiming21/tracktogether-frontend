@@ -12,15 +12,18 @@ import AuthContext from "../../store/AuthContext";
 import { matchPath } from "react-router";
 import { useLocation } from "react-router-dom";
 import GroupContext from "../../store/GroupContext";
+import FilterContext from "../../store/FilterContext";
 
 function SideNavigator() {
   const authCtx = useContext(AuthContext);
   const groupCtx = useContext(GroupContext);
+  const filterCtx = useContext(FilterContext);
   const location = useLocation();
 
   function handleLogout(e) {
     e.preventDefault();
     authCtx.logout();
+    filterCtx.logout();
     groupCtx.logout();
   }
 

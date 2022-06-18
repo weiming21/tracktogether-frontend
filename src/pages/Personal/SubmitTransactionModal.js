@@ -38,6 +38,7 @@ function SubmitTransactionModal(props) {
               <option> Food </option>
               <option> Transport </option>
               <option> Bills </option>
+              <option> Others</option>
             </Form.Select>
           </Form.Group>
           <Form.Group className="mb-3" controlId="formBasicAmount">
@@ -50,10 +51,16 @@ function SubmitTransactionModal(props) {
           </Form.Group>
           <Form.Group className="mb-3" controlId="formBasicMode">
             <Form.Label>Transaction mode</Form.Label>
-            <Form.Control
+
+            <Form.Select
               ref={formProps.transModeInput}
               placeholder="Enter transaction mode"
-            />
+            >
+              <option> Bank </option>
+              <option> PayLah </option>
+              <option> Cash </option>
+              <option> Others </option>
+            </Form.Select>
           </Form.Group>
         </Form>
       </Modal.Body>

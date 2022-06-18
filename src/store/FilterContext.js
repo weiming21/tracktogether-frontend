@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-// import AuthContext from "./AuthContext";
 
 const FilterContext = React.createContext({
   optionState: [],
@@ -11,8 +10,6 @@ const FilterContext = React.createContext({
 
 export const FilterContextProvider = (props) => {
   const initialToken = localStorage.getItem("token");
-
-  // const token = get
 
   const [optionState, setOptionState] = useState([]);
 
@@ -26,24 +23,6 @@ export const FilterContextProvider = (props) => {
   const [logState, setLogState] = useState(0); //0 is trans log, 1 is adjustment log, 2 is both.
 
   const [dataFetched, setDataFetch] = useState(false);
-
-  // const [localDataFunction, setLocalDataFunction] = useState((props) => {
-  //   console.log(props);
-  //   return [];
-  // });
-
-  console.log("filter Ctx reload");
-  console.log(initialToken);
-  console.log("datafected " + dataFetched);
-
-  // const [localDataFunction, setLocalDataFunction] = useState(() => {});
-
-  // const [sortCategoryHandlerFunction, setSortCategoryHandlerFunction] =
-  //   useState(() => {});
-
-  // const authCtx = useContext(AuthContext);
-
-  // if (!dataFetched) {
 
   if (!dataFetched && initialToken != null) {
     const url = "http://localhost:8080/api/account/transactions/";
@@ -59,8 +38,14 @@ export const FilterContextProvider = (props) => {
     })
       .then((response) => response.json())
       .then((data) => {
-        setCurrData(data.data);
-        setLocalData(data.data);
+        const newData = data.data;
+        newData.forEach((entry) => {
+          if (entry.information.trim() === "") {
+            entry.information = "Transaction information not recorded";
+          }
+        });
+        setCurrData(newData);
+        setLocalData(newData);
       })
       .catch((error) =>
         setCurrData(`Unable to retrieve quote. Error: ${error}`)
@@ -95,8 +80,8 @@ export const FilterContextProvider = (props) => {
         const adjustments = data.data.adjustments.map((entry) => {
           const newInfo =
             entry.description.trim() === ""
-              ? "No information logged"
-              : entry.information;
+              ? "Group information not recorded"
+              : entry.description;
           const newMode = "Groups";
           const json = {
             date: entry.date,
@@ -117,8 +102,6 @@ export const FilterContextProvider = (props) => {
     // sortCategoryHandlerFunction();
   }
 
-  // const [localData, setLocalData] = useState([]);
-
   const addFilter = () => {
     const newState = [
       ...optionState,
@@ -137,8 +120,6 @@ export const FilterContextProvider = (props) => {
   };
 
   const deleteAllFilter = () => {
-    // const newState = [...optionState];
-    // newState.pop();
     setOptionState([]);
   };
 
@@ -212,6 +193,16 @@ export const FilterContextProvider = (props) => {
     changeTransactionMode(index, "All");
   };
 
+  const logoutHandler = () => {
+    setDataFetch(false);
+    setOptionState([]);
+    setCurrData([]);
+    setLocalData([]);
+    setAlertData([]);
+    setAdjustmentData([]);
+    setLogState(0);
+  };
+
   const contextValue = {
     isDataFetched: dataFetched,
     optionState: optionState,
@@ -220,15 +211,10 @@ export const FilterContextProvider = (props) => {
     adjustmentData: adjustmentData,
     logState: logState,
     setLogState: setLogState,
-    // localData: localData,
     setOptionState: setOptionState,
     setCurrData: setCurrData,
     localData: localData,
     setLocalData: setLocalData,
-    // setLocalDataFunction: setLocalDataFunction,
-    // setSortCategoryHandlerFunction: setSortCategoryHandlerFunction,
-
-    // setLocalData: setLocalData,
     addFilter: addFilter,
     deleteAllFilter: deleteAllFilter,
     changeFilterVariable: changeFilterVariable,
@@ -241,6 +227,7 @@ export const FilterContextProvider = (props) => {
     changeFilterIndividual: changeFilterIndividual,
     filterAll: filterAll,
     refresh: refresh,
+    logout: logoutHandler,
   };
 
   return (
