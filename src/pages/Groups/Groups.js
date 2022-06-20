@@ -202,63 +202,10 @@ function Group() {
                   </Card.Body>
                 </Card>
               </Col>
-<<<<<<< HEAD
-            </Row>
-            <Row className="align-items-center pb-3">
-              <Col xs="4">
-                <Form.Control
-                  type="search"
-                  placeholder="Search"
-                  className="me-2"
-                  aria-label="Search"
-                  onChange={(e) => setGroupToJoin(e.target.value)}
-                />
-              </Col>
-              <Col xs="auto">
-                <Button onClick={handleJoin}>Join</Button>
-              </Col>
-              <Col xs="auto">
-                <Button onClick={handleAddGroupForm}>Create</Button>
-              </Col>
-            </Row>
-            <Row xs={1} sm={2} xl={4} xxl={6} className="g-4">
-              {groups.map((entry) => {
-                return (
-                  <Col>
-                    <Card
-                      className={styles.groupCard + " m-5"}
-                      onClick={() => {
-                        navigate("./" + entry.groupID);
-                      }}
-                    >
-                      <Card.Body>
-                        <Stack>
-                          <Image
-                            src={imageAvatar}
-                            roundedCircle
-                            width="75"
-                            height="75"
-                            className={styles.groupImage + " mb-3"}
-                          />
-
-                          <h4> {truncateName(entry.name)}</h4>
-                          <p className="mb-0"> {entry.groupID}</p>
-                        </Stack>
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                );
-              })}
-            </Row>
-          </Box>
-        </div>
-      </div>
-=======
             );
           })}
         </Row>
       </Box>
->>>>>>> cjy-branch
       <AddGroupModal formProps={formProps} childToParent={childToParent} />
     </div>
   );
