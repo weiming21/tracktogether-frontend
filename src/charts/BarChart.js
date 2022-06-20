@@ -1,4 +1,6 @@
 import Victory from "./victory";
+import GroupContext from "../store/GroupContext";
+import { useContext } from "react";
 
 export default function BarChart(props) {
   const VictoryBar = Victory.VictoryBar;
@@ -6,6 +8,46 @@ export default function BarChart(props) {
   const VictoryAxis = Victory.VictoryAxis;
   const VictoryChart = Victory.VictoryChart;
   const VictoryLabel = Victory.VictoryLabel;
+  const grpCtx = useContext(GroupContext);
+  console.log(grpCtx);
+
+  // function transform_data(arr) {
+  //   let initialJson = {
+  //     Net: {
+  //       y: 0,
+  //       label: "Net",
+  //     },
+  //   };
+  //   let temp = arr.reduce((json, current) => {
+  //     const groupName = grpCtx.findGroupWithID(current.groupID).name;
+  //     if (json[groupName]) {
+  //       json[groupName].y += current.amount;
+  //       json["Net"] += current.amount;
+  //     } else {
+  //       json[groupName] = {
+  //         y: current.amount,
+  //         label: groupName,
+  //       };
+  //       json["Net"] += current.amount;
+  //     }
+  //     return json;
+  //   }, initialJson);
+  //   temp = Object.values(temp).map((item) => {
+  //     let container = {};
+  //     container["y"] = item.y;
+  //     container["label"] = `${item.label}:\n$${item.amout}`;
+  //     container["fill"] =
+  //       item.y >= 0
+  //         ? item.label === "Net"
+  //           ? "turquoise"
+  //           : "green"
+  //         : item.label === "Net"
+  //         ? "pink"
+  //         : "red";
+  //     return container;
+  //   });
+  //   return temp;
+  // }
 
   return (
     <VictoryChart domainPadding={30}>

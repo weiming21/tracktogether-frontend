@@ -1,61 +1,169 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import styles from "./GroupComponent.module.css";
 import AuthContext from "../../../store/AuthContext";
+import GroupContext from "../../../store/GroupContext";
+import { useParams } from "react-router-dom";
 import {
-  //   Tabs,
-  //   Tab,
-  // Table,
-  //   Stack,
   Button,
   Form,
   Row,
   Col,
   ListGroup,
   CloseButton,
-  //   Container,
-  // Card,
-  // Image,
-  // Popover,
-  // OverlayTrigger,
 } from "react-bootstrap";
 
 function PaymentForm() {
+  const initialToken = localStorage.getItem("token");
   const authCtx = useContext(AuthContext);
   console.log(authCtx);
+  const grpCtx = useContext(GroupContext);
 
-  const dummyData = [
-    {
-      username: "Really",
-      contact: 11112222,
-      amount: 10,
-    },
-    {
-      username: "Ben",
-      contact: 44445555,
-      amount: 20,
-    },
-    {
-      username: "Ang",
-      contact: 44445555,
-      amount: 20,
-    },
-    {
-      username: "Teo",
-      contact: 44445555,
-      amount: 20,
-    },
-    {
-      username: "Ong",
-      contact: 44445555,
-      amount: 20,
-    },
-  ];
+  const groupID = useParams().groupID;
+
+  const [groupInformation, setGroupInformation] = useState(
+    grpCtx.findGroupWithID(groupID).users.map((entry) => {
+      // entry.amount = 0;
+      return entry;
+    })
+  );
+
+  useEffect(() => {
+    const newGroupInformation = grpCtx
+      .findGroupWithID(groupID)
+      .users.map((entry) => {
+        // entry.amount = 0;
+        return entry;
+      });
+    setGroupInformation(newGroupInformation);
+  }, [grpCtx]);
+
+  useEffect(() => {
+    setInitiatingMember(authCtx.username);
+  }, [authCtx]);
 
   const [localData, setLocalData] = useState([]);
+  const [currDescription, setCurrDescription] = useState("");
   const [splitEvenly, setSplitEvenly] = useState(true);
   const [currAmount, setCurrAmount] = useState(0);
-  // const [indivAmount, setIndivAmount] = useState([]);
+  const [currCategory, setCurrCategory] = useState("Food");
+  const [initiatingMember, setInitiatingMember] = useState(authCtx.username);
   const [currMember, setCurrMember] = useState("All");
+
+  function refresh() {
+    setLocalData([]);
+    setCurrDescription("");
+    setCurrAmount(0);
+    setCurrCategory("Food");
+    setInitiatingMember(authCtx.username);
+    setCurrMember("All");
+  }
+
+  function handleSubmitInitiatePayment() {
+    let validForm = true;
+
+    if (splitEvenly) {
+      if (currAmount === 0) {
+        setShowAmountWarning(true);
+        validForm = false;
+      } else {
+        setShowAmountWarning(false);
+      }
+    } else {
+      if (localData.filter((entry) => entry.amount === 0).length > 0) {
+        setShowAmountWarning(true);
+        validForm = false;
+      } else {
+        setShowAmountWarning(false);
+      }
+    }
+
+    if (localData.length === 0) {
+      setShowMemberWarning(true);
+      validForm = false;
+    } else {
+      setShowMemberWarning(false);
+    }
+
+    if (localData.length === 1 && localData[0].username === initiatingMember) {
+      setShowSelfPaymentWarning(true);
+      validForm = false;
+    } else {
+      setShowSelfPaymentWarning(false);
+    }
+
+    if (!validForm) {
+      return;
+    }
+
+    let hasInitiatingMember = false;
+
+    const totalAmount = localData.reduce(
+      (curr, next) => curr + Number(next.amount),
+      0
+    );
+
+    const processedInformation = localData.map((entry) => {
+      const json = {
+        date: new Date(),
+        username: entry.username,
+        userID: grpCtx.findUserIDWithName(groupID, entry.username),
+        targetUsername: initiatingMember,
+        amount: Number(entry.amount),
+        description: currDescription,
+        category: currCategory,
+        status: false,
+      };
+      if (entry.username === initiatingMember) {
+        hasInitiatingMember = true;
+        json.status = true;
+        json.amount = Number(json.amount) - Number(totalAmount);
+      }
+      console.log(totalAmount);
+      console.log(json.amount);
+      return json;
+    });
+
+    if (!hasInitiatingMember) {
+      processedInformation.push({
+        date: new Date(),
+        username: initiatingMember,
+        userID: grpCtx.findUserIDWithName(groupID, initiatingMember),
+        targetUsername: initiatingMember,
+        amount: -1 * Number(totalAmount),
+        description: currDescription,
+        category: currCategory,
+        status: true,
+      });
+    }
+
+    const url = "http://localhost:8080/api/group/initiate-payment";
+    fetch(url, {
+      method: "POST",
+      // body: JSON.stringify(base),
+      headers: {
+        "Content-Type": "application/json",
+        authorization: "Bearer " + initialToken,
+      },
+      body: JSON.stringify({
+        groupID: groupID,
+        userAmounts: processedInformation,
+      }),
+    })
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          console.log(res.json().data.message);
+        }
+      })
+      .then((data) => {
+        const newGroupData = data.data.group;
+        grpCtx.updateGroupInformation(groupID, newGroupData);
+        console.log("Successfully initiated payment");
+        setShowSuccessText(true);
+        refresh();
+      });
+  }
 
   function handleCurrAmount(e) {
     setCurrAmount(e.target.value);
@@ -87,7 +195,10 @@ function PaymentForm() {
 
   function handleAddMembers() {
     if (currMember === "All") {
-      const newLocalData = [...dummyData];
+      const newLocalData = [...groupInformation].map((entry) => {
+        entry.amount = 0;
+        return entry;
+      });
       const updatedLocalAmounts = resetIndivAmount(splitEvenly)(
         newLocalData,
         currAmount
@@ -95,12 +206,13 @@ function PaymentForm() {
       setLocalData(updatedLocalAmounts);
     } else {
       const newLocalData = [...localData];
-      const entry = dummyData.filter(
+      const entry = groupInformation.filter(
         (member) => member.username === currMember
       )[0];
       if (
         !localData.map((member) => member.username).includes(entry.username)
       ) {
+        entry.amount = 0;
         newLocalData.push(entry);
         const updatedLocalAmounts = resetIndivAmount(splitEvenly)(
           newLocalData,
@@ -131,6 +243,11 @@ function PaymentForm() {
     };
   }
 
+  const [showSuccessText, setShowSuccessText] = useState(false);
+  const [showAmountWarning, setShowAmountWarning] = useState(false);
+  const [showMemberWarning, setShowMemberWarning] = useState(false);
+  const [showSelfPaymentWarning, setShowSelfPaymentWarning] = useState(false);
+
   return (
     <>
       {/* <h2 className={styles.header}> This Group </h2> */}
@@ -139,12 +256,17 @@ function PaymentForm() {
           <Form>
             <Form.Group className="mb-3" controlId="paymentFormDescription">
               <Form.Label>Description </Form.Label>
-              <Form.Control placeholder="Enter Description" />
+              <Form.Control
+                value={currDescription}
+                onChange={(e) => setCurrDescription(e.target.value)}
+                placeholder="Enter Description"
+              />
             </Form.Group>
             <Form.Group className="my-4" controlId="paymentFormSplit">
               <Form.Check
                 type="switch"
                 id="custom-switch"
+                defaultChecked={!splitEvenly}
                 onClick={() => {
                   setSplitEvenly(!splitEvenly);
                   const updatedLocalAmounts = resetIndivAmount(!splitEvenly)(
@@ -169,11 +291,32 @@ function PaymentForm() {
             )}
             <Form.Group className="mb-3" controlId="paymentFormCategory">
               <Form.Label>Category </Form.Label>
-              <Form.Select>
+              <Form.Select
+                value={currCategory}
+                onChange={(e) => setCurrCategory(e.target.value)}
+              >
                 <option> Food </option>
                 <option> Transport </option>
                 <option> Bills </option>
               </Form.Select>
+            </Form.Group>
+
+            <Form.Group className="mb-3" controlId="initiatingMember">
+              <Form.Label> Payment to </Form.Label>
+              <Row className="align-items-right">
+                <Col xs="auto">
+                  <Form.Select
+                    value={initiatingMember}
+                    onChange={(e) => {
+                      setInitiatingMember(e.target.value);
+                    }}
+                  >
+                    {groupInformation.map((member) => {
+                      return <option> {member.username} </option>;
+                    })}
+                  </Form.Select>
+                </Col>
+              </Row>
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="paymentFormMembers">
@@ -187,7 +330,7 @@ function PaymentForm() {
                     }}
                   >
                     <option> All </option>
-                    {dummyData.map((member) => {
+                    {groupInformation.map((member) => {
                       return <option> {member.username} </option>;
                     })}
                   </Form.Select>
@@ -246,10 +389,26 @@ function PaymentForm() {
               );
             })}
           </ListGroup>
-          <Button style={{ display: "flex" }} className="my-3">
+          <Button
+            onClick={handleSubmitInitiatePayment}
+            style={{ display: "flex" }}
+            className="my-3"
+          >
             {" "}
             Send Transaction Request{" "}
           </Button>{" "}
+          {showSuccessText && (
+            <p className={styles.success}> Payment successfully initiated!</p>
+          )}
+          {showAmountWarning && (
+            <p className={styles.warning}> Amount cannot be 0!</p>
+          )}
+          {showMemberWarning && (
+            <p className={styles.warning}> Memberlist cannot be empty!</p>
+          )}
+          {showSelfPaymentWarning && (
+            <p className={styles.warning}> Cannot pay yourself!</p>
+          )}
         </Col>
       </Row>
     </>

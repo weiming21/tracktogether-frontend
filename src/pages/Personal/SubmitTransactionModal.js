@@ -1,8 +1,11 @@
 import React from "react";
-import { Button, Modal, Form } from "react-bootstrap";
+import styles from "./Personal.module.css";
+import { Button, Modal, Form, Stack } from "react-bootstrap";
 
 function SubmitTransactionModal(props) {
   const formProps = props.formProps;
+  const showValidationText = props.showValidationText;
+
   return (
     <Modal show={formProps.transactionForm} onHide={formProps.handleClose}>
       <Modal.Header closeButton>
@@ -35,6 +38,7 @@ function SubmitTransactionModal(props) {
               <option> Food </option>
               <option> Transport </option>
               <option> Bills </option>
+              <option> Others</option>
             </Form.Select>
           </Form.Group>
           <Form.Group className="mb-3" controlId="formBasicAmount">
@@ -47,20 +51,31 @@ function SubmitTransactionModal(props) {
           </Form.Group>
           <Form.Group className="mb-3" controlId="formBasicMode">
             <Form.Label>Transaction mode</Form.Label>
-            <Form.Control
+
+            <Form.Select
               ref={formProps.transModeInput}
               placeholder="Enter transaction mode"
-            />
+            >
+              <option> Bank </option>
+              <option> PayLah </option>
+              <option> Cash </option>
+              <option> Others </option>
+            </Form.Select>
           </Form.Group>
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={formProps.handleClose}>
-          Cancel
-        </Button>
-        <Button variant="primary" onClick={formProps.handleAddTransaction}>
-          Add Transaction
-        </Button>
+        <Stack direction="horizontal" gap={3}>
+          {showValidationText && (
+            <label className={styles.warningText}> Date or Amount empty!</label>
+          )}
+          <Button variant="secondary" onClick={formProps.handleClose}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={formProps.handleAddTransaction}>
+            Add Transaction
+          </Button>
+        </Stack>
       </Modal.Footer>
     </Modal>
   );

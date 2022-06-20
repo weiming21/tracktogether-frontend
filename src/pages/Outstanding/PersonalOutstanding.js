@@ -1,38 +1,39 @@
 import React from "react";
-import { Row, Col, Table } from "react-bootstrap";
+// import { Row, Col, Table } from "react-bootstrap";
 // import Box from "../../components/Box";
-import EditIcon from "@mui/icons-material/Edit";
-import AcceptIcon from "@mui/icons-material/CheckCircle";
-import RejectIcon from "@mui/icons-material/Cancel";
-import { Pagination } from "react-bootstrap";
-import { useState } from "react";
+// import EditIcon from "@mui/icons-material/Edit";
+// import AcceptIcon from "@mui/icons-material/CheckCircle";
+// import RejectIcon from "@mui/icons-material/Cancel";
+import styles from "./Outstanding.module.css";
+// import { Pagination } from "react-bootstrap";
+// import { useState } from "react";
 // import { entries } from "lodash";
 
-export default function PersonalOutstanding(props) {
-  const [active, setActive] = useState(1);
-  const items = [];
-  const entriesPerPage = 10;
-  const tabs = Math.ceil(props.data.length / entriesPerPage);
+export default function PersonalOutstanding() {
+  // const [active, setActive] = useState(1);
+  // const items = [];
+  // const entriesPerPage = 10;
+  // const tabs = Math.ceil(props.data.length / entriesPerPage);
 
-  for (let number = 1; number <= tabs; number++) {
-    items.push(
-      <Pagination.Item
-        key={number}
-        active={number === active}
-        onClick={() => setActive(number)}
-      >
-        {number}
-      </Pagination.Item>
-    );
-  }
+  // for (let number = 1; number <= tabs; number++) {
+  //   items.push(
+  //     <Pagination.Item
+  //       key={number}
+  //       active={number === active}
+  //       onClick={() => setActive(number)}
+  //     >
+  //       {number}
+  //     </Pagination.Item>
+  //   );
+  // }
 
-  const slicedData = props.data.slice(
-    (active - 1) * entriesPerPage,
-    active * entriesPerPage
-  );
+  // const slicedData = props.data.slice(
+  //   (active - 1) * entriesPerPage,
+  //   active * entriesPerPage
+  // );
   return (
     <>
-      <Row className="align-items-center pb-3">
+      {/* <Row className="align-items-center pb-3">
         <Col xs="auto">
           {" "}
           <h2>Personal Trasactions</h2>
@@ -72,7 +73,12 @@ export default function PersonalOutstanding(props) {
           })}
         </tbody>
       </Table>
-      <Pagination>{items}</Pagination>
+
+      <Pagination>{items}</Pagination> */}
+
+      <p className={"p-5 " + styles.noGroupMessage}>
+        You have no items that require classifications at the moment
+      </p>
     </>
   );
 }

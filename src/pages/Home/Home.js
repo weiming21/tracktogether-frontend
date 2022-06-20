@@ -1,13 +1,12 @@
 //import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Navigator from "../../components/navbar/Navigator";
-import SideNavigator from "../../components/sidebar/SideNavigator";
+
 import Box from "../../components/Box";
 import styles from "./Home.module.css";
 import React, {
-  useState,
+  // useState,
   useEffect,
   useContext,
-  // useReducer,
+  useReducer,
   // useRef,
 } from "react";
 import AuthContext from "../../store/AuthContext";
@@ -15,13 +14,15 @@ import DonutChart from "../../charts/DonutChart";
 import BarChart from "../../charts/BarChart";
 import LineChart from "../../charts/LineChart";
 import { Container, Row, Col, Spinner } from "react-bootstrap";
+import FilterContext from "../../store/FilterContext";
 // import { unstable_batchedUpdates } from 'react-dom';
 
 function Home() {
   const authCtx = useContext(AuthContext);
   console.log("rendering home");
-  console.log(authCtx);
-  //Random Quote
+  // console.log(authCtx);
+  const filterCtx = useContext(FilterContext);
+  console.log(filterCtx);
 
   const initialValues = {
     quote: [],
@@ -32,22 +33,22 @@ function Home() {
 
   // const reducer = (state, [type, payload]) => {
   //   switch (type) {
-  //     case 'quote':
+  //     case "quote":
   //       return {
   //         ...state,
   //         quote: payload,
   //       };
-  //     case 'pie':
+  //     case "pie":
   //       return {
   //         ...state,
   //         pieData: payload,
   //       };
-  //     case 'line':
+  //     case "line":
   //       return {
   //         ...state,
   //         lineData: payload,
   //       };
-  //     case 'bar':
+  //     case "bar":
   //       return {
   //         ...state,
   //         barData: payload,
@@ -57,11 +58,14 @@ function Home() {
   //   }
   // };
 
-  // const [state, dispatch] = useReducer(reducer, initialValues);
+  const reducer = (state, payload) => {
+    return payload;
+  };
 
-  const [data, setData] = useState(initialValues);
-  // const [isDataFetched, setDataFetched] = useState(false);
-  console.log(data);
+  const [data, dispatch] = useReducer(reducer, initialValues);
+
+  // const [data, setData] = useState(initialValues);
+
   // Bar Chart
   const dummyBarData = [
     { y: 10, label: "Net:\n$10", fill: "turquoise" },
@@ -71,123 +75,98 @@ function Home() {
     { y: -40, label: "Movie Group:\n$-40", fill: "red" },
   ];
 
-  const fetchData = async () => {
-    console.log("entering home frame:" + JSON.stringify(data));
-    // const quote_result = await fetch("https://api.quotable.io/random")
-    //   .then((response) => response.json())
-    //   .then((data) => {
-    //     return [data.content, data.author];
-    //   });
-    const quote_result = ["Test Quote", "Test Author"];
+  function getRndInteger(max) {
+    return Math.floor(Math.random() * max);
+  }
 
-    const pie_result = await fetch("http://localhost:8080/api/chart/piechart", {
-      method: "PUT",
-      body: JSON.stringify({
-        _id: authCtx.id,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        return data.data;
-      })
-      .catch((error) => console.log(error));
-
-    const line_result = await fetch(
-      "http://localhost:8080/api/chart/linechart",
-      {
-        method: "PUT",
-        body: JSON.stringify({
-          _id: authCtx.id,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        return data.data;
-      });
-
-    console.log("successfully made all api calls in home");
-    if (quote_result && pie_result && line_result) {
-      console.log("setting data");
-      setData({
-        quote: quote_result,
-        pieData: pie_result,
-        lineData: line_result,
-        barData: dummyBarData,
-      });
-    }
-  };
+  function timeout(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
 
   useEffect(() => {
-    if (authCtx.isDataFetched) {
+    let isCancelled = false;
+    console.log("entering home useEffect frame");
+    const fetchData = async () => {
+      const quote_result = await fetch(
+        "https://goquotes-api.herokuapp.com/api/v1/all?type=tag&val=money"
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          let quote = data.quotes[getRndInteger(503)];
+          return [quote.text, quote.author];
+        });
+
+      await timeout(500);
+
+      if (!isCancelled) {
+        console.log("setting all data in Home");
+        dispatch({
+          quote: quote_result,
+          pieData: filterCtx.localData,
+          lineData: filterCtx.localData,
+          barData: dummyBarData,
+        });
+      }
+    };
+
+    if (authCtx.isDataFetched && filterCtx.isDataFetched) {
       fetchData();
     }
-  }, [authCtx]);
+    //cleanup function is executed when useEffect is called again or on unmount
+    return () => {
+      isCancelled = true;
+    };
+  }, [authCtx, filterCtx]);
 
   return (
-    <React.Fragment style={{ overflow: "auto" }}>
-      <Navigator />
-      <div style={{ display: "flex", minHeight: "100%", overflow: "auto" }}>
-        <div className={styles.left}>
-          <SideNavigator />
-        </div>
-
-        <div className={styles.right}>
-          <Box>
-            <h2 className={styles.header}>Welcome Mr {authCtx.username}!</h2>
-            <Container>
-              <Row>
-                <Col>
-                  <DonutChart data={data.pieData} />
-                </Col>
-                <Col style={{ position: "relative" }}>
-                  {data.lineData.length != 0 ? (
-                    <LineChart data={data.lineData} />
-                  ) : (
-                    <div className={styles.spinner}>
-                      <Spinner animation="border" variant="primary" />
-                    </div>
-                  )}
-                </Col>
-                <Col style={{ position: "relative" }}>
-                  {data.barData.length == 0 ? (
-                    <div className={styles.spinner}>
-                      <Spinner animation="border" variant="primary" />
-                    </div>
-                  ) : (
-                    <BarChart data={data.barData} />
-                  )}
-                </Col>
-              </Row>
-            </Container>
-          </Box>
-
-          <Box>
-            <h4 className={styles.header}>Quote of the Day</h4>
-            {data.quote.length == 0 ? (
-              <Col style={{ position: "relative" }}>
+    <div className={styles.right}>
+      <Box>
+        <h2 className={styles.header}>Welcome Mr {authCtx.username}!</h2>
+        <Container>
+          <Row>
+            <Col>
+              <DonutChart data={data.pieData} />
+            </Col>
+            <Col style={{ position: "relative" }}>
+              {data.lineData.length != 0 ? (
+                <LineChart data={data.lineData} />
+              ) : (
                 <div className={styles.spinner}>
                   <Spinner animation="border" variant="primary" />
                 </div>
-                <br></br>
-                <br></br>
-              </Col>
-            ) : (
-              <div>
-                <span className={styles.quote}>"{data.quote[0]}"</span>
-                <p>-{data.quote[1]}-</p>
-              </div>
-            )}
-          </Box>
-        </div>
-      </div>
-    </React.Fragment>
+              )}
+            </Col>
+            <Col style={{ position: "relative" }}>
+              {data.barData.length == 0 ? (
+                <div className={styles.spinner}>
+                  <Spinner animation="border" variant="primary" />
+                </div>
+              ) : (
+                <BarChart data={data.barData} />
+              )}
+            </Col>
+          </Row>
+        </Container>
+      </Box>
+
+      <Box>
+        <h4 className={styles.header}>Quote of the Day</h4>
+        {data.quote.length == 0 ? (
+          <Col style={{ position: "relative" }}>
+            <div className={styles.spinner}>
+              <Spinner animation="border" variant="primary" />
+            </div>
+            <br></br>
+            <br></br>
+          </Col>
+        ) : (
+          <div>
+            <span className={styles.quote}>"{data.quote[0]}"</span>
+            <p>-{data.quote[1]}-</p>
+          </div>
+        )}
+      </Box>
+    </div>
   );
 }
 

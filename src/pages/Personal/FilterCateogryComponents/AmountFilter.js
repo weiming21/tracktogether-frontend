@@ -17,13 +17,13 @@ function AmountFilter(props) {
 
   const handleLowerAmount = (e) => {
     filterCtx.changeLowerAmount(index, e.target.value);
-    const newData = filterCtx.filterAll();
+    const newData = filterCtx.filterAll(filterCtx.logState);
     setLocalData(newData);
   };
 
   const handleUpperAmount = (e) => {
     filterCtx.changeUpperAmount(index, e.target.value);
-    const newData = filterCtx.filterAll();
+    const newData = filterCtx.filterAll(filterCtx.logState);
     setLocalData(newData);
   };
 

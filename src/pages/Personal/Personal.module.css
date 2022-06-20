@@ -25,3 +25,9 @@
   outline: none;
   box-shadow: none;
 }
+
+.warningText {
+  margin-right: auto;
+  text-align: left;
+  color: red;
+}

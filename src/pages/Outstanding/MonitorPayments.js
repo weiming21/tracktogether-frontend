@@ -1,29 +1,27 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Row, Col, Table, Button } from "react-bootstrap";
+import AuthContext from "../../store/AuthContext";
 // import Box from "../../components/Box";
-import PaidIcon from "@mui/icons-material/Paid";
 import FilterContext from "../../store/FilterContext";
 import styles from "./Outstanding.module.css";
-import AuthContext from "../../store/AuthContext";
 
-export default function Alerts() {
+export default function MonitorPayments() {
   const initialToken = localStorage.getItem("token");
-  console.log(initialToken);
+  // console.log(initialToken);
   const authCtx = useContext(AuthContext);
   const filterCtx = useContext(FilterContext);
 
   const [alert, setAlert] = useState(
-    filterCtx.alertData.filter((entry) => entry.amount > 0)
+    filterCtx.alertData.filter((entry) => entry.amount < 0)
   );
 
   useEffect(() => {
-    // console.log("useeffect in payments due");
-    setAlert(filterCtx.alertData.filter((entry) => entry.amount > 0));
+    setAlert(filterCtx.alertData.filter((entry) => entry.amount < 0));
   }, [filterCtx]);
 
-  function handleAlert(index) {
+  function handleReceivedPayment(index) {
+    console.log("clicked button");
     return () => {
-      // console.log(" alert kena clicked");
       const entry = alert[index];
       const url = "http://localhost:8080/api/account/alerts";
       fetch(url, {
@@ -39,7 +37,6 @@ export default function Alerts() {
         }),
       })
         .then((res) => {
-          // console.log("going");
           if (res.ok) {
             return res.json();
           } else {
@@ -47,10 +44,10 @@ export default function Alerts() {
           }
         })
         .then(() => {
+          console.log("received data");
           // const newGroupData = data.data;
           // grpCtx.updateGroupInformation(groupID, newGroupData);
           // grpCtx.updateGroupMemberListWithID(groupID, username);
-          // console.log(index + "is index");
           const newAlert = [...alert];
           newAlert.splice(index, 1);
           setAlert(newAlert);
@@ -58,13 +55,12 @@ export default function Alerts() {
         });
     };
   }
-
   return (
     <>
       <Row className="align-items-center pb-3">
         <Col xs="auto">
           {" "}
-          <h2>Alerts</h2>
+          <h2>Payments Due</h2>
         </Col>
         <Col xs="auto"> </Col>
       </Row>
@@ -72,24 +68,27 @@ export default function Alerts() {
         <thead>
           <tr>
             <th>Group</th>
-            <th>Payment to</th>
+            <th>Payment from</th>
             <th>Contact</th>
             <th>Amount($)</th>
-            <th>Confirm</th>
           </tr>
         </thead>
         <tbody>
-          {alert.map((entry, idx) => {
+          {alert.map((entry, index) => {
             return (
               <tr>
                 <td>{entry.group}</td>
                 <td>{entry.user}</td>
                 <td>{entry.contact}</td>
-                <td>{Number(entry.amount).toFixed(2)}</td>
+                <td>{Number(-entry.amount).toFixed(2)}</td>
                 <td>
-                  <Button variant="success" onClick={handleAlert(idx)}>
-                    <PaidIcon /*style={{ color: "green" }}*/ />
-                  </Button>
+                  <Button
+                    disabled={!entry.payeeHasPaid}
+                    onClick={handleReceivedPayment(index)}
+                  >
+                    {" "}
+                    Received payment{" "}
+                  </Button>{" "}
                 </td>
               </tr>
             );
@@ -98,7 +97,7 @@ export default function Alerts() {
       </Table>
       {alert.length == 0 && (
         <p className={"p-5 " + styles.noGroupMessage}>
-          You have no oustanding payments at the moment
+          You have no one that owe you money at the moment
         </p>
       )}
     </>

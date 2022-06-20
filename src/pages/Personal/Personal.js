@@ -1,14 +1,13 @@
-import Navigator from "../../components/navbar/Navigator";
-import SideNavigator from "../../components/sidebar/SideNavigator";
 import Box from "../../components/Box";
 import SubmitTransactionModal from "./SubmitTransactionModal";
 import styles from "./Personal.module.css";
-import React, { useState, useRef, useEffect, useContext } from "react";
+import React, { useState, useRef, useContext, useEffect } from "react";
+// import { useNavigate } from "react-router-dom";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import AddIcon from "@mui/icons-material/Add";
-import AuthContext from "../../store/AuthContext";
+// import AuthContext from "../../store/AuthContext";
 import FilterContext from "../../store/FilterContext";
 import FilterComponent from "./FilterComponent";
 import {
@@ -25,44 +24,32 @@ import {
 } from "react-bootstrap";
 
 function Personal() {
-  const authCtx = useContext(AuthContext);
-  console.log("rendering personal");
-  console.log(authCtx);
-
+  const token = localStorage.getItem("token");
   const filterCtx = useContext(FilterContext);
   const currData = filterCtx.currData;
-  const setCurrData = filterCtx.setCurrData;
-  const [localData, setLocalData] = useState([]);
+  const localData = filterCtx.localData;
+  const setLocalData = filterCtx.setLocalData;
+
+  const [totalAmount, setTotalAmount] = useState(
+    localData.reduce((curr, next) => curr + next.amount, 0).toFixed(2)
+  );
 
   useEffect(() => {
-    console.log(authCtx.isFetchingData + " use effect frames");
-    if (authCtx.isDataFetched) {
-      const url = "http://localhost:8080/api/account/" + authCtx.id;
-      console.log("fetching data in personal " + url);
-      fetch(url)
-        .then((response) => response.json())
-        .then((data) => {
-          setCurrData(data);
-          setLocalData(data);
-        })
-        .then((data) => {
-          console.log(data);
-        })
-        .catch((error) =>
-          setCurrData(`Unable to retrieve quote. Error: ${error}`)
-        );
-      sortCategoryHandler();
-    }
-  }, [authCtx]);
+    setTotalAmount(
+      filterCtx.localData
+        .reduce((curr, next) => curr + next.amount, 0)
+        .toFixed(2)
+    );
+  }, [filterCtx]);
 
-  const sortCategory = useRef();
+  const [sortCategory, setSortCategory] = useState("Date");
   const [sortDirection, setSortDirection] = useState(true); //True implies descending order
   const handleSortDirection = () => {
     setSortDirection(!sortDirection);
-    sortCategoryHandler();
+    sortCategoryHandler(sortCategory, !sortDirection);
   };
 
-  function sortCategoryHandler() {
+  function sortCategoryHandler(sortCategory, sortDirection) {
     function dataComparator(sortCategoryValue) {
       const numericalSortDirection = sortDirection ? 1 : -1;
       switch (sortCategoryValue) {
@@ -79,9 +66,36 @@ function Personal() {
     }
 
     const newLocalData = [...localData];
-    newLocalData.sort(dataComparator(sortCategory.current.value));
+    newLocalData.sort(dataComparator(sortCategory));
     setLocalData(newLocalData);
   }
+
+  function sortStream(data, sortCategory, sortDirection) {
+    function dataComparator(sortCategoryValue) {
+      const numericalSortDirection = sortDirection ? 1 : -1;
+      switch (sortCategoryValue) {
+        case "Date":
+          return (a, b) =>
+            numericalSortDirection * (new Date(b.date) - new Date(a.date));
+        case "Amount":
+          return (a, b) =>
+            numericalSortDirection * (Number(b.amount) - Number(a.amount));
+        case "Transaction Name":
+          return (a, b) =>
+            numericalSortDirection * (b.information < a.information ? -1 : 1);
+      }
+    }
+    const newLocalData = [...data];
+    newLocalData.sort(dataComparator(sortCategory));
+    return newLocalData;
+  }
+
+  const dataToDisplay = sortStream(localData, sortCategory, sortDirection);
+
+  // sortCategoryHandler();
+
+  // filterCtx.setLocalDataFunction(setLocalData);
+  // filterCtx.setSortCategoryHandlerFunction(sortCategoryHandler);
 
   const dateInput = useRef();
   const transNameInput = useRef();
@@ -106,15 +120,22 @@ function Personal() {
       mode: enteredTransMode,
     };
     console.log(newData);
-    setCurrData([...currData, newData]);
+    if (enteredDate === "" || enteredAmount === "") {
+      setShowValidationText(true);
+      return;
+    }
+
     setTransactionForm(false);
-    const url = "http://localhost:8080/api/account/" + authCtx.id;
+    const url = "http://localhost:8080/api/account/transactions/";
     console.log(url);
     fetch(url, {
       method: "PUT",
-      body: JSON.stringify(newData),
+      body: JSON.stringify({
+        data: newData,
+      }),
       headers: {
         "Content-Type": "application/json",
+        authorization: "Bearer " + token,
       },
     })
       .then((res) => {
@@ -133,6 +154,11 @@ function Personal() {
           });
         }
       })
+      .then(() => {
+        // setCurrData([...currData, newData]);
+        // setLocalData([...localData, newData]);
+        location.reload();
+      })
       .catch((err) => {
         alert(err.message);
       });
@@ -150,6 +176,7 @@ function Personal() {
             index={filterArray.length}
             localData={localData}
             setLocalData={setLocalData}
+            setActiveTab={setActiveTab}
           />
         ),
       },
@@ -189,7 +216,7 @@ function Personal() {
   const [activeTab, setActiveTab] = useState(1);
   let items = [];
   const numberOfEntries = localData.length;
-  const entriesPerPage = 3;
+  const entriesPerPage = 15;
   const tabs = Math.ceil(numberOfEntries / entriesPerPage);
   for (let number = 1; number <= tabs; number++) {
     items.push(
@@ -203,7 +230,7 @@ function Personal() {
     );
   }
 
-  const slicedLocalData = localData.slice(
+  const slicedLocalData = dataToDisplay.slice(
     (activeTab - 1) * entriesPerPage,
     activeTab * entriesPerPage
   );
@@ -219,104 +246,164 @@ function Personal() {
     handleAddTransaction: handleAddTransaction,
   };
 
+  const handleTransactionLogs = () => {
+    filterCtx.setLogState(0);
+    let newData = filterCtx.filterAll(0);
+    // newData = sortStream(newData, sortCategory, sortDirection);
+    setLocalData(newData);
+    // sortCategoryHandler(sortCategory, sortDirection);
+  };
+
+  const handleAdjustmentLogs = () => {
+    filterCtx.setLogState(1);
+    let newData = filterCtx.filterAll(1);
+    // newData = sortStream(newData, sortCategory, sortDirection);
+    setLocalData(newData);
+    // sortCategoryHandler(sortCategory, sortDirection);
+  };
+
+  const handleBothLogs = () => {
+    filterCtx.setLogState(2);
+    let newData = filterCtx.filterAll(2);
+    // newData = sortStream(newData, sortCategory, sortDirection);
+    setLocalData(newData);
+    // sortCategoryHandler(sortCategory, sortDirection);
+  };
+
+  const [showValidationText, setShowValidationText] = useState(false);
+
   return (
-    <React.Fragment style={{ overflow: "auto" }}>
-      <Navigator />
-      <div style={{ display: "flex", height: "100%", overflow: "auto" }}>
-        <div className={styles.left}>
-          <SideNavigator />
-        </div>
+    <div className={styles.right}>
+      <Box>
+        <Row className="align-items-center pb-3">
+          <Col xs="auto">
+            {" "}
+            <h2 className={styles.header}>Transaction Log</h2>{" "}
+          </Col>
+          <Col xs="auto">
+            {" "}
+            <Button className={styles.btn} onClick={handleTransactionForm}>
+              {" "}
+              Add Transaction
+            </Button>
+          </Col>
+          <Col xs="auto">
+            <Form.Text>Sort By</Form.Text>
+          </Col>
+          <Col xs="auto">
+            <Form.Select
+              value={sortCategory}
+              onChange={(e) => {
+                setSortCategory(e.target.value);
+                sortCategoryHandler(e.target.value, sortDirection);
+              }}
+              placeholder="Enter category"
+            >
+              <option value="Date"> Date </option>
+              <option vale="Amount"> Amount </option>
+              <option value="Transaction Name"> Transaction Name </option>
+            </Form.Select>
+          </Col>
+          <Col xs="auto">
+            <Button className={styles.btn} onClick={handleSortDirection}>
+              {sortDirection && <ArrowUpwardIcon />}
+              {!sortDirection && <ArrowDownwardIcon />}
+            </Button>
+          </Col>
 
-        <div className={styles.right}>
-          <Box>
-            <Row className="align-items-center pb-3">
-              <Col xs="auto">
-                {" "}
-                <h2 className={styles.header}>Transaction Log</h2>{" "}
-              </Col>
-              <Col xs="auto">
-                {" "}
-                <Button className={styles.btn} onClick={handleTransactionForm}>
-                  {" "}
-                  Add Transaction
-                </Button>
-              </Col>
-              <Col xs="auto">
-                <Form.Text>Sort By</Form.Text>
-              </Col>
-              <Col xs="auto">
-                <Form.Select
-                  ref={sortCategory}
-                  onChange={sortCategoryHandler}
-                  placeholder="Enter category"
-                >
-                  <option> Date </option>
-                  <option> Amount </option>
-                  <option> Transaction Name </option>
-                </Form.Select>
-              </Col>
-              <Col xs="auto">
-                <Button className={styles.btn} onClick={handleSortDirection}>
-                  {sortDirection && <ArrowUpwardIcon />}
-                  {!sortDirection && <ArrowDownwardIcon />}
-                </Button>
-              </Col>
-
-              <Col xs="auto">
-                <OverlayTrigger
-                  trigger="click"
-                  placement="auto"
-                  rootClose
-                  overlay={popover()}
-                >
-                  <Button variant="light" className={styles.btn}>
-                    <FilterAltIcon />
-                  </Button>
-                </OverlayTrigger>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <Table striped bordered hover>
-                  <thead>
+          <Col xs="auto">
+            <OverlayTrigger
+              trigger="click"
+              placement="auto"
+              rootClose
+              overlay={popover()}
+            >
+              <Button variant="light" className={styles.btn}>
+                <FilterAltIcon />
+              </Button>
+            </OverlayTrigger>
+          </Col>
+          <Col xs="auto">
+            <strong>
+              {" "}
+              <label> Total Amount: ${totalAmount} </label>
+            </strong>
+          </Col>
+          <Col xs="auto">
+            <Form.Check
+              inline
+              defaultChecked={filterCtx.logState === 0}
+              label="Transaction Logs"
+              name="group1"
+              type="radio"
+              id="inline-radio-1"
+              onClick={handleTransactionLogs}
+            />
+            <Form.Check
+              inline
+              defaultChecked={filterCtx.logState === 1}
+              label="Adjustment Logs"
+              name="group1"
+              type="radio"
+              id="inline-radio-2"
+              onClick={handleAdjustmentLogs}
+            />
+            <Form.Check
+              inline
+              defaultChecked={filterCtx.logState === 2}
+              label="Both"
+              name="group1"
+              type="radio"
+              id="inline-radio-3"
+              onClick={handleBothLogs}
+            />
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <Table striped bordered hover>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Transaction Name</th>
+                  <th>Category</th>
+                  <th>Amount($)</th>
+                  <th>Transaction Mode</th>
+                </tr>
+              </thead>
+              <tbody>
+                {slicedLocalData.map((entry) => {
+                  return (
                     <tr>
-                      <th>Date</th>
-                      <th>Transaction Name</th>
-                      <th>Category</th>
-                      <th>Amount($)</th>
-                      <th>Transaction Mode</th>
+                      <td>{new Date(entry.date).toDateString()}</td>
+                      <td>{entry.information}</td>
+                      <td>{entry.category}</td>
+                      <td>{Number(entry.amount).toFixed(2)}</td>
+                      <td>{entry.mode}</td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {slicedLocalData.map((entry) => {
-                      return (
-                        <tr>
-                          <td>{new Date(entry.date).toDateString()}</td>
-                          <td>{entry.information}</td>
-                          <td>{entry.category}</td>
-                          <td>{Number(entry.amount).toFixed(2)}</td>
-                          <td>{entry.mode}</td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </Table>
-              </Col>
-            </Row>
+                  );
+                })}
+              </tbody>
+            </Table>
+            {slicedLocalData.length == 0 && (
+              <p className={"p-5 " + styles.noGroupMessage}>
+                You have no transaction information logged
+              </p>
+            )}
+          </Col>
+        </Row>
 
-            <Row>
-              <Col className="align-content-center">
-                <Pagination className={styles.paginationBar}>
-                  {items}
-                </Pagination>
-              </Col>
-            </Row>
-          </Box>
-        </div>
-      </div>
-
-      <SubmitTransactionModal formProps={formProps} />
-    </React.Fragment>
+        <Row>
+          <Col className="align-content-center">
+            <Pagination className={styles.paginationBar}>{items}</Pagination>
+          </Col>
+        </Row>
+      </Box>
+      <SubmitTransactionModal
+        showValidationText={showValidationText}
+        formProps={formProps}
+      />
+    </div>
   );
 }
 

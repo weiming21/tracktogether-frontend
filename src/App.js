@@ -2,12 +2,12 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Login from "./pages/Login/Login";
 import SignUp from "./pages/SignUp/SignUp";
-import Home from "./pages/Home/Home";
-import Personal from "./pages/Personal/Personal";
-import Profile from "./pages/Profile/Profile";
-import Groups from "./pages/Groups/Groups";
-import GroupDetails from "./pages/Groups/GroupDetails";
-import Outstanding from "./pages/Outstanding/Outstanding";
+import HomeCard from "./pages/Home/HomeCard";
+import PersonalCard from "./pages/Personal/PersonalCard";
+import ProfileCard from "./pages/Profile/ProfileCard";
+import GroupsCard from "./pages/Groups/GroupsCard";
+import GroupDetailsCard from "./pages/Groups/GroupDetailsCard";
+import OutstandingCard from "./pages/Outstanding/OutstandingCard";
 import AuthContext from "./store/AuthContext";
 import { useContext } from "react";
 import { Navigate } from "react-router-dom";
@@ -26,32 +26,25 @@ function App() {
             <Routes>
               <Route exact path="/" element={<Login />} />
               <Route path="/signup" element={<SignUp />} />
-              {authCtx.isLoggedIn && <Route path="/Home" element={<Home />} />}
-
               {authCtx.isLoggedIn && (
-                <Route path="/personal" element={<Personal />} />
+                <Route path="/Home" element={<HomeCard />} />
               )}
 
               {authCtx.isLoggedIn && (
-                <Route path="/profile" element={<Profile />} />
+                <Route path="/personal" element={<PersonalCard />} />
               )}
 
               {authCtx.isLoggedIn && (
-                <Route path="/group" element={<Outstanding />} />
-              )}
-
-              {authCtx.isLoggedIn && (
-                <Route path="/outstanding" element={<Outstanding />} />
+                <Route path="/profile" element={<ProfileCard />} />
               )}
               {authCtx.isLoggedIn && (
-                <Route path={"/groups"} element={<Groups />} />
+                <Route path="/groups" element={<GroupsCard />} />
               )}
               {authCtx.isLoggedIn && (
-                <Route path="/groups/:groupID" element={<GroupDetails />} />
+                <Route path="/groups/:groupID" element={<GroupDetailsCard />} />
               )}
-
               {authCtx.isLoggedIn && (
-                <Route path={"/outstanding"} element={<Outstanding />} />
+                <Route path="/outstanding" element={<OutstandingCard />} />
               )}
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>

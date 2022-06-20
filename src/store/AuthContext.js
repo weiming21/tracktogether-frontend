@@ -1,4 +1,18 @@
 import React, { useState } from "react";
+/*
+Sample data for use when testing components that depend on Auth Context
+const propsAuthData = {
+  accountDetails : {
+    contact: 99118822,
+    email: "testmode@xyz.com",
+    id: "6296d34fb9f5fc8613765e15",
+    image: "http://localhost:8080/public/2c7648bd-91b6-4368-8ef1-b0136a34cbc0-1655534978207-chang-jing-yan-picture.jpg",
+    username: "Chang"
+  },
+} 
+<AuthContextProvider data={propsAuthData}> 
+</AuthContextProvider>
+*/
 
 const AuthContext = React.createContext({
   token: "",
@@ -16,26 +30,32 @@ const AuthContext = React.createContext({
 
 export const AuthContextProvider = (props) => {
   const initialToken = localStorage.getItem("token");
-  console.log("rendering Auth Context");
-  const [token, setToken] = useState(initialToken);
-  const [id, setId] = useState(null);
-  const [username, setUsername] = useState(null);
-  const [email, setEmail] = useState(null);
-  const [contact, setContact] = useState(null);
-  const [image, setImage] = useState(null);
 
-  const [dataFetched, setDataFetched] = useState(false);
+  const productionMode = typeof props.data === "undefined";
 
-  // const [optionState, setOptionState] = useState("Category");
-<<<<<<< HEAD
+  const [token, setToken] = useState(productionMode ? initialToken : null);
+
+  const [accountDetails, setAccountDetails] = useState(
+    productionMode
+      ? {
+          id: null,
+          username: null,
+          email: null,
+          contact: null,
+          image: null,
+        }
+      : props.data.accountDetails
+  );
+  console.log(accountDetails);
+  const [dataFetched, setDataFetched] = useState(productionMode ? false : true);
 
   const fetchData = (token) => {
-=======
-  console.log(dataFetched);
-  if (!dataFetched && initialToken != null) {
->>>>>>> 09f577da72042f4ea5814e84777332a4ff204fdb
+    if (!token) {
+      return;
+    }
     const url = "http://localhost:8080/api/account/refresh";
     console.log("fetching data in auth context");
+    setDataFetched(true);
     fetch(url, {
       method: "GET",
       // body: JSON.stringify(base),
@@ -61,13 +81,18 @@ export const AuthContextProvider = (props) => {
         }
       })
       .then((data) => {
+        // setDataFetched(true);
         let account = data.data.account;
-        setId(account._id);
-        setUsername(account.username);
-        setEmail(account.email);
-        setContact(account.contact);
-        setImage(account.image);
-        setDataFetched(true);
+
+        // setToken(null);
+        setAccountDetails({
+          id: account._id,
+          username: account.username,
+          email: account.email,
+          contact: account.contact,
+          image: account.image,
+        });
+
         console.log("Successfully refreshed!");
       })
       .catch((err) => {
@@ -91,11 +116,13 @@ export const AuthContextProvider = (props) => {
   const logoutHandler = () => {
     setToken(null);
     localStorage.removeItem("token");
-    setId(null);
-    setUsername(null);
-    setEmail(null);
-    setContact(null);
-    setImage(null);
+    setAccountDetails({
+      id: null,
+      username: null,
+      email: null,
+      contact: null,
+      image: null,
+    });
     setDataFetched(false);
     console.log("Successfully logged out!");
     // localStorage.removeItem("id");
@@ -103,17 +130,18 @@ export const AuthContextProvider = (props) => {
 
   const contextValue = {
     token: token,
-    id: id,
-    username: username,
-    email: email,
-    contact: contact,
-    image: image,
+    id: accountDetails.id,
+    username: accountDetails.username,
+    email: accountDetails.email,
+    contact: accountDetails.contact,
+    image: accountDetails.image,
     isLoggedIn: userIsLoggedIn,
     isDataFetched: dataFetched,
 
     login: loginHandler,
     // datalog: loginData,
     logout: logoutHandler,
+    fetchData: fetchData,
     // optionState: optionState,
     // setOptionState: setOptionState,
   };

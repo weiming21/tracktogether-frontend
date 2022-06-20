@@ -69,3 +69,17 @@
   background-color: rgb(231, 231, 231);
   /* border-color: #0d6efd; */
 }
+
+.entryAmount {
+  color: chartreuse;
+}
+
+.success {
+  text-align: left;
+  color: rgb(0, 148, 0);
+}
+
+.warning {
+  text-align: left;
+  color: red;
+}

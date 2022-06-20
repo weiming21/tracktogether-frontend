@@ -44,14 +44,14 @@ function DateFilter(props) {
 
   const handleYear = (e) => {
     filterCtx.changeYear(index, e.target.value);
-    const newData = filterCtx.filterAll();
+    const newData = filterCtx.filterAll(filterCtx.logState);
     setLocalData(newData);
   };
 
   const handleMonth = (e) => {
     // console.log(currMonth);
     filterCtx.changeMonth(index, e.target.value);
-    const newData = filterCtx.filterAll();
+    const newData = filterCtx.filterAll(filterCtx.logState);
     setLocalData(newData);
   };
 
