@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import styles from "./GroupComponent.module.css";
 import AuthContext from "../../../store/AuthContext";
 import GroupContext from "../../../store/GroupContext";
+import FilterContext from "../../../store/FilterContext";
 // import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 // import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import { useParams } from "react-router-dom";
@@ -27,6 +28,7 @@ function GroupMemberList() {
   const initialToken = localStorage.getItem("token");
   const authCtx = useContext(AuthContext);
   console.log(authCtx);
+  const filterCtx = useContext(FilterContext);
   const grpCtx = useContext(GroupContext);
 
   const groupID = useParams().groupID;
@@ -124,6 +126,9 @@ function GroupMemberList() {
         console.log("Successfully reset payment");
         setShowWarning(false);
         setShowSuccess(true);
+        filterCtx.setDataFetch(false);
+        // authCtx.fetchData(initialToken);
+        // location.reload();
       });
   };
 

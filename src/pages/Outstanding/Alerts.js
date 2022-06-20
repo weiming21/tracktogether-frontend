@@ -17,11 +17,13 @@ export default function Alerts() {
   );
 
   useEffect(() => {
+    // console.log("useeffect in payments due");
     setAlert(filterCtx.alertData.filter((entry) => entry.amount > 0));
   }, [filterCtx]);
 
   function handleAlert(index) {
     return () => {
+      // console.log(" alert kena clicked");
       const entry = alert[index];
       const url = "http://localhost:8080/api/account/alerts";
       fetch(url, {
@@ -37,6 +39,7 @@ export default function Alerts() {
         }),
       })
         .then((res) => {
+          // console.log("going");
           if (res.ok) {
             return res.json();
           } else {
@@ -47,6 +50,7 @@ export default function Alerts() {
           // const newGroupData = data.data;
           // grpCtx.updateGroupInformation(groupID, newGroupData);
           // grpCtx.updateGroupMemberListWithID(groupID, username);
+          // console.log(index + "is index");
           const newAlert = [...alert];
           newAlert.splice(index, 1);
           setAlert(newAlert);

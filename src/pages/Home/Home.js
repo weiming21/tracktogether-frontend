@@ -1,6 +1,5 @@
 //import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Navigator from "../../components/navbar/Navigator";
-import SideNavigator from "../../components/sidebar/SideNavigator";
+
 import Box from "../../components/Box";
 import styles from "./Home.module.css";
 import React, {
@@ -120,63 +119,54 @@ function Home() {
   }, [authCtx, filterCtx]);
 
   return (
-    <React.Fragment style={{ overflow: "auto" }}>
-      <Navigator />
-      <div style={{ display: "flex", minHeight: "100%", overflow: "auto" }}>
-        <div className={styles.left}>
-          <SideNavigator />
-        </div>
-
-        <div className={styles.right}>
-          <Box>
-            <h2 className={styles.header}>Welcome Mr {authCtx.username}!</h2>
-            <Container>
-              <Row>
-                <Col>
-                  <DonutChart data={data.pieData} />
-                </Col>
-                <Col style={{ position: "relative" }}>
-                  {data.lineData.length != 0 ? (
-                    <LineChart data={data.lineData} />
-                  ) : (
-                    <div className={styles.spinner}>
-                      <Spinner animation="border" variant="primary" />
-                    </div>
-                  )}
-                </Col>
-                <Col style={{ position: "relative" }}>
-                  {data.barData.length == 0 ? (
-                    <div className={styles.spinner}>
-                      <Spinner animation="border" variant="primary" />
-                    </div>
-                  ) : (
-                    <BarChart data={data.barData} />
-                  )}
-                </Col>
-              </Row>
-            </Container>
-          </Box>
-
-          <Box>
-            <h4 className={styles.header}>Quote of the Day</h4>
-            {data.quote.length == 0 ? (
-              <Col style={{ position: "relative" }}>
+    <div className={styles.right}>
+      <Box>
+        <h2 className={styles.header}>Welcome Mr {authCtx.username}!</h2>
+        <Container>
+          <Row>
+            <Col>
+              <DonutChart data={data.pieData} />
+            </Col>
+            <Col style={{ position: "relative" }}>
+              {data.lineData.length != 0 ? (
+                <LineChart data={data.lineData} />
+              ) : (
                 <div className={styles.spinner}>
                   <Spinner animation="border" variant="primary" />
                 </div>
-                <br></br>
-                <br></br>
-              </Col>
-            ) : (
-              <div>
-                <span className={styles.quote}>"{data.quote[0]}"</span>
-                <p>-{data.quote[1]}-</p>
-              </div>
-            )}
-          </Box>
-        </div>
-      </div>
-    </React.Fragment>
+              )}
+            </Col>
+            <Col style={{ position: "relative" }}>
+              {data.barData.length == 0 ? (
+                <div className={styles.spinner}>
+                  <Spinner animation="border" variant="primary" />
+                </div>
+              ) : (
+                <BarChart data={data.barData} />
+              )}
+            </Col>
+          </Row>
+        </Container>
+      </Box>
+
+      <Box>
+        <h4 className={styles.header}>Quote of the Day</h4>
+        {data.quote.length == 0 ? (
+          <Col style={{ position: "relative" }}>
+            <div className={styles.spinner}>
+              <Spinner animation="border" variant="primary" />
+            </div>
+            <br></br>
+            <br></br>
+          </Col>
+        ) : (
+          <div>
+            <span className={styles.quote}>"{data.quote[0]}"</span>
+            <p>-{data.quote[1]}-</p>
+          </div>
+        )}
+      </Box>
+    </div>
   );
 }
 

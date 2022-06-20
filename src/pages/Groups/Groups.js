@@ -1,6 +1,4 @@
 //import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Navigator from "../../components/navbar/Navigator";
-import SideNavigator from "../../components/sidebar/SideNavigator";
 import Box from "../../components/Box";
 import styles from "./Groups.module.css";
 import React, { useState, useContext, useEffect } from "react";
@@ -142,85 +140,73 @@ function Group() {
   };
 
   return (
-    <React.Fragment style={{ overflow: "auto" }}>
-      <Navigator />
-      <div style={{ display: "flex", minHeight: "100%", overflow: "auto" }}>
-        <div className={styles.left}>
-          <SideNavigator />
-        </div>
-
-        <div className={styles.right}>
-          <Box>
-            <Row className="align-items-center pb-3">
-              <Col xs="auto">
-                <h2> Groups</h2>
-              </Col>
-            </Row>
-            <Row className="align-items-center pb-3">
-              <Col xs="4">
-                <Form.Control
-                  type="search"
-                  placeholder="Search"
-                  className="me-2"
-                  aria-label="Search"
-                  onChange={(e) => setGroupToJoin(e.target.value)}
-                />
-              </Col>
-              <Col xs="auto">
-                <OverlayTrigger
-                  show={joinErrorMessage}
-                  placement="right"
-                  overlay={popover}
+    <div className={styles.right}>
+      <Box>
+        <Row className="align-items-center pb-3">
+          <Col xs="auto">
+            <h2> Groups</h2>
+          </Col>
+        </Row>
+        <Row className="align-items-center pb-3">
+          <Col xs="4">
+            <Form.Control
+              type="search"
+              placeholder="Search"
+              className="me-2"
+              aria-label="Search"
+              onChange={(e) => setGroupToJoin(e.target.value)}
+            />
+          </Col>
+          <Col xs="auto">
+            <OverlayTrigger
+              show={joinErrorMessage}
+              placement="right"
+              overlay={popover}
+            >
+              <Button onClick={handleJoin}>Join</Button>
+            </OverlayTrigger>
+          </Col>
+          <Col xs="auto">
+            <Button onClick={handleAddGroupForm}>Create</Button>
+          </Col>
+        </Row>
+        <Row xs={1} sm={2} xl={4} xxl={6} className="g-4">
+          {groups.length == 0 && (
+            <p className={"p-5 " + styles.noGroupMessage}>
+              You have not joined any groups
+            </p>
+          )}
+          {groups.map((entry) => {
+            return (
+              <Col>
+                <Card
+                  className={styles.groupCard + " m-5"}
+                  onClick={() => {
+                    navigate("./" + entry.groupID);
+                  }}
                 >
-                  <Button onClick={handleJoin}>Join</Button>
-                </OverlayTrigger>
-              </Col>
-              <Col xs="auto">
-                <Button onClick={handleAddGroupForm}>Create</Button>
-              </Col>
-            </Row>
-            <Row xs={1} sm={2} xl={4} xxl={6} className="g-4">
-              {groups.length == 0 && (
-                <p className={"p-5 " + styles.noGroupMessage}>
-                  You have not joined any groups
-                </p>
-              )}
-              {groups.map((entry) => {
-                return (
-                  <Col>
-                    <Card
-                      className={styles.groupCard + " m-5"}
-                      onClick={() => {
-                        navigate("./" + entry.groupID);
-                      }}
-                    >
-                      <Card.Body>
-                        <Stack>
-                          <Image
-                            src={imageAvatar}
-                            roundedCircle
-                            width="75"
-                            height="75"
-                            className={styles.groupImage + " mb-3"}
-                          />
+                  <Card.Body>
+                    <Stack>
+                      <Image
+                        src={imageAvatar}
+                        roundedCircle
+                        width="75"
+                        height="75"
+                        className={styles.groupImage + " mb-3"}
+                      />
 
-                          <h4> {truncateName(entry.name)}</h4>
-                          <p className="mb-0">
-                            {" "}
-                            {padWithZeroes(entry.groupID)}
-                          </p>
-                        </Stack>
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                );
-              })}
-            </Row>
-          </Box>
-        </div>
-      </div>
+                      <h4> {truncateName(entry.name)}</h4>
+                      <p className="mb-0"> {padWithZeroes(entry.groupID)}</p>
+                    </Stack>
+                  </Card.Body>
+                </Card>
+              </Col>
+            );
+          })}
+        </Row>
+      </Box>
       <AddGroupModal formProps={formProps} childToParent={childToParent} />
-    </React.Fragment>
+    </div>
   );
 }
 

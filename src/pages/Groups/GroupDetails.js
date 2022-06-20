@@ -1,6 +1,4 @@
 //import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Navigator from "../../components/navbar/Navigator";
-import SideNavigator from "../../components/sidebar/SideNavigator";
 import Box from "../../components/Box";
 import PaymentForm from "./GroupComponents/PaymentForm";
 import GroupMemberList from "./GroupComponents/GroupMemberList";
@@ -34,37 +32,28 @@ function GroupDetails() {
   const params = useParams();
 
   return grpCtx.validateGroupWithID(parseInt(params.groupID)) ? (
-    <React.Fragment style={{ overflow: "auto" }}>
-      <Navigator />
-      <div style={{ display: "flex", minHeight: "100%", overflow: "auto" }}>
-        <div className={styles.left}>
-          <SideNavigator />
-        </div>
-
-        <div className={styles.right}>
-          <Box>
-            <Tabs
-              defaultActiveKey="payment"
-              id="uncontrolled-tab-example"
-              className="mb-3"
-            >
-              <Tab eventKey="payment" title="Initiate Payment">
-                <PaymentForm />
-              </Tab>
-              <Tab eventKey="memberList" title="Member List">
-                <GroupMemberList />
-              </Tab>
-              <Tab eventKey="groupSettings" title="Group Settings">
-                <GroupSettings />
-              </Tab>
-              <Tab eventKey="groupLogs" title="Group Logs">
-                <GroupLogs />
-              </Tab>
-            </Tabs>
-          </Box>
-        </div>
-      </div>
-    </React.Fragment>
+    <div className={styles.right}>
+      <Box>
+        <Tabs
+          defaultActiveKey="payment"
+          id="uncontrolled-tab-example"
+          className="mb-3"
+        >
+          <Tab eventKey="payment" title="Initiate Payment">
+            <PaymentForm />
+          </Tab>
+          <Tab eventKey="memberList" title="Member List">
+            <GroupMemberList />
+          </Tab>
+          <Tab eventKey="groupSettings" title="Group Settings">
+            <GroupSettings />
+          </Tab>
+          <Tab eventKey="groupLogs" title="Group Logs">
+            <GroupLogs />
+          </Tab>
+        </Tabs>
+      </Box>
+    </div>
   ) : (
     <div>
       <h1>Error 404 not found</h1>

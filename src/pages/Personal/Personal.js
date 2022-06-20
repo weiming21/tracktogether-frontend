@@ -1,5 +1,3 @@
-import Navigator from "../../components/navbar/Navigator";
-import SideNavigator from "../../components/sidebar/SideNavigator";
 import Box from "../../components/Box";
 import SubmitTransactionModal from "./SubmitTransactionModal";
 import styles from "./Personal.module.css";
@@ -275,149 +273,137 @@ function Personal() {
   const [showValidationText, setShowValidationText] = useState(false);
 
   return (
-    <React.Fragment style={{ overflow: "auto" }}>
-      <Navigator />
-      <div style={{ display: "flex", minHeight: "100%", overflow: "auto" }}>
-        <div className={styles.left}>
-          <SideNavigator />
-        </div>
+    <div className={styles.right}>
+      <Box>
+        <Row className="align-items-center pb-3">
+          <Col xs="auto">
+            {" "}
+            <h2 className={styles.header}>Transaction Log</h2>{" "}
+          </Col>
+          <Col xs="auto">
+            {" "}
+            <Button className={styles.btn} onClick={handleTransactionForm}>
+              {" "}
+              Add Transaction
+            </Button>
+          </Col>
+          <Col xs="auto">
+            <Form.Text>Sort By</Form.Text>
+          </Col>
+          <Col xs="auto">
+            <Form.Select
+              value={sortCategory}
+              onChange={(e) => {
+                setSortCategory(e.target.value);
+                sortCategoryHandler(e.target.value, sortDirection);
+              }}
+              placeholder="Enter category"
+            >
+              <option value="Date"> Date </option>
+              <option vale="Amount"> Amount </option>
+              <option value="Transaction Name"> Transaction Name </option>
+            </Form.Select>
+          </Col>
+          <Col xs="auto">
+            <Button className={styles.btn} onClick={handleSortDirection}>
+              {sortDirection && <ArrowUpwardIcon />}
+              {!sortDirection && <ArrowDownwardIcon />}
+            </Button>
+          </Col>
 
-        <div className={styles.right}>
-          <Box>
-            <Row className="align-items-center pb-3">
-              <Col xs="auto">
-                {" "}
-                <h2 className={styles.header}>Transaction Log</h2>{" "}
-              </Col>
-              <Col xs="auto">
-                {" "}
-                <Button className={styles.btn} onClick={handleTransactionForm}>
-                  {" "}
-                  Add Transaction
-                </Button>
-              </Col>
-              <Col xs="auto">
-                <Form.Text>Sort By</Form.Text>
-              </Col>
-              <Col xs="auto">
-                <Form.Select
-                  value={sortCategory}
-                  onChange={(e) => {
-                    setSortCategory(e.target.value);
-                    sortCategoryHandler(e.target.value, sortDirection);
-                  }}
-                  placeholder="Enter category"
-                >
-                  <option value="Date"> Date </option>
-                  <option vale="Amount"> Amount </option>
-                  <option value="Transaction Name"> Transaction Name </option>
-                </Form.Select>
-              </Col>
-              <Col xs="auto">
-                <Button className={styles.btn} onClick={handleSortDirection}>
-                  {sortDirection && <ArrowUpwardIcon />}
-                  {!sortDirection && <ArrowDownwardIcon />}
-                </Button>
-              </Col>
-
-              <Col xs="auto">
-                <OverlayTrigger
-                  trigger="click"
-                  placement="auto"
-                  rootClose
-                  overlay={popover()}
-                >
-                  <Button variant="light" className={styles.btn}>
-                    <FilterAltIcon />
-                  </Button>
-                </OverlayTrigger>
-              </Col>
-              <Col xs="auto">
-                <strong>
-                  {" "}
-                  <label> Total Amount: ${totalAmount} </label>
-                </strong>
-              </Col>
-              <Col xs="auto">
-                <Form.Check
-                  inline
-                  defaultChecked={filterCtx.logState === 0}
-                  label="Transaction Logs"
-                  name="group1"
-                  type="radio"
-                  id="inline-radio-1"
-                  onClick={handleTransactionLogs}
-                />
-                <Form.Check
-                  inline
-                  defaultChecked={filterCtx.logState === 1}
-                  label="Adjustment Logs"
-                  name="group1"
-                  type="radio"
-                  id="inline-radio-2"
-                  onClick={handleAdjustmentLogs}
-                />
-                <Form.Check
-                  inline
-                  defaultChecked={filterCtx.logState === 2}
-                  label="Both"
-                  name="group1"
-                  type="radio"
-                  id="inline-radio-3"
-                  onClick={handleBothLogs}
-                />
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <Table striped bordered hover>
-                  <thead>
+          <Col xs="auto">
+            <OverlayTrigger
+              trigger="click"
+              placement="auto"
+              rootClose
+              overlay={popover()}
+            >
+              <Button variant="light" className={styles.btn}>
+                <FilterAltIcon />
+              </Button>
+            </OverlayTrigger>
+          </Col>
+          <Col xs="auto">
+            <strong>
+              {" "}
+              <label> Total Amount: ${totalAmount} </label>
+            </strong>
+          </Col>
+          <Col xs="auto">
+            <Form.Check
+              inline
+              defaultChecked={filterCtx.logState === 0}
+              label="Transaction Logs"
+              name="group1"
+              type="radio"
+              id="inline-radio-1"
+              onClick={handleTransactionLogs}
+            />
+            <Form.Check
+              inline
+              defaultChecked={filterCtx.logState === 1}
+              label="Adjustment Logs"
+              name="group1"
+              type="radio"
+              id="inline-radio-2"
+              onClick={handleAdjustmentLogs}
+            />
+            <Form.Check
+              inline
+              defaultChecked={filterCtx.logState === 2}
+              label="Both"
+              name="group1"
+              type="radio"
+              id="inline-radio-3"
+              onClick={handleBothLogs}
+            />
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <Table striped bordered hover>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Transaction Name</th>
+                  <th>Category</th>
+                  <th>Amount($)</th>
+                  <th>Transaction Mode</th>
+                </tr>
+              </thead>
+              <tbody>
+                {slicedLocalData.map((entry) => {
+                  return (
                     <tr>
-                      <th>Date</th>
-                      <th>Transaction Name</th>
-                      <th>Category</th>
-                      <th>Amount($)</th>
-                      <th>Transaction Mode</th>
+                      <td>{new Date(entry.date).toDateString()}</td>
+                      <td>{entry.information}</td>
+                      <td>{entry.category}</td>
+                      <td>{Number(entry.amount).toFixed(2)}</td>
+                      <td>{entry.mode}</td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {slicedLocalData.map((entry) => {
-                      return (
-                        <tr>
-                          <td>{new Date(entry.date).toDateString()}</td>
-                          <td>{entry.information}</td>
-                          <td>{entry.category}</td>
-                          <td>{Number(entry.amount).toFixed(2)}</td>
-                          <td>{entry.mode}</td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </Table>
-                {slicedLocalData.length == 0 && (
-                  <p className={"p-5 " + styles.noGroupMessage}>
-                    You have no transaction information logged
-                  </p>
-                )}
-              </Col>
-            </Row>
+                  );
+                })}
+              </tbody>
+            </Table>
+            {slicedLocalData.length == 0 && (
+              <p className={"p-5 " + styles.noGroupMessage}>
+                You have no transaction information logged
+              </p>
+            )}
+          </Col>
+        </Row>
 
-            <Row>
-              <Col className="align-content-center">
-                <Pagination className={styles.paginationBar}>
-                  {items}
-                </Pagination>
-              </Col>
-            </Row>
-          </Box>
-        </div>
-      </div>
-
+        <Row>
+          <Col className="align-content-center">
+            <Pagination className={styles.paginationBar}>{items}</Pagination>
+          </Col>
+        </Row>
+      </Box>
       <SubmitTransactionModal
         showValidationText={showValidationText}
         formProps={formProps}
       />
-    </React.Fragment>
+    </div>
   );
 }
 

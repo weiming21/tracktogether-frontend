@@ -1,5 +1,3 @@
-import Navigator from "../../components/navbar/Navigator";
-import SideNavigator from "../../components/sidebar/SideNavigator";
 import AuthContext from "../../store/AuthContext";
 import imageAvatar from "../../images/img_avatar.png";
 import Box from "../../components/Box";
@@ -145,142 +143,129 @@ function Profile() {
   };
 
   return (
-    <div className={styles.newApp}>
-      <Navigator />
-      <div style={{ display: "flex", height: "100%", overflow: "auto" }}>
-        <div className={styles.left}>
-          <SideNavigator />
-        </div>
-
-        <div className={styles.right}>
-          <Box>
-            <h2 className={styles.header + " pb-3"}>Your Profile</h2>
-            <Row>
-              <Col xs="auto">
-                {" "}
-                <div>
-                  <Image
-                    className="m-3"
-                    src={authCtx.image ? authCtx.image : imageAvatar}
-                    roundedCircle
-                    width="250"
-                    height="250"
-                  />{" "}
-                  <div className="m-3 d-flex align-items-center">
-                    <input
-                      ref={inputRef}
-                      onChange={handleUpload}
-                      className="d-none"
-                      type="file"
-                      accept="image/*"
-                    />
-                    <div style={{ paddingLeft: 30 }}>
-                      <Button
-                        onClick={() => {
-                          inputRef.current?.click();
-                        }}
-                      >
-                        Upload
-                      </Button>
-                    </div>
-                    <div style={{ paddingLeft: 30 }}>
-                      <Button variant="danger" onClick={handleRemove}>
-                        Remove
-                      </Button>
-                    </div>
-                  </div>
+    <div className={styles.right}>
+      <Box>
+        <h2 className={styles.header + " pb-3"}>Your Profile</h2>
+        <Row>
+          <Col xs="auto">
+            {" "}
+            <div>
+              <Image
+                className="m-3"
+                src={authCtx.image ? authCtx.image : imageAvatar}
+                roundedCircle
+                width="250"
+                height="250"
+              />{" "}
+              <div className="m-3 d-flex align-items-center">
+                <input
+                  ref={inputRef}
+                  onChange={handleUpload}
+                  className="d-none"
+                  type="file"
+                  accept="image/*"
+                />
+                <div style={{ paddingLeft: 30 }}>
+                  <Button
+                    onClick={() => {
+                      inputRef.current?.click();
+                    }}
+                  >
+                    Upload
+                  </Button>
                 </div>
-                {/* <CameraAltIcon
+                <div style={{ paddingLeft: 30 }}>
+                  <Button variant="danger" onClick={handleRemove}>
+                    Remove
+                  </Button>
+                </div>
+              </div>
+            </div>
+            {/* <CameraAltIcon
                       onClick={() => {
                         inputRef.current?.click();
                       }}
                     /> */}
-                {/* </div> */}
-                {/* </div> */}
-              </Col>
-              <Col xl={6} sm={12}>
-                <Form>
-                  <Row className="mb-3">
-                    <Col xs="auto">
-                      <Form.Group controlId="profileName">
-                        <Form.Label className="text-start">Name</Form.Label>
-                        <Form.Control
-                          disabled
-                          placeholder="Enter Name"
-                          value={authCtx.username}
-                          onChange={(e) => setUserName(e.target.value)}
-                        />
-                      </Form.Group>
-                    </Col>
+            {/* </div> */}
+            {/* </div> */}
+          </Col>
+          <Col xl={6} sm={12}>
+            <Form>
+              <Row className="mb-3">
+                <Col xs="auto">
+                  <Form.Group controlId="profileName">
+                    <Form.Label className="text-start">Name</Form.Label>
+                    <Form.Control
+                      disabled
+                      placeholder="Enter Name"
+                      value={authCtx.username}
+                      onChange={(e) => setUserName(e.target.value)}
+                    />
+                  </Form.Group>
+                </Col>
 
-                    <Col xs="auto">
-                      <Form.Group controlId="profileBank">
-                        <Form.Label className="text-start"> Bank</Form.Label>
-                        <Form.Control disabled placeholder="Bank Name" />
-                      </Form.Group>
-                    </Col>
-                  </Row>
+                <Col xs="auto">
+                  <Form.Group controlId="profileBank">
+                    <Form.Label className="text-start"> Bank</Form.Label>
+                    <Form.Control disabled placeholder="Bank Name" />
+                  </Form.Group>
+                </Col>
+              </Row>
 
-                  <Row className="mb-3">
-                    <Col xs="auto">
-                      <Form.Group controlId="profileName">
-                        <Form.Label className="text-start">
-                          Contact Number
-                        </Form.Label>
-                        <Form.Control
-                          disabled={formState}
-                          placeholder="Enter Contact"
-                          value={authCtx.contact}
-                          onChange={(e) => setContact(e.target.value)}
-                        />
-                      </Form.Group>
-                    </Col>
+              <Row className="mb-3">
+                <Col xs="auto">
+                  <Form.Group controlId="profileName">
+                    <Form.Label className="text-start">
+                      Contact Number
+                    </Form.Label>
+                    <Form.Control
+                      disabled={formState}
+                      placeholder="Enter Contact"
+                      value={authCtx.contact}
+                      onChange={(e) => setContact(e.target.value)}
+                    />
+                  </Form.Group>
+                </Col>
 
-                    <Col xs="auto">
-                      <Form.Group controlId="profileAccNumber">
-                        <Form.Label className="text-start">
-                          Account Number
-                        </Form.Label>
-                        <Form.Control disabled placeholder="Acc Num" />
-                      </Form.Group>
-                    </Col>
-                  </Row>
+                <Col xs="auto">
+                  <Form.Group controlId="profileAccNumber">
+                    <Form.Label className="text-start">
+                      Account Number
+                    </Form.Label>
+                    <Form.Control disabled placeholder="Acc Num" />
+                  </Form.Group>
+                </Col>
+              </Row>
 
-                  <Row className="mb-3">
-                    <Col xs="auto">
-                      <Form.Group controlId="profileEmail">
-                        <Form.Label className="text-start">Email</Form.Label>
-                        <Form.Control
-                          disabled={formState}
-                          placeholder="Enter Email"
-                          value={authCtx.email}
-                          onChange={(e) => setEmail(e.target.value)}
-                        />
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                  <Stack direction="horizontal" gap={3}>
-                    <Button
-                      variant="primary"
-                      type="submit"
-                      onClick={handleSubmit}
-                    >
-                      Submit
-                    </Button>
-                    <Button onClick={handleEditableState}>Edit Profile</Button>
-                  </Stack>
-                </Form>
-                <Stack direction="horizontal" gap={3} className="pb-3">
-                  <Button className="mt-3"> Change Password</Button>
-                  <Button variant="danger" className="mt-3">
-                    Delete Account{" "}
-                  </Button>
-                </Stack>
-              </Col>
-            </Row>
-          </Box>
-        </div>
-      </div>
+              <Row className="mb-3">
+                <Col xs="auto">
+                  <Form.Group controlId="profileEmail">
+                    <Form.Label className="text-start">Email</Form.Label>
+                    <Form.Control
+                      disabled={formState}
+                      placeholder="Enter Email"
+                      value={authCtx.email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </Form.Group>
+                </Col>
+              </Row>
+              <Stack direction="horizontal" gap={3}>
+                <Button variant="primary" type="submit" onClick={handleSubmit}>
+                  Submit
+                </Button>
+                <Button onClick={handleEditableState}>Edit Profile</Button>
+              </Stack>
+            </Form>
+            <Stack direction="horizontal" gap={3} className="pb-3">
+              <Button className="mt-3"> Change Password</Button>
+              <Button variant="danger" className="mt-3">
+                Delete Account{" "}
+              </Button>
+            </Stack>
+          </Col>
+        </Row>
+      </Box>
     </div>
   );
 }
