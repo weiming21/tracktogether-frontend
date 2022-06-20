@@ -27,8 +27,13 @@ export const AuthContextProvider = (props) => {
   const [dataFetched, setDataFetched] = useState(false);
 
   // const [optionState, setOptionState] = useState("Category");
+<<<<<<< HEAD
 
   const fetchData = (token) => {
+=======
+  console.log(dataFetched);
+  if (!dataFetched && initialToken != null) {
+>>>>>>> 09f577da72042f4ea5814e84777332a4ff204fdb
     const url = "http://localhost:8080/api/account/refresh";
     console.log("fetching data in auth context");
     fetch(url, {

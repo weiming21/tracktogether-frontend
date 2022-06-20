@@ -27,7 +27,7 @@ function AddGroupModal(props) {
           return res.json();
         } else {
           return res.json().then((data) => {
-            let errorMessage = "Authentication failed!";
+            let errorMessage;
             console.log(JSON.stringify(data));
             if (data && data.error && data.error.message) {
               errorMessage = data.error.message;

@@ -1,22 +1,25 @@
-import React, { useContext, useState } from "react";
-import AuthContext from "./AuthContext";
+import React, { useState } from "react";
+// import AuthContext from "./AuthContext";
 
 const GroupContext = React.createContext({
   group: [],
-  isDataFetched: false,
+  //   isDataFetched: false,
   //   login: () => {},
-  //   datalog: () => {},
+  datalog: () => {},
   //   logout: () => {},
 });
 
 export const GroupContextProvider = (props) => {
-  const authCtx = useContext(AuthContext);
-  const [group, setGroup] = useState([]);
+  //   const authCtx = useContext(AuthContext);
+  const initialGroup = JSON.parse(localStorage.getItem("group"));
+  console.log(initialGroup);
+  const [group, setGroup] = useState(initialGroup);
 
-  const [dataFetched, setDataFetched] = useState(false);
+  //   const [groupDataFetched, setGroupDataFetched] = useState(false);
 
   // const [optionState, setOptionState] = useState("Category");
 
+<<<<<<< HEAD
   if (!dataFetched && authCtx.isDataFetched) {
     const url = "http://localhost:8080/api/group/summary/" + authCtx.username;
     console.log("fetching data in group context");
@@ -54,6 +57,43 @@ export const GroupContextProvider = (props) => {
         alert(err.message);
       });
   }
+=======
+  //   console.log(group);
+  //   console.log(authCtx.isDataFetched);
+  //   console.log(authCtx.username);
+  //   console.log(group);
+  //   console.log(authCtx.isDataFetched);
+  //   console.log(groupDataFetched);
+  //   console.log(authCtx.token);
+  //   if (!groupDataFetched && authCtx.isDataFetched) {
+  //     const url = "http://localhost:8080/api/group/summary/" + authCtx.username;
+  //     console.log("fetching data in group context");
+  //     fetch(url)
+  //       .then((res) => {
+  //         if (res.ok) {
+  //           return res.json();
+  //         } else {
+  //           return res.json().then((data) => {
+  //             let errorMessage; // = 'Authentication failed!';
+  //             console.log(JSON.stringify(data));
+  //             if (data && data.error && data.error.message) {
+  //               errorMessage = data.error.message;
+  //             }
+  //             console.log(errorMessage);
+
+  //             throw new Error(errorMessage);
+  //           });
+  //         }
+  //       })
+  //       .then((data) => {
+  //         loginData(data);
+  //         setGroupDataFetched(true);
+  //       })
+  //       .catch((err) => {
+  //         alert(err.message);
+  //       });
+  //   }
+>>>>>>> 09f577da72042f4ea5814e84777332a4ff204fdb
 
   // const initialId = localStorage.getItem("id");
   //   const userIsLoggedIn = !!token;
@@ -63,15 +103,11 @@ export const GroupContextProvider = (props) => {
   //     localStorage.setItem("token", token);
   //   };
 
-  //   const loginData = (account) => {
-  //     console.log(account);
-  //     setId(account._id);
-  //     setUsername(account.username);
-  //     setEmail(account.email);
-  //     setContact(account.contact);
-  //     setImage(account.image);
-  //     // localStorage.setItem("id", account._id);
-  //   };
+  const loadData = (group) => {
+    console.log(group);
+    setGroup(group);
+    localStorage.setItem("group", JSON.stringify(group));
+  };
 
   //   const logoutHandler = () => {
   //     setToken(null);
@@ -81,7 +117,7 @@ export const GroupContextProvider = (props) => {
 
   const contextValue = {
     group: group,
-    isDataFetched: dataFetched,
+    // isDataFetched: groupDataFetched,
     // username: username,
     // email: email,
     // contact: contact,
@@ -90,7 +126,7 @@ export const GroupContextProvider = (props) => {
     // isDataFetched: dataFetched,
 
     // login: loginHandler,
-    // datalog: loginData,
+    datalog: loadData,
     // logout: logoutHandler,
     // optionState: optionState,
     // setOptionState: setOptionState,

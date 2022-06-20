@@ -31,33 +31,63 @@ function Group() {
   console.log(groupCtx);
 
   const [groups, setGroups] = useState([]);
+  const [groupToJoin, setGroupToJoin] = useState();
 
   function childToParent(childdata) {
     const newGroups = groups;
     newGroups.push(childdata);
     setGroups(newGroups);
+    groupCtx.datalog(newGroups);
   }
 
-  useEffect(() => setGroups(groupCtx.group), [groupCtx]);
+  function handleJoin(e) {
+    e.preventDefault();
+    if (groupToJoin) {
+      fetch("http://localhost:8080/api/group/join", {
+        method: "PUT",
+        body: JSON.stringify({
+          groupID: groupToJoin,
+          username: authCtx.username,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => {
+          if (res.ok) {
+            return res.json();
+          } else {
+            return res.json().then((data) => {
+              let errorMessage;
+              console.log(JSON.stringify(data));
+              if (data && data.error && data.error.message) {
+                errorMessage = data.error.message;
+              }
+              console.log(errorMessage);
+              throw new Error(errorMessage);
+            });
+          }
+        })
+        .then((data) => {
+          const newGroups = groups;
+          newGroups.push(data.data.group);
+          console.log(newGroups);
+          setGroups(newGroups);
+          groupCtx.datalog(newGroups);
+        })
+        .catch((err) => {
+          alert(err.message);
+        });
+    }
+  }
 
-  // const dummyGroups = [
-  //   {
-  //     groupName: "Group 1",
-  //     groupID: 1234,
-  //   },
-  //   {
-  //     groupName: "Group 2",
-  //     groupID: 2468,
-  //   },
-  //   {
-  //     groupName: "A really really long group name",
-  //     groupID: 4201,
-  //   },
-  //   {
-  //     groupName: "Group 4",
-  //     groupID: 2882,
-  //   },
-  // ];
+  console.log("loading groups:" + groupCtx.group);
+  useEffect(() => {
+    // console.log(groups);
+    // console.log(groupCtx.group);
+    setGroups(groupCtx.group);
+  }, [groupCtx]);
+
   function truncateName(name) {
     if (name.length > 12) {
       return name.slice(0, 9) + "...";
@@ -99,10 +129,11 @@ function Group() {
                   placeholder="Search"
                   className="me-2"
                   aria-label="Search"
+                  onChange={(e) => setGroupToJoin(e.target.value)}
                 />
               </Col>
               <Col xs="auto">
-                <Button>Join</Button>
+                <Button onClick={handleJoin}>Join</Button>
               </Col>
               <Col xs="auto">
                 <Button onClick={handleAddGroupForm}>Create</Button>
