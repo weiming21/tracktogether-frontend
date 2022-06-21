@@ -14,5 +14,5 @@ root.render(
         <App />
       </FilterContextProvider>
     </AuthContextProvider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );

@@ -8,7 +8,7 @@ export default function LineChart(props) {
   const VictoryTooltip = Victory.VictoryTooltip;
   const VictoryLabel = Victory.VictoryLabel;
   //   const VictoryContainer = Victory.VictoryContainer;
-  function group_by_dates(arr) {
+  function groupByDates(arr) {
     let temp = arr.reduce((json, current) => {
       const date = new Date(current.date);
       const month = date.getMonth();
@@ -32,22 +32,22 @@ export default function LineChart(props) {
     return date;
   }
   // console.log(props);
-  function filter_and_sort_dates(arr) {
-    const filtered_arr = arr.filter(
+  function filterAndSortDates(arr) {
+    const filteredArr = arr.filter(
       (item) =>
         new Date(`${item._id.year}-${item._id.month}`) > subtractMonths(6),
     );
     // console.log(filtered_arr);
 
-    const sorted_arr = filtered_arr.sort(
+    const sortedArr = filteredArr.sort(
       (a, b) =>
         new Date(`${a._id.year}-${a._id.month}`) -
         new Date(`${b._id.year}-${b._id.month}`),
     );
-    return sorted_arr;
+    return sortedArr;
   }
 
-  function get_past_n_months(date, n) {
+  function getPastMonths(date, n) {
     let result = [];
     for (let i = n; i >= 0; i--) {
       result.push(subtractMonths(i).getMonth());
@@ -56,7 +56,7 @@ export default function LineChart(props) {
     return result;
   }
 
-  function map_month_to_value(arr) {
+  function mapMonthToValue(arr) {
     const months = [
       "January",
       "February",
@@ -72,12 +72,12 @@ export default function LineChart(props) {
       "December",
     ];
 
-    const required_months = get_past_n_months(new Date(), 5).map(
+    const requiredMonths = getPastMonths(new Date(), 5).map(
       (item) => months[item],
     );
 
     let result = [];
-    required_months.forEach((month) => {
+    requiredMonths.forEach((month) => {
       const item = arr.find((item) => month == months[item._id.month - 1]);
       if (item) {
         const container = {};
@@ -93,11 +93,36 @@ export default function LineChart(props) {
   }
 
   function transform_data(arr) {
-    return map_month_to_value(filter_and_sort_dates(group_by_dates(arr)));
+    return mapMonthToValue(filterAndSortDates(groupByDates(arr)));
   }
 
   console.log("entered linechart component");
-  return (
+
+  return props.data.length == 0 ? (
+    <VictoryChart>
+      <VictoryAxis
+        style={{
+          axis: { stroke: "transparent" },
+          ticks: { stroke: "transparent" },
+          tickLabels: { fill: "transparent" },
+        }}
+      />
+      <VictoryLabel
+        standalone={false}
+        text="Breakdown by Months"
+        x={50}
+        y={340}
+        style={{ fontSize: 35, fill: "grey" }}
+      />
+      <VictoryLabel
+        text="You have no transaction history"
+        x={210}
+        y={140}
+        textAnchor="middle"
+        style={{ fontSize: 25, fill: "black" }}
+      />
+    </VictoryChart>
+  ) : (
     <VictoryChart
       //   standalone={false}
       containerComponent={
