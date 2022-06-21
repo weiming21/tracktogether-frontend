@@ -10,9 +10,7 @@ const propsAuthData = {
     username: "Chang"
   },
 } 
-
 <AuthContextProvider data={propsAuthData}> 
-
 </AuthContextProvider>
 */
 
