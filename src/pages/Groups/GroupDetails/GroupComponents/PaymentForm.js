@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import styles from "./GroupComponent.module.css";
-import AuthContext from "../../../store/AuthContext";
-import GroupContext from "../../../store/GroupContext";
+import AuthContext from "../../../../store/AuthContext";
+import GroupContext from "../../../../store/GroupContext";
 import { useParams } from "react-router-dom";
 import {
   Button,

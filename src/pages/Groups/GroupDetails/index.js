@@ -1,5 +1,5 @@
 import React from "react";
-import Template from "../../components/Template/";
+import Template from "../../../components/Template/";
 // import styles from "./GroupDetails.module.css";
 import GroupDetails from "./GroupDetails";
 

@@ -24,7 +24,7 @@ import {
   //   // OverlayTrigger,
 } from "react-bootstrap";
 import { useParams } from "react-router-dom"; //useNavigate
-import GroupContext from "../../../store/GroupContext";
+import GroupContext from "../../../../store/GroupContext";
 
 function GroupLogs() {
   // const navigation = useNavigate();
@@ -66,7 +66,8 @@ function GroupLogs() {
                 <td className="py-3">{entry.username}</td>
                 <td
                   className={"py-3 " + styles.entryAmount}
-                  style={{ color: entry.amount > 0 ? "red" : "green" }}>
+                  style={{ color: entry.amount > 0 ? "red" : "green" }}
+                >
                   <strong>{Number(entry.amount).toFixed(2)}</strong>
                 </td>
               </tr>

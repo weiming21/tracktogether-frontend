@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
 import styles from "./GroupComponent.module.css";
-import imageAvatar from "../../../images/img_avatar.png";
-import AuthContext from "../../../store/AuthContext";
+import imageAvatar from "../../../../images/img_avatar.png";
+import AuthContext from "../../../../store/AuthContext";
+import GroupContext from "../../../../store/GroupContext";
 // import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import {
   //   Tabs,
@@ -23,7 +24,6 @@ import {
   // OverlayTrigger,
 } from "react-bootstrap";
 import { useParams, useNavigate } from "react-router-dom";
-import GroupContext from "../../../store/GroupContext";
 
 function GroupSettings() {
   const navigation = useNavigate();

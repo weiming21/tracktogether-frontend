@@ -1,13 +1,13 @@
 //import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Box from "../../components/Box";
+import Box from "../../../components/Box";
 import PaymentForm from "./GroupComponents/PaymentForm";
 import GroupMemberList from "./GroupComponents/GroupMemberList";
 import GroupSettings from "./GroupComponents/GroupSettings";
 import GroupLogs from "./GroupComponents/GroupLog";
-import styles from "./Groups.module.css";
+import styles from "../Groups.module.css";
 import React, { useContext } from "react";
-import AuthContext from "../../store/AuthContext";
-import GroupContext from "../../store/GroupContext";
+import AuthContext from "../../../store/AuthContext";
+import GroupContext from "../../../store/GroupContext";
 import { useParams } from "react-router-dom";
 import {
   Tabs,

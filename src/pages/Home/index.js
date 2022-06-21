@@ -1,5 +1,5 @@
 import React from "react";
-import Template from "../../components/Template/";
+import Template from "../../components/Template";
 // import styles from "./Home.module.css";
 import Home from "./Home";
 

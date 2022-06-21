@@ -73,7 +73,7 @@ export default function LineChart(props) {
     ];
 
     const requiredMonths = getPastMonths(new Date(), 5).map(
-      (item) => months[item],
+      (item) => months[item]
     );
 
     let result = [];

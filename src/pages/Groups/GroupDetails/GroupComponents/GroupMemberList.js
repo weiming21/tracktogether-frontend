@@ -1,8 +1,8 @@
 import React, { useState, useContext, useEffect } from "react";
 import styles from "./GroupComponent.module.css";
-import AuthContext from "../../../store/AuthContext";
-import GroupContext from "../../../store/GroupContext";
-import FilterContext from "../../../store/FilterContext";
+import AuthContext from "../../../../store/AuthContext";
+import GroupContext from "../../../../store/GroupContext";
+import FilterContext from "../../../../store/FilterContext";
 // import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 // import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import { useParams } from "react-router-dom";
