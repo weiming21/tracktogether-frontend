@@ -12,11 +12,15 @@ const GroupContext = React.createContext({
 });
 
 export const GroupContextProvider = (props) => {
-  const productionMode = typeof props.data === "undefined";
+  // const productionMode = typeof props.data === "undefined";
 
-  const token = localStorage.getItem("token");
-  const [group, setGroup] = useState(productionMode ? [] : props.data.group);
-  const [dataFetched, setDataFetched] = useState(productionMode ? false : true);
+  const token = localStorage.getItem("token") || props.token;
+  // const [group, setGroup] = useState(productionMode ? [] : props.data.group);
+  // const [dataFetched, setDataFetched] = useState(productionMode ? false : true);
+
+  const [group, setGroup] = useState([]);
+  const [dataFetched, setDataFetched] = useState(false);
+
   console.log(group);
   if (!dataFetched && token != null) {
     const url = "http://localhost:8080/api/group/summary/";

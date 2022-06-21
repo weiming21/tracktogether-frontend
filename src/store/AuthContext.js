@@ -1,18 +1,4 @@
 import React, { useState } from "react";
-/*
-Sample data for use when testing components that depend on Auth Context
-const propsAuthData = {
-  accountDetails : {
-    contact: 99118822,
-    email: "testmode@xyz.com",
-    id: "6296d34fb9f5fc8613765e15",
-    image: "http://localhost:8080/public/2c7648bd-91b6-4368-8ef1-b0136a34cbc0-1655534978207-chang-jing-yan-picture.jpg",
-    username: "Chang"
-  },
-} 
-<AuthContextProvider data={propsAuthData}> 
-</AuthContextProvider>
-*/
 
 const AuthContext = React.createContext({
   token: "",
@@ -29,25 +15,37 @@ const AuthContext = React.createContext({
 });
 
 export const AuthContextProvider = (props) => {
-  const initialToken = localStorage.getItem("token");
+  const initialToken = localStorage.getItem("token") || props.token;
+  console.log(initialToken);
 
-  const productionMode = typeof props.data === "undefined";
+  // const productionMode = typeof props.data === "undefined";
 
-  const [token, setToken] = useState(productionMode ? initialToken : null);
+  // const [token, setToken] = useState(productionMode ? initialToken : null);
 
-  const [accountDetails, setAccountDetails] = useState(
-    productionMode
-      ? {
-          id: null,
-          username: null,
-          email: null,
-          contact: null,
-          image: null,
-        }
-      : props.data.accountDetails
-  );
-  console.log(accountDetails);
-  const [dataFetched, setDataFetched] = useState(productionMode ? false : true);
+  // const [accountDetails, setAccountDetails] = useState(
+  //   productionMode
+  //     ? {
+  //         id: null,
+  //         username: null,
+  //         email: null,
+  //         contact: null,
+  //         image: null,
+  //       }
+  //     : props.data.accountDetails
+  // );
+
+  // const [dataFetched, setDataFetched] = useState(productionMode ? false : true);
+  const [token, setToken] = useState(initialToken);
+  const [accountDetails, setAccountDetails] = useState({
+    id: null,
+    username: null,
+    email: null,
+    contact: null,
+    image: null,
+  });
+
+  const [dataFetched, setDataFetched] = useState(false);
+  // console.log(accountDetails);
 
   const fetchData = (token) => {
     if (!token) {

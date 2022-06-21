@@ -16,7 +16,6 @@ import LineChart from "../../charts/LineChart";
 import { Container, Row, Col, Spinner } from "react-bootstrap";
 import FilterContext from "../../store/FilterContext";
 import GroupContext from "../../store/GroupContext";
-// import { unstable_batchedUpdates } from 'react-dom';
 
 function Home() {
   const authCtx = useContext(AuthContext);
@@ -34,37 +33,6 @@ function Home() {
     lineData: [],
     barData: [],
   };
-
-  // const reducer = (state, [type, payload]) => {
-  //   switch (type) {
-  //     case "quote":
-  //       return {
-  //         ...state,
-  //         quote: payload,
-  //       };
-  //     case "pie":
-  //       return {
-  //         ...state,
-  //         pieData: payload,
-  //       };
-  //     case "line":
-  //       return {
-  //         ...state,
-  //         lineData: payload,
-  //       };
-  //     case "bar":
-  //       return {
-  //         ...state,
-  //         barData: payload,
-  //       };
-  //     default:
-  //       throw new Error(`Unknown action type: ${type}`);
-  //   }
-  // };
-
-  // const reducer = (state, payload) => {
-  //   return payload;
-  // };
 
   // const [data, dispatch] = useReducer(reducer, initialValues);
 
@@ -96,13 +64,6 @@ function Home() {
 
       if (!isCancelled) {
         console.log("setting all data in Home");
-        // dispatch({
-        //   quote: quote_result,
-        //   pieData: filterCtx.localData,
-        //   lineData: filterCtx.localData,
-        //   barData: grpCtx.group,
-        // });
-
         setData({
           quote: quote_result,
           pieData: filterCtx.localData,

@@ -45,30 +45,39 @@ const FilterContext = React.createContext({
 });
 
 export const FilterContextProvider = (props) => {
-  const productionMode = typeof props.data === "undefined";
+  // const productionMode = typeof props.data === "undefined";
 
-  const initialToken = localStorage.getItem("token");
+  const initialToken = localStorage.getItem("token") || props.token;
 
   const [optionState, setOptionState] = useState([]);
 
-  const [currData, setCurrData] = useState(
-    productionMode ? [] : props.data.currData
-  );
-  const [localData, setLocalData] = useState(
-    productionMode ? [] : props.data.currData
-  );
+  // const [currData, setCurrData] = useState(
+  //   productionMode ? [] : props.data.currData
+  // );
+  // const [localData, setLocalData] = useState(
+  //   productionMode ? [] : props.data.currData
+  // );
 
-  const [alertData, setAlertData] = useState(
-    productionMode ? [] : props.data.alertData
-  );
+  // const [alertData, setAlertData] = useState(
+  //   productionMode ? [] : props.data.alertData
+  // );
 
-  const [adjustmentData, setAdjustmentData] = useState(
-    productionMode ? [] : props.data.adjustmentData
-  );
+  // const [adjustmentData, setAdjustmentData] = useState(
+  //   productionMode ? [] : props.data.adjustmentData
+  // );
+
+  const [currData, setCurrData] = useState([]);
+  const [localData, setLocalData] = useState([]);
+
+  const [alertData, setAlertData] = useState([]);
+
+  const [adjustmentData, setAdjustmentData] = useState([]);
 
   const [logState, setLogState] = useState(0); //0 is trans log, 1 is adjustment log, 2 is both.
 
-  const [dataFetched, setDataFetch] = useState(productionMode ? false : true);
+  // const [dataFetched, setDataFetch] = useState(productionMode ? false : true);
+
+  const [dataFetched, setDataFetch] = useState(false);
 
   function fetchAll() {
     const url = "http://localhost:8080/api/account/transactions/";
