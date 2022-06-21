@@ -3,10 +3,10 @@
 import Box from "../../components/Box";
 import styles from "./Home.module.css";
 import React, {
-  // useState,
+  useState,
   useEffect,
   useContext,
-  useReducer,
+  // useReducer,
   // useRef,
 } from "react";
 import AuthContext from "../../store/AuthContext";
@@ -15,6 +15,7 @@ import BarChart from "../../charts/BarChart";
 import LineChart from "../../charts/LineChart";
 import { Container, Row, Col, Spinner } from "react-bootstrap";
 import FilterContext from "../../store/FilterContext";
+import GroupContext from "../../store/GroupContext";
 // import { unstable_batchedUpdates } from 'react-dom';
 
 function Home() {
@@ -23,6 +24,9 @@ function Home() {
   // console.log(authCtx);
   const filterCtx = useContext(FilterContext);
   console.log(filterCtx);
+
+  const grpCtx = useContext(GroupContext);
+  console.log(grpCtx);
 
   const initialValues = {
     quote: [],
@@ -58,22 +62,13 @@ function Home() {
   //   }
   // };
 
-  const reducer = (state, payload) => {
-    return payload;
-  };
+  // const reducer = (state, payload) => {
+  //   return payload;
+  // };
 
-  const [data, dispatch] = useReducer(reducer, initialValues);
+  // const [data, dispatch] = useReducer(reducer, initialValues);
 
-  // const [data, setData] = useState(initialValues);
-
-  // Bar Chart
-  const dummyBarData = [
-    { y: 10, label: "Net:\n$10", fill: "turquoise" },
-    { y: 20, label: "Friends:\n$20", fill: "green" },
-    { y: -20, label: "Friends:\n$-20", fill: "red" },
-    { y: 50, label: "Gym Group:\n$50", fill: "green" },
-    { y: -40, label: "Movie Group:\n$-40", fill: "red" },
-  ];
+  const [data, setData] = useState(initialValues);
 
   function getRndInteger(max) {
     return Math.floor(Math.random() * max);
@@ -97,26 +92,34 @@ function Home() {
         });
 
       await timeout(500);
+      console.log(isCancelled);
 
       if (!isCancelled) {
         console.log("setting all data in Home");
-        dispatch({
+        // dispatch({
+        //   quote: quote_result,
+        //   pieData: filterCtx.localData,
+        //   lineData: filterCtx.localData,
+        //   barData: grpCtx.group,
+        // });
+
+        setData({
           quote: quote_result,
           pieData: filterCtx.localData,
           lineData: filterCtx.localData,
-          barData: dummyBarData,
+          barData: grpCtx.group,
         });
       }
     };
 
-    if (authCtx.isDataFetched && filterCtx.isDataFetched) {
+    if (filterCtx.isDataFetched) {
       fetchData();
     }
     //cleanup function is executed when useEffect is called again or on unmount
     return () => {
       isCancelled = true;
     };
-  }, [authCtx, filterCtx]);
+  }, [filterCtx, grpCtx]);
 
   return (
     <div className={styles.right}>
@@ -128,7 +131,7 @@ function Home() {
               <DonutChart data={data.pieData} />
             </Col>
             <Col style={{ position: "relative" }}>
-              {data.lineData.length != 0 ? (
+              {data.quote.length != 0 ? (
                 <LineChart data={data.lineData} />
               ) : (
                 <div className={styles.spinner}>
@@ -137,7 +140,7 @@ function Home() {
               )}
             </Col>
             <Col style={{ position: "relative" }}>
-              {data.barData.length == 0 ? (
+              {data.quote.length == 0 ? (
                 <div className={styles.spinner}>
                   <Spinner animation="border" variant="primary" />
                 </div>
