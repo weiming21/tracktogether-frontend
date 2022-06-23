@@ -318,7 +318,11 @@ function Personal() {
               rootClose
               overlay={popover()}
             >
-              <Button variant="light" className={styles.btn}>
+              <Button
+                variant="light"
+                aria-label="filter"
+                className={styles.btn}
+              >
                 <FilterAltIcon />
               </Button>
             </OverlayTrigger>
