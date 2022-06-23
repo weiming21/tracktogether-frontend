@@ -4,16 +4,17 @@ import "@testing-library/jest-dom";
 import { server } from "./mocks/server.js";
 
 // Establish API mocking before all tests.
-beforeAll(() =>
-  server.listen({
-    onUnhandledRequest(req) {
-      console.error(
-        "Found an unhandled %s request to %s",
-        req.method,
-        req.url.href
-      );
-    },
-  })
+beforeAll(
+  () => server.listen()
+  // server.listen({
+  //   onUnhandledRequest(req) {
+  //     console.error(
+  //       "Found an unhandled %s request to %s",
+  //       req.method,
+  //       req.url.href
+  //     );
+  //   },
+  // })
 );
 // Reset any request handlers that we may add during the tests,
 // so they don't affect other tests.

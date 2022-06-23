@@ -157,8 +157,8 @@ export const FilterContextProvider = (props) => {
 
     Promise.all([txnData, alertData, adjustmentData])
       .then((arrayOfData) => {
-        console.log(arrayOfData);
-        console.log("arrayOfData");
+        // console.log(arrayOfData);
+        // console.log("arrayOfData");
         const newCurrData = [...arrayOfData[0]];
         const newAlerts = [...arrayOfData[1]];
         const newAdjustmentData = [...arrayOfData[2]];

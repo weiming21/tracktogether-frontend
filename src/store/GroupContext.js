@@ -49,7 +49,7 @@ export const GroupContextProvider = (props) => {
         }
       })
       .then((data) => {
-        console.log(data.data.groups);
+        // console.log(data.data.groups);
         setGroup(data.data.groups);
         setDataFetched(true);
       })
