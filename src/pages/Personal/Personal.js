@@ -197,6 +197,7 @@ function Personal() {
           {" "}
           <Stack direction="horizontal" gap={3}>
             <Button
+              aria-label="addfilter"
               className="ms-auto"
               variant="secondary"
               onClick={removeFilterHandler}
