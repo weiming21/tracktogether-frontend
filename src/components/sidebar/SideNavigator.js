@@ -69,7 +69,10 @@ function SideNavigator() {
             <NavLink exact to="/groups" activeClassName="activeClicked">
               <CDBSidebarMenuItem
                 icon="users"
-                active={matchPath(location.pathname, "/groups")}
+                active={
+                  matchPath(location.pathname, "/groups") ||
+                  matchPath({ path: "/groups/:groupID" }, location.pathname)
+                }
               >
                 Groups
               </CDBSidebarMenuItem>

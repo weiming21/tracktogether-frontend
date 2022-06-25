@@ -6,24 +6,29 @@ import { GroupContextProvider } from "../store/GroupContext";
 // const propsAuthData = require("../store/AuthDummyContext.json");
 // const propsFilterData = require("../store/FilterDummyContext.json");
 // const propsGroupData = require("../store/GroupDummyContext.json");
+import { createMemoryHistory } from "history";
+
 const authToken = process.env.REACT_APP_AUTH_TOKEN;
 
-const AllTheProviders = ({ children }) => {
-  return (
-    <Router>
+const customRender = (ui, routeHistory, initialRouteIndex, options) => {
+  const history = createMemoryHistory({
+    initialEntries: routeHistory,
+    initialIndex: initialRouteIndex,
+  });
+  const AllTheProviders = ({ children }) => {
+    return (
       <AuthContextProvider token={authToken}>
         <FilterContextProvider token={authToken}>
-          <GroupContextProvider token={authToken}>
-            {children}
+          <GroupContextProvider token={authToken}> 
+            <Router history={history}>{children}</Router>
           </GroupContextProvider>
-        </FilterContextProvider>
-      </AuthContextProvider>
-    </Router>
-  );
+         </FilterContextProvider>
+       </AuthContextProvider>
+    );
+  };
+  const component = render(ui, { wrapper: AllTheProviders, ...options });
+  return {...component, history};
 };
-
-const customRender = (ui, options) =>
-  render(ui, { wrapper: AllTheProviders, ...options });
 
 // re-export everything
 export * from "@testing-library/react";

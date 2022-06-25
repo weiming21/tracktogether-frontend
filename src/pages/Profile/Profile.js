@@ -214,7 +214,7 @@ function Profile() {
 
               <Row className="mb-3">
                 <Col xs="auto">
-                  <Form.Group controlId="profileName">
+                  <Form.Group controlId="profileContact">
                     <Form.Label className="text-start">
                       Contact Number
                     </Form.Label>

@@ -1,35 +1,44 @@
 // src/mocks/handlers.js
 import { rest } from "msw";
+const mockAuthToken = process.env.REACT_APP_AUTH_TOKEN;
 
 export const handlers = [
   rest.post("http://localhost:8080/api/account/login", (req, res, ctx) => {
-    localStorage.setItem("is-authenticated", "true");
+    localStorage.setItem("auth-token", mockAuthToken);
     return res(
-      ctx.cookie(
-        "auth-token",
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyOTZkMzRmYjlmNWZjODYxMzc2NWUxNSIsImVtYWlsIjoiY2hhbmdAeHl6LmNvbSIsImlhdCI6MTY1NTMwNTg1MX0.v6J9qGBnqALMcwel1yeLYuW1mPqjG25Tu96CVKrYfW8"
-      )
+      ctx.cookie("auth-token", mockAuthToken),
+      ctx.json({
+        data: {
+          token: mockAuthToken,
+          account: {
+            _id: "123456789",
+            username: "testuser",
+            email: null,
+            contact: null,
+            password: "testpassword",
+            image: "",
+          },
+        },
+      })
     );
   }),
-  rest.get(
-    "https://goquotes-api.herokuapp.com/api/v1/all?type=tag&val=money",
-    (req, res, ctx) => {
-      const fakeQuoteData = [];
-      for (let i = 0; i < 503; i++) {
-        fakeQuoteData.push({
-          text: "Dummy Quote",
-          author: "Dummy Author",
-          tag: "money",
-        });
-      }
 
-      return res(
-        ctx.json({
-          quotes: fakeQuoteData,
-        })
-      );
+  rest.get("http://localhost:8080/api/account/quote", (req, res, ctx) => {
+    const fakeQuoteData = [];
+    for (let i = 0; i < 503; i++) {
+      fakeQuoteData.push({
+        quote: "Dummy Quote",
+        author: "Dummy Author",
+        tag: "money",
+      });
     }
-  ),
+
+    return res(
+      ctx.json({
+        data: { quotes: fakeQuoteData },
+      })
+    );
+  }),
 
   rest.get("http://localhost:8080/api/account/refresh", (req, res, ctx) => {
     return res(
@@ -40,7 +49,7 @@ export const handlers = [
             email: "testmode@xyz.com",
             id: "6296d34fb9f5fc8613765e15",
             image:
-              "http://localhost:8080/public/2c7648bd-91b6-4368-8ef1-b0136a34cbc0-1655534978207-chang-jing-yan-picture.jpg",
+              "https://orbital.comp.nus.edu.sg/wp-content/uploads/sites/12/2020/04/cropped-cropped-STS-133_Discovery_Lift_Off_Launch_Pad_39A_KSC.jpg",
             username: "Chang",
           },
         },
