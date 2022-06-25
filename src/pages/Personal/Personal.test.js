@@ -75,27 +75,33 @@ test("filter variable changes dynamically", async () => {
     expect(screen.getByText(/Filter By/i)).toBeInTheDocument()
   );
 
-  //Click on add filter button
+  //Click on add filter plus button
   const addFilterButton = screen.getByRole("button", {
     name: /addfilter/i,
   });
-
   userEvent.click(addFilterButton);
-  //Check if current input is date
-  const categoryFilter = screen.findByText(/Choose Variable/i);
 
+  //Check if current input is date
+  const yearTitle = await screen.findByText(/Year/i);
+  const monthTitle = await screen.findByText(/Month/i);
+  expect(yearTitle).toBeInTheDocument();
+  expect(monthTitle).toBeInTheDocument();
+
+  //Changes the inputs to Category, Amount and Mode
+  const categoryFilter = await screen.findByLabelText(/Choose Variable/i);
+  expect(categoryFilter).toBeInTheDocument();
+  userEvent.selectOptions(categoryFilter, "Category");
   await waitFor(() => {
-    expect(categoryFilter).toBeInTheDocument();
+    expect(screen.getByText(/Select Category/i)).toBeInTheDocument();
   });
 
-  // const myTimeout = setTimeout(async () => {
-  //   //Click on add filter button
-  //   const addFilterButton = screen.getByRole("button", {
-  //     name: /add-filter/i,
-  //   });
-  //   userEvent.click(addFilterButton);
-  //   //Check if current input is dat
-  //   const categoryFilter = await screen.findByLabelText(/choose variable/i);
-  //   expect(categoryFilter).toBeInTheDocument();
-  // }, 1000);
+  userEvent.selectOptions(categoryFilter, "Amount");
+  await waitFor(() => {
+    expect(screen.getByText(/Greater Than/i)).toBeInTheDocument();
+    expect(screen.getByText(/Smaller Than/i)).toBeInTheDocument();
+  });
+  userEvent.selectOptions(categoryFilter, "Transaction Mode");
+  await waitFor(() => {
+    expect(screen.getByText(/Select Mode/i)).toBeInTheDocument();
+  });
 });

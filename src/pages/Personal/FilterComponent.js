@@ -29,18 +29,22 @@ const FilterComponent = (props) => {
   return (
     <Popover.Body className="border-bottom pb-0">
       <Form.Group>
-        <Form.Label> Choose Variable </Form.Label>
+        <Form.Label for="chooseVariable"> Choose Variable </Form.Label>
         <Form.Select
           value={optionState.filterVariable}
           // ref={optionRef}
           onChange={handleOption}
           placeholder="Enter category"
+          id="chooseVariable"
+          // data-testid="chooseVariable"
         >
           <option value="Date"> Date </option>
           <option value="Category"> Category </option>
           <option value="Amount"> Amount </option>
           <option value="Transaction Mode"> Transaction Mode </option>
         </Form.Select>
+      </Form.Group>
+      <Form.Group>
         {optionState.filterVariable == "Date" && (
           <DateFilter
             index={index}

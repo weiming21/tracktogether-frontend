@@ -60,7 +60,7 @@ export default function MonitorPayments() {
       <Row className="align-items-center pb-3">
         <Col xs="auto">
           {" "}
-          <h2>Payments Due</h2>
+          <h2>Payments to you</h2>
         </Col>
         <Col xs="auto"> </Col>
       </Row>

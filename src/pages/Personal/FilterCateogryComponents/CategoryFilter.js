@@ -38,7 +38,7 @@ function CategoryFilter(props) {
 
   return (
     <Form.Group className="my-3">
-      <Form.Label> Select only </Form.Label>
+      <Form.Label> Select Category </Form.Label>
       <Form.Select value={optionState.category} onChange={handleCategory}>
         {uniqueCategories.map((entry) => {
           return <option> {entry} </option>;

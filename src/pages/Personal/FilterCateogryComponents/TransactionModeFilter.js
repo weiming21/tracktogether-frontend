@@ -36,7 +36,7 @@ function TransactionModeFilter(props) {
 
   return (
     <Form.Group className="my-3">
-      <Form.Label> Select only </Form.Label>
+      <Form.Label> Select Mode </Form.Label>
       <Form.Select
         value={optionState.transactionMode}
         onChange={handleTransactionMode}
