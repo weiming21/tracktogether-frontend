@@ -311,7 +311,7 @@ function SignUpForm() {
           />
         </p>
         {displayUsernameError && (
-          <p style={{ color: "red" }}>
+          <p role="error" style={{ color: "red" }}>
             {credentialsIsValid.username.errorMessage}{" "}
           </p>
         )}
@@ -329,7 +329,7 @@ function SignUpForm() {
           />
         </p>
         {displayEmailError && (
-          <p style={{ color: "red" }}>
+          <p role="error" style={{ color: "red" }}>
             {credentialsIsValid.email.errorMessage}{" "}
           </p>
         )}
@@ -346,7 +346,7 @@ function SignUpForm() {
           />
         </p>
         {displayContactNoError && (
-          <p style={{ color: "red" }}>
+          <p role="error" style={{ color: "red" }}>
             {credentialsIsValid.contactNo.errorMessage}{" "}
           </p>
         )}
@@ -363,7 +363,7 @@ function SignUpForm() {
           />
         </p>
         {displayPasswordError && (
-          <p style={{ color: "red" }}>
+          <p role="error" style={{ color: "red" }}>
             {credentialsIsValid.password.errorMessage}{" "}
           </p>
         )}
@@ -380,8 +380,8 @@ function SignUpForm() {
           />
         </p>
         {displayConfirmPasswordError && (
-          <p style={{ color: "red" }}>
-            {credentialsIsValid.cfmPassword.errorMessage}{" "}
+          <p role="error" style={{ color: "red" }}>
+            {credentialsIsValid.password.errorMessage}{" "}
           </p>
         )}
 

@@ -122,7 +122,7 @@ function LoginForm() {
         <p>
           <img src={lock} alt="password" className={styles.icon} />
           <input
-            type="text"
+            type="password"
             name="password"
             placeholder="Password"
             className={styles.field}

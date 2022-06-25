@@ -51,12 +51,19 @@ function Home() {
     console.log("entering home useEffect frame");
     const fetchData = async () => {
       const quote_result = await fetch(
-        "https://goquotes-api.herokuapp.com/api/v1/all?type=tag&val=money"
+        "http://localhost:8080/api/account/quote",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: "Bearer " + authCtx.token,
+          },
+        }
       )
         .then((response) => response.json())
         .then((data) => {
-          let quote = data.quotes[getRndInteger(503)];
-          return [quote.text, quote.author];
+          let quote = data.data.quotes[getRndInteger(418)];
+          return [quote.quote, quote.author];
         });
 
       await timeout(500);
@@ -114,21 +121,23 @@ function Home() {
       </Box>
 
       <Box>
-        <h4 className={styles.header}>Quote of the Day</h4>
-        {data.quote.length == 0 ? (
-          <Col style={{ position: "relative" }}>
-            <div className={styles.spinner}>
-              <Spinner animation="border" variant="primary" />
+        <div data-testid="quote">
+          <h4 className={styles.header}>Quote of the Day</h4>
+          {data.quote.length == 0 ? (
+            <Col style={{ position: "relative" }}>
+              <div className={styles.spinner}>
+                <Spinner animation="border" variant="primary" />
+              </div>
+              <br></br>
+              <br></br>
+            </Col>
+          ) : (
+            <div>
+              <span className={styles.quote}>"{data.quote[0]}"</span>
+              <p>-{data.quote[1]}-</p>
             </div>
-            <br></br>
-            <br></br>
-          </Col>
-        ) : (
-          <div>
-            <span className={styles.quote}>"{data.quote[0]}"</span>
-            <p>-{data.quote[1]}-</p>
-          </div>
-        )}
+          )}
+        </div>
       </Box>
     </div>
   );

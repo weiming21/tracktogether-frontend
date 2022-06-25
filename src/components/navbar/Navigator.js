@@ -22,20 +22,26 @@ import {
 function Navigator() {
   const authCtx = useContext(AuthContext);
   const navbar = { backgroundColor: "#64B5F6" };
-  const renderTooltip = (props) => (
+  const renderAppName = (props) => (
     <Tooltip id="button-tooltip" {...props}>
       TrackTogether
     </Tooltip>
   );
 
-  const clientID = "00c74e4f-ce40-4652-be2a-05e632a5f82f";
+  const renderProfileTag = (props) => (
+    <Tooltip id="button-tooltip" {...props}>
+      Profile
+    </Tooltip>
+  );
+
+  // const clientID = "00c74e4f-ce40-4652-be2a-05e632a5f82f";
   // const secret = "d06562dd-5d23-4e13-9646-76cc0d5ba5e0";
-  const redirectURL = "http://localhost:3000/Home";
-  const authURL = `/https://www.dbs.com/sandbox/api/sg/v1/oauth/authorize?
-  client_id=${clientID}&
-  redirect_uri=${redirectURL}&
-  scope=Read&
-  response_type=code`;
+  // const redirectURL = "http://localhost:3000/Home";
+  // const authURL = `/https://www.dbs.com/sandbox/api/sg/v1/oauth/authorize?
+  // client_id=${clientID}&
+  // redirect_uri=${redirectURL}&
+  // scope=Read&
+  // response_type=code`;
 
   // const profileURL = "/profile/" + authCtx.username;
   // const  goToBankAccount = (event) => {
@@ -51,9 +57,9 @@ function Navigator() {
         <OverlayTrigger
           placement="right"
           delay={{ show: 250, hide: 400 }}
-          overlay={renderTooltip}
+          overlay={renderAppName}
         >
-          <Navbar.Brand href="/">
+          <Navbar.Brand href="/home">
             <img
               src={logo}
               width="50"
@@ -76,24 +82,22 @@ function Navigator() {
           </Form>
         </Navbar.Collapse>
 
-        {/* <Navbar.Text> Auth Code: {authCtx.token} </Navbar.Text> */}
-
         <Stack direction="horizontal" gap={3}>
-          <Link to="/profile">
-            <Navbar.Text> Signed in as: {authCtx.username} </Navbar.Text>
-          </Link>
-
+          <OverlayTrigger
+            placement="bottom"
+            delay={{ show: 250, hide: 400 }}
+            overlay={renderProfileTag}
+          >
+            <Link to="/profile">
+              <Navbar.Text> Signed in as: {authCtx.username} </Navbar.Text>
+            </Link>
+          </OverlayTrigger>
           <Image
             src={authCtx.image ? authCtx.image : imageAvatar}
             roundedCircle
             width="50"
             height="50"
           />
-
-          <Link to={authURL}>
-            {/* <Button variant="outline-primary">Sync with Bank Account</Button> */}
-            Sync with Bank
-          </Link>
 
           <Nav
             className="me-auto my-2 my-lg-0"
@@ -105,11 +109,14 @@ function Navigator() {
               title="Settings"
               id="navbarScrollingDropdown"
             >
-              <NavDropdown.Item href="/">Change Password</NavDropdown.Item>
-              <NavDropdown.Item href="/">Sync to Bank Account</NavDropdown.Item>
-              <NavDropdown.Item href="/">Another Action</NavDropdown.Item>
+              <NavDropdown.Item href="/profile">Edit Profile</NavDropdown.Item>
+              <NavDropdown.Item href="/bank-sync">
+                Sync to Bank Account
+              </NavDropdown.Item>
               <NavDropdown.Divider />
-              <NavDropdown.Item href="/">Delete account</NavDropdown.Item>
+              <NavDropdown.Item href="/profile">
+                Delete Account
+              </NavDropdown.Item>
             </NavDropdown>
           </Nav>
         </Stack>

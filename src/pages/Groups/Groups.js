@@ -181,6 +181,7 @@ function Group() {
               <Col>
                 <Card
                   className={styles.groupCard + " m-5"}
+                  role="card"
                   onClick={() => {
                     navigate("./" + entry.groupID);
                   }}
